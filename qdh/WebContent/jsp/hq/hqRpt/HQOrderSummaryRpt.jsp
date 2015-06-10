@@ -36,7 +36,7 @@ function refresh() {
 					    <tr>
 					      <th data-options="field:'0',width:120">客户名字</th>
 					      <c:forEach items="${brands}" var="brand">
-					         <th data-options="field:'${brand.brand_ID}',width:100">${brand.brand_Name}</th>
+					         <th data-options="field:'${brand.cbId}',width:100">${brand.brandHeader}</th>
 					      </c:forEach>
 					      <th data-options="field:'9999',width:120">** 汇总 **</th>
 					    </tr>

@@ -27,10 +27,12 @@ import qdh.dao.entity.VO.CustSummaryDataVO;
 import qdh.dao.entity.VO.HQCustRptVO;
 import qdh.dao.entity.VO.HQProdRptVO;
 import qdh.dao.entity.VO.MobileProdRptVO;
+import qdh.dao.entity.VO.RptSummaryHeaderVO;
 import qdh.dao.entity.order.CurrentBrands;
 import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.product.Brand;
+import qdh.dao.entity.product.Product;
 import qdh.dao.entity.product.ProductBarcode;
 import qdh.dao.entity.systemConfig.OrderExportLog;
 import qdh.dao.impl.Response;
@@ -541,14 +543,20 @@ public class RptService {
 		 * 1. 牌子名字
 		 */
 		DetachedCriteria cbCriteria = DetachedCriteria.forClass(CurrentBrands.class);
-		cbCriteria.addOrder(Order.asc("brand.brand_ID"));
+		cbCriteria.addOrder(Order.asc("id"));
 		
 		List<CurrentBrands> currentBrands = currentBrandsDaoImpl.getByCritera(cbCriteria, true);
-		List<Brand> brands = new ArrayList<>();
-		List<Integer> brandIds = new ArrayList<>();
+		List<RptSummaryHeaderVO> brands = new ArrayList<>();
+		List<Integer> cbrandIds = new ArrayList<>();
 		for (CurrentBrands brands2 : currentBrands){
-			brands.add(brands2.getBrand());
-			brandIds.add(brands2.getBrand().getBrand_ID());
+			String header = brands2.getBrand().getBrand_Name() + " " + brands2.getQuarter().getQuarter_Name();
+			
+			RptSummaryHeaderVO summaryHeaderVO = new RptSummaryHeaderVO();
+			summaryHeaderVO.setCbId(brands2.getId());
+			summaryHeaderVO.setBrandHeader(header);
+			
+			brands.add(summaryHeaderVO);
+			cbrandIds.add(brands2.getId());
 		}
 		objects.put("brands", brands);
 		
@@ -579,19 +587,26 @@ public class RptService {
 			int custId = cop.getCustId();
 			custIds.add(custId);
 			
-			int brandId = cop.getProductBarcode().getProduct().getBrand().getBrand_ID();
+			Product product = cop.getProductBarcode().getProduct();
+			int yearId = product.getYear().getYear_ID();
+			int quarterId = product.getQuarter().getQuarter_ID();
+			int brandId = product.getBrand().getBrand_ID();
+			
+			CurrentBrands cb = currentBrandsDaoImpl.getByKey(yearId, quarterId, brandId);
+			int cbId = cb.getId();
+			
 			int q = cop.getQuantity();
-			String key = custId + "#" + brandId;
+			String key = custId + "#" + cbId;
 			
 			Integer qSum = dataMap.get(key);
 			if (qSum == null)
 				qSum = 0;
 			dataMap.put(key, qSum + q);
 			
-			Integer brandSum = brandSumMap.get(brandId);
+			Integer brandSum = brandSumMap.get(cbId);
 			if (brandSum == null)
 				brandSum = 0;
-			brandSumMap.put(brandId, brandSum + q);
+			brandSumMap.put(cbId, brandSum + q);
 		}
 		
 		List<CustSummaryDataVO> summaryDataVOs = new ArrayList<>();
@@ -601,8 +616,8 @@ public class RptService {
 			summaryDataVO.setCustName(customerDaoImpl.get(custId, true).getCustName());
 			
 			List<Integer> qList = new ArrayList<>();
-			for (Integer brandId : brandIds){
-				String key = custId + "#" + brandId;
+			for (Integer cbId : cbrandIds){
+				String key = custId + "#" + cbId;
 				
 				Integer qSum = dataMap.get(key);
 				if (qSum == null)
@@ -610,8 +625,6 @@ public class RptService {
 				
 				subTotal += qSum;
 				qList.add(qSum);
-				
-
 			}
 			
 			summaryDataVO.setOrderQ(qList);
@@ -624,8 +637,8 @@ public class RptService {
 		subTotalVO.setCustName("** 所有客户 **");
 		List<Integer> qList = new ArrayList<>();
 		int total = 0 ;
-		for (Integer brandId : brandIds){
-			Integer qSum = brandSumMap.get(brandId);
+		for (Integer custId : cbrandIds){
+			Integer qSum = brandSumMap.get(custId);
 			if (qSum == null)
 				qSum = 0;
 			
