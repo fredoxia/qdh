@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="qdh.dao.entity.product">
+
+   <class name="Area" table="area">
+        <cache usage="read-write" region="qdhConstant"/>
+        <id name="area_ID" column="area_ID">
+            <generator class="assigned" />
+        </id>
+        <property name="area_Name" column="area_Name" type="string"/>
+        <property name="area_Code" column="area_Code" type="string"/>
+    </class>
+    
+    <class name="Brand" table="brand">
+        <cache usage="read-write" region="qdh"/>
+        <id name="brand_ID" column="brand_ID">
+            <generator class="assigned" />
+        </id>
+        <property name="brand_Name" column="brand_name" type="string"/>
+        <property name="brand_Code" column="brand_Code" type="string"/>
+        <property name="supplier" column="supplier" type="string"/>
+        <property name="pinyin" column="pin_yin" type="string"/>
+    </class>
+    
+    <class name="Category" table="category">
+        <cache usage="read-write" region="qdh"/>
+        <id name="category_ID" column="category_ID">
+            <generator class="assigned" />
+        </id>
+        <property name="category_Name" column="category_Name" type="string"/>
+        <property name="category_Code" column="category_Code" type="string"/>
+    </class>
+    
+    <class name="Quarter" table="quarter">
+        <cache usage="read-write" region="qdhConstant"/>
+        <id name="quarter_ID" column="quarter_ID">
+            <generator class="assigned" />
+        </id>
+        <property name="quarter_Name" column="quarter_Name" type="string"/>
+        <property name="quarter_Code" column="quarter_Code" type="string"/>
+    </class>
+    
+    <class name="Year" table="year">
+        <cache usage="read-write" region="qdhConstant"/>
+        <id name="year_ID" column="year_ID" type="integer">
+            <generator class="assigned" />
+        </id>
+        <property name="year" column="year" type="string"/>
+        <property name="year_Code" column="year_Code" type="string"/>
+    </class>
+    
+    <class name="Color" table="color">
+        <cache usage="read-write" region="qdhConstant"/>
+        <id name="colorId" column="color_id">
+            <generator class="assigned" />
+        </id>
+        <property name="code" column="code" type="string"/>
+        <property name="name" column="name" type="string"/>
+        <property name="deleted" column="deleted" type="integer"/>
+    </class>
+
+ 
+    <class name="Size" table="size">
+        <cache usage="read-write" region="qdhConstant"/>
+        <id name="sizeId" column="size_id">
+            <generator class="assigned" />
+        </id>
+        <property name="code" column="code" type="string"/>
+        <property name="name" column="name" type="string"/>
+        <property name="deleted" column="deleted" type="integer"/>
+    </class>
+   
+       
+    <class name="Product" table="product">
+    	<cache usage="read-write" region="qdh"/>
+        <id name="productId" column="product_ID"> 
+            <generator class="assigned" />
+        </id>
+        <property name="serialNum" column="serial_number" type="string"/>
+        <property name="productCode" column="product_Code" type="string"/>
+        <property name="numPerHand" column="numPerHand" type="integer"/>
+        <property name="unit" column="unit" type="string"/>
+        <property name="createDate" column="create_Date" type="timestamp"/>
+        <property name="salesPrice" column="sale_Price" type="double"/>
+        <property name="salesPriceFactory" column="sale_price_factory" type="double"/>
+        <property name="discount" column="discount" type="double"/>
+        <property name="wholeSalePrice" column="whole_sale_price" type="double"/>
+        <property name="wholeSalePrice2" column="whole_sale_price2" type="double"/>
+        <property name="wholeSalePrice3" column="whole_sale_price3" type="double"/>
+        <property name="recCost" column="rec_cost" type="double"/>
+        <many-to-one name="area" column="area_ID" class="Area" lazy="false"/>
+        <many-to-one name="year" column="year_ID" class="Year" lazy="false"/>
+        <many-to-one name="quarter" column="quarter_ID" class="Quarter" lazy="false"/>
+        <many-to-one name="brand" column="brand_ID" class="Brand" lazy="false"/>
+        <many-to-one name="category" column="category_ID" class="Category" lazy="false"/>
+   </class>
+
+    <class name="ProductBarcode" table="product_barcode">
+        <cache usage="read-write" region="qdh"/>
+        <id name="id" column="id"> 
+            <generator class="assigned" />
+        </id>
+        <property name="status" column="status" type="integer"/>
+        <property name="barcode" column="barcode" type="string"/>
+        <property name="createDate" column="create_date" type="timestamp"/>
+        <many-to-one name="product" fetch="join" column="product_ID" class="Product" lazy="false"/>
+        <many-to-one name="color" column="color_Id" class="Color" not-null = "false" lazy="false"/>
+        <many-to-one name="size" column="size_Id" class="Size" not-null = "false" lazy="false"/>
+   </class>
+
+    <class name="NumPerHand" table="num_per_hand">
+        <cache usage="read-write" region="qdhConstant"/>
+        <id name="id" column="id" type="integer">
+            <generator class="assigned" />
+        </id>
+        <property name="numPerHand" column="numPerHand" type="integer"/>
+    </class>
+ 
+        
+</hibernate-mapping>
