@@ -57,7 +57,7 @@ function pdaLogin(){
 		    </tr>
 		    <tr>
 		      <td height="30"></td>
-		      <td align="left"><input type="checkbox" name="isAdmin" id="isAdmin" value="true"/>登陆到连锁店</td>
+		      <td align="left"><input type="checkbox" name="isAdmin" id="isAdmin" value="true"/>登陆到连锁店 </td>
 		    </tr>
 		  </table>
 		</s:form>
