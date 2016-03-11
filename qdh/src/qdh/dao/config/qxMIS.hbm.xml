@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="qdh.dao.entity.productMIS">
+<hibernate-mapping package="qdh.dao.entity.qxMIS">
 
    <class name="Area" table="area">
         <id name="area_ID" column="area_ID">
@@ -55,7 +55,6 @@
 
  
     <class name="Size" table="size">
-
         <id name="sizeId" column="size_id">
             <generator class="assigned" />
         </id>
@@ -89,7 +88,6 @@
    </class>
 
     <class name="ProductBarcode" table="product_barcode">
-
         <id name="id" column="id"> 
             <generator class="identity" />
         </id>
@@ -102,12 +100,24 @@
    </class>
 
     <class name="NumPerHand" table="num_per_hand">
-
         <id name="id" column="id" type="integer">
             <generator class="identity" />
         </id>
         <property name="numPerHand" column="numPerHand" type="integer"/>
     </class>
- 
+    
+     <class name="UserInfor" table="userinfor">
+        <id name="user_id" column="user_id">
+            <generator class="identity" />
+        </id>
+        <property name="user_name" column="user_name" type="string"/>
+        <property name="password" column="password" type="string"/>
+        <property name="name" column="name" type="string"/>
+        <property name="roleType" column="roleType" type="integer"/>
+        <property name="department" column="department" type="string"/>
+        <property name="jobTitle" column="jobTitle" type="string"/>
+        <property name="jinsuanID" column="jinsuanID" type="integer"/>
+        <property name="resign" column="resign" type="integer"/>
+    </class>
         
 </hibernate-mapping>

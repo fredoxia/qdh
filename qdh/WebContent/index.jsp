@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@taglib prefix="s" uri="/struts-tags" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -38,7 +37,7 @@ function pdaLogin(){
 </head>
 <body>
 <div id="loginDialog" class="easyui-dialog" title="千禧宝贝连锁店管理系统" data-options="iconCls:'icon-status_online',resizable:false,modal:true,draggable:false,closable:false,buttons:[{text:'登陆',handler:function(){ login(); }},{text:'PDA登录',handler:function(){ pdaLogin(); }}]" style="width:330px;height:230px;padding:5px">
-	  <s:form id="loginForm" name="loginForm" method="post" action="" theme="simple">
+	  <form id="loginForm" name="loginForm" method="post" action="" theme="simple">
 		  <table width="100%">
 		    <tr>
 		      <td colspan="2" align="center"><strong>总部用户登录 </strong></td>
@@ -46,21 +45,17 @@ function pdaLogin(){
 		    <tr>
 		      <td width="85" height="30">用户名：</td>
 		      <td width="180">
-		      <s:textfield name="user.user_name" id="userName" cssClass="easyui-validatebox" data-options="required:true"/></td>
+		      <input type="text" name="user.user_name" id="userName" class="easyui-validatebox" data-options="required:true"/></td>
 		    </tr>
 		    <tr>
 		      <td height="30">密码：</td>
 		      <td>
-		      <s:password name="user.password" id="password" cssClass="easyui-validatebox" data-options="required:true"/>
+		      <input type="password" name="user.password" id="password" class="easyui-validatebox" data-options="required:true"/>
 
 		      </td>
 		    </tr>
-		    <tr>
-		      <td height="30"></td>
-		      <td align="left"><input type="checkbox" name="isAdmin" id="isAdmin" value="true"/>登陆到连锁店 </td>
-		    </tr>
 		  </table>
-		</s:form>
+		</form>
 </div>
 
 
