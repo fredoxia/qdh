@@ -107,10 +107,10 @@
     </class>
     
      <class name="UserInfor" table="userinfor">
-        <id name="user_id" column="user_id">
+        <id name="userId" column="user_id">
             <generator class="identity" />
         </id>
-        <property name="user_name" column="user_name" type="string"/>
+        <property name="userName" column="user_name" type="string"/>
         <property name="password" column="password" type="string"/>
         <property name="name" column="name" type="string"/>
         <property name="roleType" column="roleType" type="integer"/>

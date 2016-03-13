@@ -3,13 +3,13 @@ package qdh.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import qdh.dao.entity.qxMIS.UserInfor;
+import qdh.dao.impl.Response;
 import qdh.pageModel.Json;
 import qdh.pageModel.SessionInfo;
 import qdh.service.UserService;
@@ -23,11 +23,11 @@ public class UserController {
 	private UserService userService;
 	
 	@ResponseBody
-	@RequestMapping("/HQlogin")
-	public Json login(UserInfor user, HttpSession session, HttpServletRequest request) {
+	@RequestMapping("/HQLogin")
+	public Json HQLogin(UserInfor user, HttpSession session, HttpServletRequest request) {
 		Json j = new Json();
-		UserInfor u = userService.HQlogin(user);
-		if (u != null) {
+		Response response = userService.HQlogin(user);
+		if (response.isSuccess()) {
 			j.setSuccess(true);
 			j.setMsg("登陆成功！");
 
@@ -38,7 +38,7 @@ public class UserController {
 
 			j.setObj(sessionInfo);
 		} else {
-			j.setMsg("用户名或密码错误！");
+			j.setMsg(response.getMessage());
 		}
 		return j;
 	}
