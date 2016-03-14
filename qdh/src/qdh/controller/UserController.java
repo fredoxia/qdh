@@ -3,6 +3,9 @@ package qdh.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +35,7 @@ public class UserController {
 			j.setMsg("登陆成功！");
 
 			SessionInfo sessionInfo = new SessionInfo();
-			//BeanUtils.copyProperties(u, sessionInfo);
+			BeanUtils.copyProperties(response.getReturnValue(), sessionInfo);
 			sessionInfo.setIp(IpUtil.getIpAddr(request));
 			//sessionInfo.setResourceList(userService.resourceList(u.getId()));
 

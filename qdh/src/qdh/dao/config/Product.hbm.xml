@@ -115,6 +115,13 @@
         </id>
         <property name="numPerHand" column="numPerHand" type="integer"/>
     </class>
- 
+    <class name="CurrentBrands" table="current_brands">
+        <composite-id name="id" class="CurrentBrandsId">
+            <key-many-to-one name="year" column="year_id" class="year" lazy="false"/>
+            <key-many-to-one name="quarter" column="quarter_id" class="quarter" lazy="false"/>
+            <key-many-to-one name="brand" column="brand_id" class="brand" lazy="false"/>
+        </composite-id>
+        <property name="updateDate" column="update_date" type="timestamp"/>
+    </class> 
         
 </hibernate-mapping>
