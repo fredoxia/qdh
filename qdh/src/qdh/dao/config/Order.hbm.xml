@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="qdh.dao.entity.order">
+    <class name="CurrentBrands" table="current_brands">
+        <composite-id name="id" class="CurrentBrandsId">
+            <key-many-to-one name="year" column="year_id" class="qdh.dao.entity.product.Year" lazy="false"/>
+            <key-many-to-one name="quarter" column="quarter_id" class="qdh.dao.entity.product.Quarter" lazy="false"/>
+            <key-many-to-one name="brand" column="brand_id" class="qdh.dao.entity.product.Brand" lazy="false"/>
+        </composite-id>
+        <property name="updateDate" column="update_date" type="timestamp"/>
+    </class> 
+        
+</hibernate-mapping>

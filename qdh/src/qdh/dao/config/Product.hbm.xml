@@ -115,13 +115,6 @@
         </id>
         <property name="numPerHand" column="numPerHand" type="integer"/>
     </class>
-    <class name="qdh.dao.entity.order.CurrentBrands" table="current_brands">
-        <composite-id name="id" class="qdh.dao.entity.order.CurrentBrandsId">
-            <key-many-to-one name="year" column="year_id" class="Year" lazy="false"/>
-            <key-many-to-one name="quarter" column="quarter_id" class="Quarter" lazy="false"/>
-            <key-many-to-one name="brand" column="brand_id" class="Brand" lazy="false"/>
-        </composite-id>
-        <property name="updateDate" column="update_date" type="timestamp"/>
-    </class> 
+
         
 </hibernate-mapping>
