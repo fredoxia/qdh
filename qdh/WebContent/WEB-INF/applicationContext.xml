@@ -31,7 +31,15 @@
 			</list>
 		</property>
 	</bean>
-
+	
+	<!-- 拦截器 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="qdh.interceptor.SecurityInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
     <!-- database outside configuration -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
         <property name="locations">  

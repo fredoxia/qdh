@@ -10,7 +10,11 @@ import java.util.List;
  */
 public class SessionInfo implements java.io.Serializable {
 
-	private String userId;// 用户ID
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4221264015564298180L;
+	private int userId;// 用户ID
 	private String userName;// 用户登录名
 	private String ip;// 用户IP
 
@@ -25,11 +29,11 @@ public class SessionInfo implements java.io.Serializable {
 	}
 
 
-	public String getUserId() {
+	public int getUserId() {
 		return userId;
 	}
 
-	public void setUserId(String userId) {
+	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 

@@ -14,7 +14,10 @@ function login(){
     }
 }
 function loginBackProcess(data){
-	alert(data.success);
+	if (data.success)
+		window.location.href = "<%=request.getContextPath()%>/userController/HQMain";
+	else 
+		alert(data.msg);	
 }
 </script>
 </head>

@@ -1,7 +1,6 @@
 package qdh.dao.entity.qxMIS;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class UserInfor implements Serializable{
 	/**
@@ -26,14 +25,7 @@ public class UserInfor implements Serializable{
 	private String name;
 	private String password;
 	private int roleType;
-	private Date onBoardDate = new Date();
 	private String department;
-	private Date birthday = new Date();
-	private String mobilePhone;
-	private String homePhone;
-	private String idNumber;
-	private double baseSalary;
-	private double baseVacation;
 	private String jobTitle;
 	private int jinsuanID;
 
@@ -51,55 +43,13 @@ public class UserInfor implements Serializable{
 		this.jinsuanID = jinsuanID;
 	}
 
-
-	public Date getOnBoardDate() {
-		return onBoardDate;
-	}
-	public void setOnBoardDate(Date onBoardDate) {
-		this.onBoardDate = onBoardDate;
-	}
 	public String getDepartment() {
 		return department;
 	}
 	public void setDepartment(String department) {
 		this.department = department;
 	}
-	public Date getBirthday() {
-		return birthday;
-	}
-	public void setBirthday(Date birthday) {
-		this.birthday = birthday;
-	}
-	public String getMobilePhone() {
-		return mobilePhone;
-	}
-	public void setMobilePhone(String mobilePhone) {
-		this.mobilePhone = mobilePhone;
-	}
-	public String getHomePhone() {
-		return homePhone;
-	}
-	public void setHomePhone(String homePhone) {
-		this.homePhone = homePhone;
-	}
-	public String getIdNumber() {
-		return idNumber;
-	}
-	public void setIdNumber(String idNumber) {
-		this.idNumber = idNumber;
-	}
-	public double getBaseSalary() {
-		return baseSalary;
-	}
-	public void setBaseSalary(double baseSalary) {
-		this.baseSalary = baseSalary;
-	}
-	public double getBaseVacation() {
-		return baseVacation;
-	}
-	public void setBaseVacation(double baseVacation) {
-		this.baseVacation = baseVacation;
-	}
+	
 	public String getJobTitle() {
 		return jobTitle;
 	}
@@ -177,11 +127,7 @@ public class UserInfor implements Serializable{
 	public String toString() {
 		return "UserInfor [user_id=" + userId + ", user_name=" + userName
 				+ ", name=" + name + ", password=" + password + ", roleType="
-				+ roleType + ", onBoardDate=" + onBoardDate + ", department="
-				+ department + ", birthday=" + birthday + ", mobilePhone="
-				+ mobilePhone + ", homePhone=" + homePhone + ", idNumber="
-				+ idNumber + ", baseSalary=" + baseSalary + ", baseVacation="
-				+ baseVacation + ", jobTitle=" + jobTitle + ", jinsuanID="
+				+ roleType +", jobTitle=" + jobTitle + ", jinsuanID="
 				+ jinsuanID + ", resign=" + resign + ", functions=" 
 				+ "]";
 	}

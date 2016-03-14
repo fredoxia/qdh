@@ -27,6 +27,8 @@ public class SystemParmLoader implements ServletContextListener {
         loggerLocal.info("开始加载消息管理器 ...");
         QXMsgManager.load();
         
+        loggerLocal.info("开始加载免拦截url ...");
+        DefaultFunction.load();
     }
 
 	/**

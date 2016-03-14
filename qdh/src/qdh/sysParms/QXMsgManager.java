@@ -15,7 +15,7 @@ public class QXMsgManager {
 		try {
 				InputStream is =
 					QXMsgManager.class.getClassLoader()
-				 .getResourceAsStream("sysParms/QXMessage.properties");
+				 .getResourceAsStream("qdh/sysParms/QXMessage.properties");
 				if( is!= null) {
 					msgPorperty.load(is);
 				}
