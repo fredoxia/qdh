@@ -13,7 +13,7 @@ import qdh.dao.entity.qxMIS.Color;
 import qdh.dao.impl.BaseDAO;
 
 @Repository
-public class ColorDaoImpl extends BaseDAO<Color> {
+public class Color2DaoImpl extends BaseDAO<Color> {
 
 
 

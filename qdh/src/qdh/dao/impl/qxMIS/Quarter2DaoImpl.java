@@ -1,13 +1,9 @@
 package qdh.dao.impl.qxMIS;
 
-
 import org.springframework.stereotype.Repository;
-
-import qdh.dao.entity.qxMIS.Area;
+import qdh.dao.entity.qxMIS.Quarter;
 import qdh.dao.impl.BaseDAO;
-
-
 @Repository
-public class AreaDaoImpl extends BaseDAO<Area>{
+public class Quarter2DaoImpl extends BaseDAO<Quarter> {
 
 }

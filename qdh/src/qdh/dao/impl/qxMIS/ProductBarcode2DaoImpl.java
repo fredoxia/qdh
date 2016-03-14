@@ -1,11 +1,12 @@
 package qdh.dao.impl.qxMIS;
 
-
 import org.springframework.stereotype.Repository;
-import qdh.dao.entity.qxMIS.NumPerHand;
+
+import qdh.dao.entity.qxMIS.ProductBarcode;
 import qdh.dao.impl.BaseDAO;
 
 @Repository
-public class NumPerHandDaoImpl extends BaseDAO<NumPerHand>{
+public class ProductBarcode2DaoImpl  extends BaseDAO<ProductBarcode> {
+
 
 }
