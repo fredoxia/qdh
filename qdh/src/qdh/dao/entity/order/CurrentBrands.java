@@ -9,6 +9,7 @@ public class CurrentBrands implements Serializable{
 	 */
 	private static final long serialVersionUID = -4688789245578068255L;
 	private CurrentBrandsId id;
+	private String updateUser = "";
 	private Date updateDate;
 
 	public CurrentBrandsId getId() {
@@ -28,6 +29,16 @@ public class CurrentBrands implements Serializable{
 
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
+	}
+
+
+	public String getUpdateUser() {
+		return updateUser;
+	}
+
+
+	public void setUpdateUser(String updateUser) {
+		this.updateUser = updateUser;
 	}
 
 

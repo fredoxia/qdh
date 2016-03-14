@@ -7,6 +7,8 @@
             <key-many-to-one name="quarter" column="quarter_id" class="qdh.dao.entity.product.Quarter" lazy="false"/>
             <key-many-to-one name="brand" column="brand_id" class="qdh.dao.entity.product.Brand" lazy="false"/>
         </composite-id>
+        
+        <property name="updateUser" column="update_user" type="string"/>
         <property name="updateDate" column="update_date" type="timestamp"/>
     </class> 
         
