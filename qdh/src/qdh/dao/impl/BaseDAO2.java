@@ -43,9 +43,7 @@ public class BaseDAO2<T> extends DAOAbstract implements DAOInterface<T>{
 	
 	@Override
 	public void saveOrUpdate(T entity, boolean cached) {
-		if (cached)
-			getHibernateTemplateMS().setCacheQueries(true);
-		getHibernateTemplateMS().saveOrUpdate(entity);
+
 	}
 	
 	@Override
@@ -56,9 +54,7 @@ public class BaseDAO2<T> extends DAOAbstract implements DAOInterface<T>{
 	}
 	@Override
 	public void delete(T entity, boolean cached){
-		if (cached)
-			getHibernateTemplateMS().setCacheQueries(true);
-		getHibernateTemplateMS().delete(entity);
+
 	}
 	
 	/**
@@ -73,16 +69,12 @@ public class BaseDAO2<T> extends DAOAbstract implements DAOInterface<T>{
 
 	@Override
 	public void save(T entity, boolean cached) {
-		if (cached)
-			getHibernateTemplateMS().setCacheQueries(true);
-		getHibernateTemplateMS().save(entity);
+
 	}
 
 	@Override
 	public void update(T entity, boolean cached) {
-		if (cached)
-			getHibernateTemplateMS().setCacheQueries(true);
-		getHibernateTemplateMS().update(entity);
+	
 	}
 
 	@Override
@@ -177,6 +169,12 @@ public class BaseDAO2<T> extends DAOAbstract implements DAOInterface<T>{
 
 	@Override
 	public void clearSession() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void merge(T object) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="qdh.dao.entity.qxMIS">
 
-   <class name="Area" table="area">
+   <class name="Area2" table="area">
         <id name="area_ID" column="area_ID">
             <generator class="identity" />
         </id>
@@ -10,7 +10,7 @@
         <property name="area_Code" column="area_Code" type="string"/>
     </class>
     
-    <class name="Brand" table="brand">
+    <class name="Brand2" table="brand">
         <id name="brand_ID" column="brand_ID">
             <generator class="identity" />
         </id>
@@ -18,9 +18,10 @@
         <property name="brand_Code" column="brand_Code" type="string"/>
         <property name="supplier" column="supplier" type="string"/>
         <property name="pinyin" column="pin_yin" type="string"/>
+        <property name="chainId" column="chain_id" type="integer"/>
     </class>
     
-    <class name="Category" table="category">
+    <class name="Category2" table="category">
         <id name="category_ID" column="category_ID">
             <generator class="identity" />
         </id>
@@ -28,7 +29,7 @@
         <property name="category_Code" column="category_Code" type="string"/>
     </class>
     
-    <class name="Quarter" table="quarter">
+    <class name="Quarter2" table="quarter">
         <id name="quarter_ID" column="quarter_ID">
             <generator class="identity" />
         </id>
@@ -36,7 +37,7 @@
         <property name="quarter_Code" column="quarter_Code" type="string"/>
     </class>
     
-    <class name="Year" table="year">
+    <class name="Year2" table="year">
         <id name="year_ID" column="year_ID" type="integer">
             <generator class="identity" />
         </id>
@@ -44,7 +45,7 @@
         <property name="year_Code" column="year_Code" type="string"/>
     </class>
     
-    <class name="Color" table="color">
+    <class name="Color2" table="color">
         <id name="colorId" column="color_id">
             <generator class="assigned" />
         </id>
@@ -54,7 +55,7 @@
     </class>
 
  
-    <class name="Size" table="size">
+    <class name="Size2" table="size">
         <id name="sizeId" column="size_id">
             <generator class="assigned" />
         </id>
@@ -64,7 +65,7 @@
     </class>
    
        
-    <class name="Product" table="product">
+    <class name="Product2" table="product">
         <id name="productId" column="product_ID"> 
             <generator class="identity" />
         </id>
@@ -72,7 +73,6 @@
         <property name="productCode" column="product_Code" type="string"/>
         <property name="numPerHand" column="numPerHand" type="integer"/>
         <property name="unit" column="unit" type="string"/>
-        <property name="createDate" column="create_Date" type="timestamp"/>
         <property name="salesPrice" column="sale_Price" type="double"/>
         <property name="salesPriceFactory" column="sale_price_factory" type="double"/>
         <property name="discount" column="discount" type="double"/>
@@ -80,33 +80,33 @@
         <property name="wholeSalePrice2" column="whole_sale_price2" type="double"/>
         <property name="wholeSalePrice3" column="whole_sale_price3" type="double"/>
         <property name="recCost" column="rec_cost" type="double"/>
-        <many-to-one name="area" column="area_ID" class="Area" lazy="false"/>
-        <many-to-one name="year" column="year_ID" class="Year" lazy="false"/>
-        <many-to-one name="quarter" column="quarter_ID" class="Quarter" lazy="false"/>
-        <many-to-one name="brand" column="brand_ID" class="Brand" lazy="false"/>
-        <many-to-one name="category" column="category_ID" class="Category" lazy="false"/>
+        <many-to-one name="area" column="area_ID" class="Area2" lazy="false"/>
+        <many-to-one name="year" column="year_ID" class="Year2" lazy="false"/>
+        <many-to-one name="quarter" column="quarter_ID" class="Quarter2" lazy="false"/>
+        <many-to-one name="brand" column="brand_ID" class="Brand2" lazy="false"/>
+        <many-to-one name="category" column="category_ID" class="Category2" lazy="false"/>
    </class>
 
-    <class name="ProductBarcode" table="product_barcode">
+    <class name="ProductBarcode2" table="product_barcode">
         <id name="id" column="id"> 
             <generator class="identity" />
         </id>
         <property name="status" column="status" type="integer"/>
         <property name="barcode" column="barcode" type="string"/>
-        <property name="createDate" column="create_date" type="timestamp"/>
-        <many-to-one name="product" fetch="join" column="product_ID" class="Product" lazy="false"/>
-        <many-to-one name="color" column="color_Id" class="Color" not-null = "false" lazy="false"/>
-        <many-to-one name="size" column="size_Id" class="Size" not-null = "false" lazy="false"/>
+        <many-to-one name="product" fetch="join" column="product_ID" class="Product2" lazy="false"/>
+        <many-to-one name="color" column="color_Id" class="Color2" not-null = "false" lazy="false"/>
+        <many-to-one name="size" column="size_Id" class="Size2" not-null = "false" lazy="false"/>
+        <property name="chainId" column="chain_id" type="integer"/>
    </class>
 
-    <class name="NumPerHand" table="num_per_hand">
+    <class name="NumPerHand2" table="num_per_hand">
         <id name="id" column="id" type="integer">
             <generator class="identity" />
         </id>
         <property name="numPerHand" column="numPerHand" type="integer"/>
     </class>
     
-     <class name="UserInfor" table="userinfor">
+     <class name="UserInfor2" table="userinfor">
         <id name="userId" column="user_id">
             <generator class="identity" />
         </id>
@@ -119,5 +119,14 @@
         <property name="jinsuanID" column="jinsuanID" type="integer"/>
         <property name="resign" column="resign" type="integer"/>
     </class>
-        
+     <class name="ChainStore2" table="chain_store">
+
+        <id name="chainId" column="chain_id">
+            <generator class="identity" />
+        </id>
+        <property name="chainName" column="chain_name" type="string"/>
+        <property name="ownerName" column="owner_name" type="string"/>
+		<property name="clientId" column="client_id" type="integer"/>
+		<property name="status" column="status" type="integer"/>
+    </class>       
 </hibernate-mapping>

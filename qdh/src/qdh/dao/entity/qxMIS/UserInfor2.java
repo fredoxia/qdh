@@ -2,7 +2,7 @@ package qdh.dao.entity.qxMIS;
 
 import java.io.Serializable;
 
-public class UserInfor implements Serializable{
+public class UserInfor2 implements Serializable{
 	/**
 	 * 
 	 */
@@ -117,7 +117,7 @@ public class UserInfor implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UserInfor other = (UserInfor) obj;
+		UserInfor2 other = (UserInfor2) obj;
 		if (userId != other.userId)
 			return false;
 		return true;

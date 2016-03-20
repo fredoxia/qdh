@@ -1,11 +1,15 @@
 package qdh.dao.entity.order;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
+
+import org.apache.poi.ss.usermodel.DateUtil;
 
 import qdh.dao.entity.product.Brand;
 import qdh.dao.entity.product.Quarter;
 import qdh.dao.entity.product.Year;
+import qdh.utility.DateUtility;
 
 public class CurrentBrands implements Serializable{
 	/**
@@ -14,11 +18,42 @@ public class CurrentBrands implements Serializable{
 	private static final long serialVersionUID = -4688789245578068255L;
 	private int id;
 	private String updateUser = "";
-	private Date updateDate;
+	private Timestamp updateDate;
 	private Year year;
 	private Quarter quarter;
 	private Brand brand;
+	private int numOfBarcodes;
 	
+	public CurrentBrands(){
+		
+	}
+	
+	public CurrentBrands(int yearId, int quarterId, int brandId, int numOfBarcodes, String updateUser){
+		Year year = new Year();
+		year.setYear_ID(yearId);
+		
+		Quarter quarter =new Quarter();
+		quarter.setQuarter_ID(quarterId);
+		
+		Brand brand = new Brand();
+		brand.setBrand_ID(brandId);
+		
+		this.setYear(year);
+		this.setQuarter(quarter);
+		this.setBrand(brand);
+		this.setUpdateUser(updateUser);
+		this.setNumOfBarcodes(numOfBarcodes);
+		this.setUpdateDate(DateUtility.getToday());
+	}
+	
+	public int getNumOfBarcodes() {
+		return numOfBarcodes;
+	}
+
+	public void setNumOfBarcodes(int numOfBarcode) {
+		this.numOfBarcodes = numOfBarcode;
+	}
+
 	public Year getYear() {
 		return year;
 	}
@@ -53,7 +88,7 @@ public class CurrentBrands implements Serializable{
 	}
 
 
-	public void setUpdateDate(Date updateDate) {
+	public void setUpdateDate(Timestamp updateDate) {
 		this.updateDate = updateDate;
 	}
 

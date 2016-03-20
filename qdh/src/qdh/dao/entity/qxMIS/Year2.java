@@ -2,7 +2,7 @@ package qdh.dao.entity.qxMIS;
 
 import java.io.Serializable;
 
-public class Year implements Serializable{
+public class Year2 implements Serializable{
 	/**
 	 * 
 	 */
@@ -11,11 +11,11 @@ public class Year implements Serializable{
     private String year;
     private String year_Code;
     
-    public Year(){
+    public Year2(){
     	
     }
     
-    public Year(int year_ID, String year){
+    public Year2(int year_ID, String year){
     	this.year_ID = year_ID;
     	this.year = year;
     }

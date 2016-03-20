@@ -3,13 +3,14 @@ package qdh.dao.entity.qxMIS;
 
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
 
-public class Product  implements Serializable{
+public class Product2  implements Serializable{
 	/**
 	 * 
 	 */
@@ -20,17 +21,15 @@ public class Product  implements Serializable{
 	 * unique
 	 */
     private String serialNum;
-    private Area area = new Area();
-    private Year year = new Year();
-    private Quarter quarter = new Quarter();
-    private Brand brand = new Brand();
-    private Category category = new Category();
+    private Area2 area = new Area2();
+    private Year2 year = new Year2();
+    private Quarter2 quarter = new Quarter2();
+    private Brand2 brand = new Brand2();
+    private Category2 category = new Category2();
     private String productCode;
     private int numPerHand;
     private String unit;
 
-	private Date createDate = new Date();
-    private String createDate_s;
     /**
      * the chain store's sale price连锁店零售价
      */
@@ -48,15 +47,7 @@ public class Product  implements Serializable{
      */    
     private double wholeSalePrice3;
     
-    /**
-     * 历史输入 折扣价
-     */
-    private double lastInputPrice;
-    
-    /**
-     * 历史选择价格
-     */
-    private double lastChoosePrice;
+
     /**
      * the whole saler's cost price批发商进价
      */
@@ -109,25 +100,16 @@ public class Product  implements Serializable{
 	}
 
 
-	public Date getCreateDate() {
-		return createDate;
-	}
 
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
+
+	public Product2(){
 
 	}
-
-	public Product(){
-
-	}
-    public Product(String serialNum,String productCode, int numPerHand, String unit, Date createDate, String createDate_s,double salesPrice){
+    public Product2(String serialNum,String productCode, int numPerHand, String unit, double salesPrice){
     	this.setSerialNum(serialNum);
     	this.setProductCode(productCode);
     	this.setNumPerHand(numPerHand);
     	this.setUnit(unit);
-    	this.setCreateDate(createDate);
-
     	this.setSalesPrice(salesPrice);
   	
     }
@@ -153,34 +135,34 @@ public class Product  implements Serializable{
 	public void setProductId(int productId) {
 		this.productId = productId;
 	}
-	public Area getArea() {
+	public Area2 getArea() {
 		return area;
 	}
-	public void setArea(Area area) {
+	public void setArea(Area2 area) {
 		this.area = area;
 	}
-	public Year getYear() {
+	public Year2 getYear() {
 		return year;
 	}
-	public void setYear(Year year) {
+	public void setYear(Year2 year) {
 		this.year = year;
 	}
-	public Quarter getQuarter() {
+	public Quarter2 getQuarter() {
 		return quarter;
 	}
-	public void setQuarter(Quarter quarter) {
+	public void setQuarter(Quarter2 quarter) {
 		this.quarter = quarter;
 	}
-	public Brand getBrand() {
+	public Brand2 getBrand() {
 		return brand;
 	}
-	public void setBrand(Brand brand) {
+	public void setBrand(Brand2 brand) {
 		this.brand = brand;
 	}
-	public Category getCategory() {
+	public Category2 getCategory() {
 		return category;
 	}
-	public void setCategory(Category category) {
+	public void setCategory(Category2 category) {
 		this.category = category;
 	}
 
@@ -209,20 +191,7 @@ public class Product  implements Serializable{
 	public void setWholeSalePrice3(double wholeSalePrice3) {
 		this.wholeSalePrice3 = wholeSalePrice3;
 	}
-	
-	public double getLastInputPrice() {
-		return lastInputPrice;
-	}
-	public void setLastInputPrice(double lastInputPrice) {
-		this.lastInputPrice = lastInputPrice;
-	}
-	
-	public double getLastChoosePrice() {
-		return lastChoosePrice;
-	}
-	public void setLastChoosePrice(double lastChoosePrice) {
-		this.lastChoosePrice = lastChoosePrice;
-	}
+
 
 	@Override
 	public int hashCode() {
@@ -249,7 +218,7 @@ public class Product  implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Product other = (Product) obj;
+		Product2 other = (Product2) obj;
 		if (productId != 0 && productId== other.getProductId())
 			return true;
 		if (area == null) {

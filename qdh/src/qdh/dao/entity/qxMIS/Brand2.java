@@ -8,7 +8,7 @@ import java.util.Map;
 
 
 
-public class Brand  implements Serializable{
+public class Brand2  implements Serializable{
 	/**
 	 * 
 	 */
@@ -33,11 +33,19 @@ public class Brand  implements Serializable{
     private String brand_Code;
     private String supplier;
     private String pinyin;
-
+    private Integer chainId ;
  	
- 	public Brand(){
+ 	public Brand2(){
  		
  	}
+
+	public Integer getChainId() {
+		return chainId;
+	}
+
+	public void setChainId(Integer chainId) {
+		this.chainId = chainId;
+	}
 
 	public String getPinyin() {
 		return pinyin;
@@ -47,7 +55,7 @@ public class Brand  implements Serializable{
 		this.pinyin = pinyin;
 	}
 
-	public Brand(int brandId, String brandName){
+	public Brand2(int brandId, String brandName){
  		this.brand_ID = brandId;
  		this.brand_Name = brandName;
  	}

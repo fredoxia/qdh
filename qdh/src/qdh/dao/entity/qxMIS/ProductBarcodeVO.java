@@ -22,17 +22,17 @@ public class ProductBarcodeVO {
 	private double wholePrice3 = 0;
 	private Date createTime;
 	
-	public ProductBarcodeVO(ProductBarcode pb){
+	public ProductBarcodeVO(ProductBarcode2 pb){
 		this.id = pb.getId();
 		this.barcode = pb.getBarcode();
-		Product product = pb.getProduct();
+		Product2 product = pb.getProduct();
 		if (product != null){
 			this.year = product.getYear().getYear();
 			this.quarter = product.getQuarter().getQuarter_Name();
 			this.brand = product.getBrand().getBrand_Name();
 			this.category = product.getCategory().getCategory_Name();
 			this.productCode = product.getProductCode();
-			Color color = pb.getColor();
+			Color2 color = pb.getColor();
 			if (color != null)
 				this.color = color.getName();
 			this.qOneHand = String.valueOf(product.getNumPerHand());
@@ -44,7 +44,7 @@ public class ProductBarcodeVO {
 			this.wholePrice1 = product.getWholeSalePrice();
 			this.wholePrice2 = product.getWholeSalePrice2();
 			this.wholePrice3 = product.getWholeSalePrice3();
-			this.createTime = pb.getCreateDate();
+
 		}
 	}
 	

@@ -1,7 +1,11 @@
 package qdh.dao.entity.product;
 
 import java.io.Serializable;
-import java.util.Date;
+
+
+import org.springframework.beans.BeanUtils;
+
+import qdh.dao.entity.qxMIS.ProductBarcode2;
 
 
 public class ProductBarcode implements Serializable {
@@ -16,15 +20,30 @@ public class ProductBarcode implements Serializable {
 	private static final long serialVersionUID = -7555848597032873392L;
 	private int id;
 	private Product product = new Product();
-	private Color color;
-	private Size size;
+	private Color color ;
+	private Size size ;
 	private String barcode;
-	private Date createDate;
-    private int boughtBefore = 0 ;
     private int status = 1;
 
 	public ProductBarcode(){
 		
+	}
+	
+	public ProductBarcode(ProductBarcode2 pb2){
+		id = pb2.getId();
+		barcode = pb2.getBarcode();
+		status = pb2.getStatus();
+		product = new Product(pb2.getProduct());
+		
+		if (pb2.getColor() != null){
+			color = new Color();
+			BeanUtils.copyProperties(pb2.getColor(), color);
+		}
+		
+		if (pb2.getSize() != null){
+			size = new Size();
+			BeanUtils.copyProperties(pb2.getSize(), size);
+		}
 	}
 	
 	public ProductBarcode(int id){
@@ -35,8 +54,6 @@ public class ProductBarcode implements Serializable {
 		this.setColor(color);
 		this.setProduct(product);
 		this.setSize(size);
-		this.setCreateDate(new Date());
-		
 	}
 	
 	public int getStatus() {
@@ -45,14 +62,6 @@ public class ProductBarcode implements Serializable {
 
 	public void setStatus(int status) {
 		this.status = status;
-	}
-
-	public int getBoughtBefore() {
-		return boughtBefore;
-	}
-
-	public void setBoughtBefore(int boughtBefore) {
-		this.boughtBefore = boughtBefore;
 	}
 
 	public int getId() {
@@ -84,12 +93,6 @@ public class ProductBarcode implements Serializable {
 	}
 	public void setBarcode(String barcode) {
 		this.barcode = barcode;
-	}
-	public Date getCreateDate() {
-		return createDate;
-	}
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
 	}
 
 	@Override

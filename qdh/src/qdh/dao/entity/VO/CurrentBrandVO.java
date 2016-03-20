@@ -9,6 +9,7 @@ public class CurrentBrandVO {
 	private String year;
 	private String quarter;
 	private String brand;
+	private int numOfBarcodes;
 	private String updateUser;
 	private Date updateDate;
 	
@@ -19,8 +20,17 @@ public class CurrentBrandVO {
 		brand = currentBrands.getBrand().getBrand_Name();
 		updateUser = currentBrands.getUpdateUser();
 		updateDate = currentBrands.getUpdateDate();
+		numOfBarcodes = currentBrands.getNumOfBarcodes();
 	}
 	
+	public int getNumOfBarcodes() {
+		return numOfBarcodes;
+	}
+
+	public void setNumOfBarcodes(int numOfBarcode) {
+		this.numOfBarcodes = numOfBarcode;
+	}
+
 	public int getId() {
 		return id;
 	}

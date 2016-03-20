@@ -1,5 +1,7 @@
 package qdh.pageModel;
 
+import qdh.dao.impl.Response;
+
 /**
  * 
  * JSON模型
@@ -11,11 +13,29 @@ package qdh.pageModel;
  */
 public class Json implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8035480926731148678L;
+
 	private boolean success = false;
 
 	private String msg = "";
 
 	private Object obj = null;
+	
+	public Json(){
+		
+	}
+	
+	public Json(Response response){
+		msg = response.getMessage();
+		obj = response.getReturnValue();
+		if (response.isSuccess())
+			success = true;
+		else 
+			success = false;
+	}
 
 	public boolean isSuccess() {
 		return success;

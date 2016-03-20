@@ -7,6 +7,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
+
+import qdh.dao.entity.qxMIS.Area2;
+import qdh.dao.entity.qxMIS.Brand2;
+import qdh.dao.entity.qxMIS.Category2;
+import qdh.dao.entity.qxMIS.Product2;
+import qdh.dao.entity.qxMIS.Quarter2;
+import qdh.dao.entity.qxMIS.Year2;
+
 
 
 public class Product  implements Serializable{
@@ -29,8 +38,6 @@ public class Product  implements Serializable{
     private int numPerHand;
     private String unit;
 
-	private Date createDate = new Date();
-    private String createDate_s;
     /**
      * the chain store's sale price连锁店零售价
      */
@@ -47,16 +54,7 @@ public class Product  implements Serializable{
      * the whole saler's sale price/chain store's cost,批发商发价3/连锁店进价
      */    
     private double wholeSalePrice3;
-    
-    /**
-     * 历史输入 折扣价
-     */
-    private double lastInputPrice;
-    
-    /**
-     * 历史选择价格
-     */
-    private double lastChoosePrice;
+
     /**
      * the whole saler's cost price批发商进价
      */
@@ -69,6 +67,32 @@ public class Product  implements Serializable{
      * the product's discount 默认折扣
      */
     private double discount;
+    
+    public Product(){
+    	
+    }
+    
+    public Product(Product2 p){
+    	this.productId = p.getProductId();
+    	this.serialNum = p.getSerialNum();
+
+        BeanUtils.copyProperties(p.getArea(), area);
+        BeanUtils.copyProperties(p.getYear(), year);
+        BeanUtils.copyProperties(p.getQuarter(), quarter);
+        BeanUtils.copyProperties(p.getBrand(), brand);
+        BeanUtils.copyProperties(p.getCategory(), category);
+        productCode = p.getProductCode();
+        numPerHand = p.getNumPerHand();
+        unit = p.getUnit();
+		salesPrice = p.getSalesPrice();
+		wholeSalePrice = p.getWholeSalePrice();
+		wholeSalePrice2 = p.getWholeSalePrice2();
+		wholeSalePrice3 = p.getWholeSalePrice3();
+		recCost = p.getRecCost();
+		salesPriceFactory = p.getSalesPriceFactory();
+		discount = p.getDiscount();
+    }
+
 
 
 	public double getWholeSalePrice() {
@@ -108,30 +132,7 @@ public class Product  implements Serializable{
 		this.unit = unit;
 	}
 
-
-	public Date getCreateDate() {
-		return createDate;
-	}
-
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-
-	}
-
-	public Product(){
-
-	}
-    public Product(String serialNum,String productCode, int numPerHand, String unit, Date createDate, String createDate_s,double salesPrice){
-    	this.setSerialNum(serialNum);
-    	this.setProductCode(productCode);
-    	this.setNumPerHand(numPerHand);
-    	this.setUnit(unit);
-    	this.setCreateDate(createDate);
-
-    	this.setSalesPrice(salesPrice);
-  	
-    }
-    
+   
 
 	public String getProductCode() {
 		return productCode;
@@ -210,19 +211,7 @@ public class Product  implements Serializable{
 		this.wholeSalePrice3 = wholeSalePrice3;
 	}
 	
-	public double getLastInputPrice() {
-		return lastInputPrice;
-	}
-	public void setLastInputPrice(double lastInputPrice) {
-		this.lastInputPrice = lastInputPrice;
-	}
-	
-	public double getLastChoosePrice() {
-		return lastChoosePrice;
-	}
-	public void setLastChoosePrice(double lastChoosePrice) {
-		this.lastChoosePrice = lastChoosePrice;
-	}
+
 
 	@Override
 	public int hashCode() {

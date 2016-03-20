@@ -2,7 +2,7 @@ package qdh.dao.entity.qxMIS;
 
 import java.io.Serializable;
 
-public class Quarter  implements Serializable{
+public class Quarter2  implements Serializable{
     /**
 	 * 
 	 */
@@ -12,11 +12,11 @@ public class Quarter  implements Serializable{
     private String quarter_Name;
     private String quarter_Code;
     
-    public Quarter(){
+    public Quarter2(){
     	
     }
     
-    public Quarter(int quarterId, String quarterName){
+    public Quarter2(int quarterId, String quarterName){
     	this.quarter_ID = quarterId;
     	this.quarter_Name = quarterName;
     }

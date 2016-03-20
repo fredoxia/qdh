@@ -44,7 +44,6 @@ public class ProductBarcodeVO {
 			this.wholePrice1 = product.getWholeSalePrice();
 			this.wholePrice2 = product.getWholeSalePrice2();
 			this.wholePrice3 = product.getWholeSalePrice3();
-			this.createTime = pb.getCreateDate();
 		}
 	}
 	

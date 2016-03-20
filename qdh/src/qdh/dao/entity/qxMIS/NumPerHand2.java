@@ -2,7 +2,7 @@ package qdh.dao.entity.qxMIS;
 
 import java.io.Serializable;
 
-public class NumPerHand implements Serializable{
+public class NumPerHand2 implements Serializable{
 	/**
 	 * 
 	 */
@@ -10,7 +10,7 @@ public class NumPerHand implements Serializable{
 	private int id;
     private int numPerHand;
     
-    public NumPerHand(){
+    public NumPerHand2(){
     	
     }
 

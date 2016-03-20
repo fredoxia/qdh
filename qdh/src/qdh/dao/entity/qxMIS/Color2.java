@@ -2,27 +2,30 @@ package qdh.dao.entity.qxMIS;
 
 import java.io.Serializable;
 
-public class Size implements Serializable{
+public class Color2 implements Serializable{
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 6930290273038803472L;
-	private int sizeId;
+	private int colorId;
     private String code;
     private String name;
     private int deleted;
-
-    public Size(){
+    
+    public Color2(){
     	
     }
-	public Size(Integer sizeId) {
-		setSizeId(sizeId);
+    
+    public Color2(int colorId){
+    	setColorId(colorId);
+    }
+    
+    
+	public int getColorId() {
+		return colorId;
 	}
-	public int getSizeId() {
-		return sizeId;
-	}
-	public void setSizeId(int sizeId) {
-		this.sizeId = sizeId;
+	public void setColorId(int colorId) {
+		this.colorId = colorId;
 	}
 	public String getCode() {
 		return code;
@@ -44,8 +47,8 @@ public class Size implements Serializable{
 	}
 	@Override
 	public String toString() {
-		return "Size [sizeId=" + sizeId + ", code=" + code + ", name=" + name
-				+ ", deleted=" + deleted + "]";
+		return "Color [colorId=" + colorId + ", code=" + code + ", name="
+				+ name + ", deleted=" + deleted + "]";
 	}
 
     

@@ -1,10 +1,13 @@
 package qdh.dao.entity.qxMIS;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 
+import qdh.dao.entity.product.Size;
 
-public class ProductBarcode implements Serializable {
+
+public class ProductBarcode2 implements Serializable {
 	public static final String BARCODE_PREFIX ="1";
 	public static final String SERIAL_PREFIX = "2";
     public static final int STATUS_DELETE = 2;
@@ -15,30 +18,37 @@ public class ProductBarcode implements Serializable {
 	 */
 	private static final long serialVersionUID = -7555848597032873392L;
 	private int id;
-	private Product product = new Product();
-	private Color color;
-	private Size size;
+	private Product2 product = new Product2();
+	private Color2 color;
+	private Size2 size;
 	private String barcode;
-	private Date createDate;
-    private int boughtBefore = 0 ;
+	private Integer chainId;
+
     private int status = 1;
 
-	public ProductBarcode(){
+	public ProductBarcode2(){
 		
 	}
 	
-	public ProductBarcode(int id){
+	public ProductBarcode2(int id){
 		this.setId(id);
 	}
 	
-	public ProductBarcode(Product product , Color color, Size size){
+	public ProductBarcode2(Product2 product , Color2 color, Size2 size){
 		this.setColor(color);
 		this.setProduct(product);
 		this.setSize(size);
-		this.setCreateDate(new Date());
 		
 	}
 	
+	public Integer getChainId() {
+		return chainId;
+	}
+
+	public void setChainId(Integer chainId) {
+		this.chainId = chainId;
+	}
+
 	public int getStatus() {
 		return status;
 	}
@@ -47,13 +57,6 @@ public class ProductBarcode implements Serializable {
 		this.status = status;
 	}
 
-	public int getBoughtBefore() {
-		return boughtBefore;
-	}
-
-	public void setBoughtBefore(int boughtBefore) {
-		this.boughtBefore = boughtBefore;
-	}
 
 	public int getId() {
 		return id;
@@ -61,22 +64,22 @@ public class ProductBarcode implements Serializable {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public Product getProduct() {
+	public Product2 getProduct() {
 		return product;
 	}
-	public void setProduct(Product product) {
+	public void setProduct(Product2 product) {
 		this.product = product;
 	}
-	public Color getColor() {
+	public Color2 getColor() {
 		return color;
 	}
-	public void setColor(Color color) {
+	public void setColor(Color2 color) {
 		this.color = color;
 	}
-	public Size getSize() {
+	public Size2 getSize() {
 		return size;
 	}
-	public void setSize(Size size) {
+	public void setSize(Size2 size) {
 		this.size = size;
 	}
 	public String getBarcode() {
@@ -85,12 +88,7 @@ public class ProductBarcode implements Serializable {
 	public void setBarcode(String barcode) {
 		this.barcode = barcode;
 	}
-	public Date getCreateDate() {
-		return createDate;
-	}
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
+
 
 	@Override
 	public int hashCode() {
@@ -110,7 +108,7 @@ public class ProductBarcode implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ProductBarcode other = (ProductBarcode) obj;
+		ProductBarcode2 other = (ProductBarcode2) obj;
 		if (id != 0 && id == other.getId())
 			return true;
 		if (color == null) {

@@ -2,7 +2,7 @@ package qdh.dao.entity.qxMIS;
 
 import java.io.Serializable;
 
-public class Area  implements Serializable{
+public class Area2  implements Serializable{
     private int area_ID;
     private String area_Name;
     private String area_Code;

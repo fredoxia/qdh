@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Category  implements Serializable{
+public class Category2  implements Serializable{
 //	public final static int CATEGORY_ID_NOT_PRODUCTS = 9;
 	public final static int CATEGORY_NEI_YI = 7;
 	public final static int CATEGORY_SHI_PING =11;

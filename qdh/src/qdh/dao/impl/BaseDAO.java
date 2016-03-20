@@ -304,4 +304,9 @@ public class BaseDAO<T> extends DAOAbstract implements DAOInterface<T>{
 		});	
 	}
 	
+	@Override
+	public void merge(T object){
+		getHibernateTemplate().merge(object);
+	}
+	
 }

@@ -31,9 +31,10 @@ $(function() {
     <div title="系统菜单" data-options="selected:true" style="padding:10px;">
         <ul id="treeMenu" class="easyui-tree" lines="true">  
                <li data-options="iconCls:'icon-images',state:'open',border:false">  
-		            <span>订货会管理</span>  
+		            <span>订货会资料管理</span>  
 	        		<ul>
 	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/prodOptController/HQProdMgmt'}">订货会品牌管理</li>
+	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/custAcctController/CustAcctMgmt'}">客户资料管理</li>
 	        		</ul> 
 		        </li>
 		</ul>

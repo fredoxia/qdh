@@ -117,4 +117,6 @@ public interface DAOInterface <T>{
 	public int executeHQLCount(String queryString, Object[] values, boolean cached);
 	
 	public void clearSession();
+
+	void merge(T object);
 }

@@ -8,8 +8,19 @@
         <many-to-one name="year" column="year_id" class="qdh.dao.entity.product.Year" lazy="false"/>
         <many-to-one name="quarter" column="quarter_id" class="qdh.dao.entity.product.Quarter" lazy="false"/>
         <many-to-one name="brand" column="brand_id" class="qdh.dao.entity.product.Brand" lazy="false"/>
+        <property name="numOfBarcodes" column="num_of_barcodes" type="integer"/>
         <property name="updateUser" column="update_user" type="string"/>
         <property name="updateDate" column="update_date" type="timestamp"/>
     </class> 
-        
+    <class name="Customer" table="customer">
+        <id name="id" column="id">
+            <generator class="identity" />
+        </id>
+        <property name="custName" column="cust_name" type="string"/>
+        <property name="password" column="password" type="string"/>
+        <property name="chainStoreName" column="chain_store_name" type="string"/>
+        <property name="chainId" column="chain_id" type="integer"/>
+        <property name="updateUser" column="update_user" type="string"/>
+        <property name="updateDate" column="update_date" type="timestamp"/>
+    </class>       
 </hibernate-mapping>

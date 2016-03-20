@@ -2,34 +2,12 @@ package qdh.dao.entity.product;
 
 import java.io.Serializable;
 
-public class NumPerHand implements Serializable{
+import qdh.dao.entity.qxMIS.NumPerHand2;
+
+public class NumPerHand extends NumPerHand2{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -4420317812621918098L;
-	private int id;
-    private int numPerHand;
-    
-    public NumPerHand(){
-    	
-    }
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public int getNumPerHand() {
-		return numPerHand;
-	}
-
-	public void setNumPerHand(int numPerHand) {
-		this.numPerHand = numPerHand;
-	}
-
-
-  
+	
 }

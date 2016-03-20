@@ -14,7 +14,7 @@ var dataGrid;
 
 $(function() {
 	dataGrid = $('#dataGrid').datagrid({
-		url : '<%=request.getContextPath()%>/prodOptController/GetCurrentBrands',
+		url : '<%=request.getContextPath()%>/custAcctController/GetCustAccts',
 		fit : true,
 		fitColumns : true,
 		border : false,
@@ -26,29 +26,29 @@ $(function() {
 		nowrap : false,
 		singleSelect: true,
 		columns : [ [ {
-			field : 'year',
-			title : '年份',
+			field : 'custName',
+			title : '客户名字',
 			width : 50
 		}, {
-			field : 'quarter',
-			title : '季度',
+			field : 'id',
+			title : '登录名',
+			width : 50
+		}, {			
+			field : 'password',
+			title : '登录密码',
 			width : 50
 		}, {
-			field : 'brand',
-			title : '品牌',
+			field : 'chainStoreName',
+			title : '连锁店名字',
 			width : 50
-		}, {
-			field : 'numOfBarcodes',
-			title : '条码数',
-			width : 40
 		}, {
 			field : 'updateUser',
 			title : '操作人员',
 			width : 50
 		}, {
 			field : 'updateDate',
-			title : '导入时间',
-			width : 90
+			title : '操作日期',
+			width : 80
 		}, {
 			field : 'action',
 			title : '',
@@ -65,19 +65,19 @@ $(function() {
 function deleteFun() {
 	var rows = dataGrid.datagrid('getSelections');
 	if (rows.length == 0){
-		parent.$.messager.alert('错误', '请选中一个品牌再继续操作', 'error');
+		parent.$.messager.alert('错误', '请选中一个客户信息再继续操作', 'error');
 		return;
 	}
 	
 	var	id = rows[0].id;
-	parent.$.messager.confirm('询问', '您确定要从订货系统中删除当前选中季度的品牌？', function(b) {
+	parent.$.messager.confirm('询问', '您确定要从订货系统中删除当前选中客户？', function(b) {
 		if (b) {
 			parent.$.messager.progress({
 					title : '提示',
 					text : '数据处理中，请稍后....'
 			});
-			$.post('<%=request.getContextPath()%>/prodOptController/DeleteCurrentBrand', {
-				currentBrandId : id
+			$.post('<%=request.getContextPath()%>/custAcctController/DeleteCustAcct', {
+				id : id
 			}, function(result) {
 				if (result.success) {
 					parent.$.messager.alert('成功提示', result.msg, 'info');
@@ -92,12 +92,12 @@ function deleteFun() {
 }
 function addFun() {
 	parent.$.modalDialog({
-		title : '导入品牌',
+		title : '添加客户',
 		width : 500,
 		height : 200,
-		href : '<%=request.getContextPath()%>/prodOptController/PreAddCurrentBrand',
+		href : '<%=request.getContextPath()%>/custAcctController/PreAddUpdateCustAcct',
 		buttons : [ {
-			text : '导入',
+			text : '提交信息',
 			handler : function() {
 				parent.$.modalDialog.openner_dataGrid = dataGrid;
 				var f = parent.$.modalDialog.handler.find('#form');
@@ -115,8 +115,8 @@ function addFun() {
 		</div>
 	</div>
 	<div id="toolbar" style="display: none;">
-			<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">导入品牌</a>
-			<a onclick="deleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">删除品牌</a>
+			<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">添加客户</a>
+			<a onclick="deleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">删除客户</a>
 	</div>
 
 
