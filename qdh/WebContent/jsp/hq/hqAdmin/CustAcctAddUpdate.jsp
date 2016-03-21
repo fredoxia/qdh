@@ -36,6 +36,15 @@
 			return false;
 		}
 	}
+	
+	function checkChain(){
+		var isChainStore = $("#isChainStore").is(':checked');
+		if (isChainStore){
+			$("#chainId").combobox("select", -1);
+		}
+		
+		alert(isChainStore + " , "+ $("#chainId").combo("getValue"));
+	}
 </script>
 <div class="easyui-layout" data-options="fit:true,border:false">
 	<div data-options="region:'center',border:false" title="" style="overflow: hidden;">
@@ -43,7 +52,7 @@
 			<table border="1">
 				<tr>
 					<th width="80" height="30">连锁店客户</th>
-					<td><input type="checkbox" name="isChainStore" id="isChainStore"/></td>
+					<td><input type="checkbox" name="isChainStore" id="isChainStore" onclick="checkChain();"/></td>
 				</tr>
 				<tr>
 					<th height="30">散客名字</th>
