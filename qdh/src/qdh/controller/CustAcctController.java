@@ -72,4 +72,21 @@ public class CustAcctController {
 		
 		return json;
 	}
+	
+	@ResponseBody
+	@RequestMapping("/DeleteCustAcct")
+	public Json DeleteCustAcct(Integer id, HttpSession session){
+		Response response = new Response();
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		try {
+			response = custAcctService.deleteCustAcct(id,loginUser.getUserName());
+		} catch (Exception e){
+			e.printStackTrace();
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
+	}
 }

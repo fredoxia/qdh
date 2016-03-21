@@ -28,20 +28,21 @@ $(function() {
 		columns : [ [ {
 			field : 'custName',
 			title : '客户名字',
-			width : 50
+			width : 80
+		}, {
+			field : 'chainStoreName',
+			title : '连锁店名字',
+			width : 80
 		}, {
 			field : 'id',
-			title : '登录名',
+			title : '登录账号',
 			width : 50
 		}, {			
 			field : 'password',
 			title : '登录密码',
 			width : 50
 		}, {
-			field : 'chainStoreName',
-			title : '连锁店名字',
-			width : 50
-		}, {
+
 			field : 'updateUser',
 			title : '操作人员',
 			width : 50
@@ -83,7 +84,7 @@ function deleteFun() {
 					parent.$.messager.alert('成功提示', result.msg, 'info');
 					dataGrid.datagrid('reload');
 				} else {
-					parent.$.messager.alert('失败警告', result.msg, 'info');
+					parent.$.messager.alert('失败警告', result.msg, 'error');
 				}
 				parent.$.messager.progress('close');
 			}, 'JSON');
@@ -106,6 +107,29 @@ function addFun() {
 		} ]
 	});
 }
+function updateFun(){
+	var rows = dataGrid.datagrid('getSelections');
+	if (rows.length == 0){
+		parent.$.messager.alert('错误', '请选中一个客户信息再继续操作', 'error');
+		return;
+	}
+	
+	var	id = rows[0].id;
+	parent.$.modalDialog({
+		title : '修改客户',
+		width : 500,
+		height : 200,
+		href : '<%=request.getContextPath()%>/custAcctController/PreAddUpdateCustAcct?id=' + id,
+		buttons : [ {
+			text : '提交信息',
+			handler : function() {
+				parent.$.modalDialog.openner_dataGrid = dataGrid;
+				var f = parent.$.modalDialog.handler.find('#form');
+				f.submit();
+			}
+		} ]
+	});
+}
 </script>
 </head>
 <body>
@@ -116,6 +140,7 @@ function addFun() {
 	</div>
 	<div id="toolbar" style="display: none;">
 			<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">添加客户</a>
+			<a onclick="updateFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">修改客户</a>
 			<a onclick="deleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">删除客户</a>
 	</div>
 

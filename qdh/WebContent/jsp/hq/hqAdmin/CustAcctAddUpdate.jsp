@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>  
 <script type="text/javascript">
 	$(function() {
 		parent.$.messager.progress('close');
@@ -23,7 +24,16 @@
 	
 	function validateAddForm(){
 		var error = "";
-
+		var chain = $("#chainId").combo("getValue");
+		var custName = $.trim($("#custName").val());
+		var chainTxt = $("#chainId").combo("getText");
+		
+		if ((!isValidPositiveInteger(chain) && chain!=-1) || chain == chainTxt) 
+	        error += "连锁店客户请从下拉菜单中选取，请检查\n";
+	    else if (chain == -1 && custName == "")
+			error = "散客 必须输入客户名字<br/>连锁店客户 请选择连锁店下拉";
+		
+		
 		if (error == ""){
 			parent.$.messager.progress({
 				title : '提示',
@@ -37,40 +47,26 @@
 		}
 	}
 	
-	function checkChain(){
-		var isChainStore = $("#isChainStore").is(':checked');
-		if (isChainStore){
-			$("#chainId").combobox("select", -1);
-		}
-		
-		alert(isChainStore + " , "+ $("#chainId").combo("getValue"));
-	}
+
 </script>
 <div class="easyui-layout" data-options="fit:true,border:false">
 	<div data-options="region:'center',border:false" title="" style="overflow: hidden;">
 		<form id="form" method="post">
-			<table border="1">
+			<table border="0">
+				<form:hidden id="id" path="cust.id"/>
+			   <tr>
+					<th height="30">客户名字</th>
+					<td><form:input id="custName" path="cust.custName"/> *散客必须输入，方便以后查找</td>
+				</tr>
+
 				<tr>
 					<th width="80" height="30">连锁店客户</th>
-					<td><input type="checkbox" name="isChainStore" id="isChainStore" onclick="checkChain();"/></td>
-				</tr>
-				<tr>
-					<th height="30">散客名字</th>
-					<td><input type="text" name="custName" id="custName"/></td>
-				</tr>
-				
-				<tr>
-					<th height="30">连锁店客户</th>
 					<td>
-					   <select id="chainId" name="chainId" class="easyui-combobox">
-					      <option value="-1"></option>
-						  <c:forEach items="${chainStores}" var="chainStore">
-						      <option value="${chainStore.chainId}">${chainStore.chainName}</option>
-						  </c:forEach>
-					  </select>	
+					      <form:select path="cust.chainId"  cssClass="easyui-combobox" items="${chainStores}" itemLabel="chainName"  
+                               itemValue="chainId"></form:select> 
 					</td>
-				</tr>			
-			</table>
+				</tr>
+		   </table>
 		</form>
 	</div>
 </div>

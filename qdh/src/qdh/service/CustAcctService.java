@@ -60,6 +60,10 @@ public class CustAcctService {
 		
 		Map dataMap = new HashMap();
 		dataMap.put("cust", cust);
+		ChainStore2 heapStore2 = new ChainStore2();
+		heapStore2.setChainId(-1);
+		heapStore2.setChainName("");
+		chainStores.add(0, heapStore2);
 		dataMap.put("chainStores", chainStores);
 		
 		response.setReturnValue(dataMap);
@@ -71,7 +75,7 @@ public class CustAcctService {
 		Response response = new Response();
 		
 		Integer chainId = cust.getChainId();
-		if (chainId != null && chainId != 0){
+		if (chainId != null && chainId != -1){
 			ChainStore2 chainStore = chainStore2DaoImpl.get(chainId, true);
 			cust.setChainStoreName(chainStore.getChainName());
 		} else {
@@ -84,17 +88,31 @@ public class CustAcctService {
 			custOrig = customerDaoImpl.get(cust.getId(), true);
 		}
 		
+		cust.setUpdateUser(userName);
+		cust.setUpdateDate(DateUtility.getToday());
 		if (custOrig == null){
-			cust.setUpdateUser(userName);
-			cust.setUpdateDate(DateUtility.getToday());
 			cust.setPassword(StringUtility.getRandomPassword());
 			customerDaoImpl.save(cust, true);
 		} else {
-//			String[] ignoreProperties = new String[]{"password"};
-			BeanUtils.copyProperties(cust, custOrig);
+			String[] ignoreProperties = new String[]{"password"};
+			BeanUtils.copyProperties(cust, custOrig,ignoreProperties);
 			customerDaoImpl.update(custOrig, true);
 		}
 
+		return response;
+	}
+
+	public Response deleteCustAcct(Integer id, String userName) {
+		Response response = new Response();
+		
+		Customer cust = customerDaoImpl.get(id, true);
+		
+		if (cust == null){
+			response.setFail("客户信息已经删除，不能再重复删除");
+		} else {
+			customerDaoImpl.delete(cust, true);
+			response.setSuccess("客户信息 : " + cust.getCustName() + " 已经成功从订货系统删除");
+		}
 		return response;
 	}
 
