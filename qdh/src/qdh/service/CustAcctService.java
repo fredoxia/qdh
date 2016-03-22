@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,12 @@ public class CustAcctService {
 	@Autowired
 	private ChainStore2DaoImpl chainStore2DaoImpl;
 	
-	public DataGrid getCustAccts(Boolean isChain, String namePY) {
+	public DataGrid getCustAccts(Boolean isChain, String namePY, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(Customer.class);
+		
+		System.out.println(sort + "," + order);
 		
 		if (isChain!= null){
 			if (isChain){
@@ -43,6 +46,15 @@ public class CustAcctService {
 		
 		if (namePY != null){
 			
+		}
+		
+		if (sort != null && !sort.trim().equals("")){
+			if (order != null ){
+				if (order.equalsIgnoreCase("asc") )
+					criteria.addOrder(Order.asc(sort));
+				else 
+					criteria.addOrder(Order.desc(sort));
+			}
 		}
 		
 		List<Customer> custs = customerDaoImpl.getByCritera(criteria, true);

@@ -27,10 +27,14 @@ $(function() {
 		singleSelect: true,
 		columns : [ [ {
 			field : 'custName',
+			sortable:true,
+			order:'desc',
 			title : '客户名字',
 			width : 80
 		}, {
 			field : 'chainStoreName',
+			sortable:true,
+			order:'desc',
 			title : '连锁店名字',
 			width : 80
 		}, {
@@ -134,6 +138,9 @@ function updateFun(){
 </head>
 <body>
 	<div class="easyui-layout" data-options="fit : true,border : false">
+		<div data-options="region:'north',border:false">
+			艘说
+		</div>
 		<div data-options="region:'center',border:false">
 			<table id="dataGrid"></table>
 		</div>
