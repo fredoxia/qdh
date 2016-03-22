@@ -23,7 +23,7 @@ public class ProductBarcode2 implements Serializable {
 	private Size2 size;
 	private String barcode;
 	private Integer chainId;
-
+	private Timestamp createDate ; 
     private int status = 1;
 
 	public ProductBarcode2(){
@@ -41,6 +41,14 @@ public class ProductBarcode2 implements Serializable {
 		
 	}
 	
+	public Timestamp getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Timestamp createDate) {
+		this.createDate = createDate;
+	}
+
 	public Integer getChainId() {
 		return chainId;
 	}

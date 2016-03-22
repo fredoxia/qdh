@@ -134,12 +134,37 @@ function updateFun(){
 		} ]
 	});
 }
+function searchFun() {
+	dataGrid.datagrid('load', $.serializeObject($('#searchForm')));
+}
+function cleanFun() {
+	$('#searchForm input').val('');
+	$("#custType").attr("value", -1);
+	dataGrid.datagrid('load', {});
+}
 </script>
 </head>
 <body>
 	<div class="easyui-layout" data-options="fit : true,border : false">
-		<div data-options="region:'north',border:false">
-			艘说
+		<div data-options="region:'north',title:'查询条件',border:false" style="height: 90px; overflow: hidden;">
+			<form id="searchForm">
+				<table class="table table-hover table-condensed" style="display: block;">
+					<tr>
+						<th>客户名字</th>
+						<td><input name="custName" id="custName" placeholder="可以模糊查询客户名字"/></td>
+					</tr>
+					<tr>
+						<th>客户种类</th>
+						<td>
+							<select name="custType" id="custType">
+								<option value="-1">所有</option>
+								<option value="1">连锁店客户</option>
+								<option value="2">零散客户</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</form>
 		</div>
 		<div data-options="region:'center',border:false">
 			<table id="dataGrid"></table>
@@ -149,6 +174,8 @@ function updateFun(){
 			<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">添加客户</a>
 			<a onclick="updateFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">修改客户</a>
 			<a onclick="deleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">删除客户</a>
+			<a onclick="searchFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">过滤条件</a>
+			<a onclick="cleanFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true">清空条件</a>
 	</div>
 
 

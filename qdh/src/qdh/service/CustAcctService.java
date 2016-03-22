@@ -22,6 +22,9 @@ import qdh.utility.StringUtility;
 
 @Service
 public class CustAcctService {
+	private final int CUST_TYPE_ALL = -1;
+	private final int CUST_TYPE_CHAIN = 1;
+	private final int CUST_TYPE_OTHER = 2;
 
 	@Autowired
 	private CustomerDaoImpl customerDaoImpl;
@@ -29,23 +32,23 @@ public class CustAcctService {
 	@Autowired
 	private ChainStore2DaoImpl chainStore2DaoImpl;
 	
-	public DataGrid getCustAccts(Boolean isChain, String namePY, String sort, String order) {
+	public DataGrid getCustAccts(Integer isChain, String name, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(Customer.class);
 		
 		System.out.println(sort + "," + order);
 		
-		if (isChain!= null){
-			if (isChain){
+		if (isChain!= null && isChain != CUST_TYPE_ALL){
+			if (isChain == CUST_TYPE_CHAIN){
 				criteria.add(Restrictions.isNotNull("chainId"));
 			} else {
 				criteria.add(Restrictions.isNull("chainId"));
 			}
 		}
 		
-		if (namePY != null){
-			
+		if (name != null && !name.trim().equals("")){
+			criteria.add(Restrictions.or(Restrictions.like("chainStoreName", "%" + name + "%"), Restrictions.like("custName", "%" + name + "%")));
 		}
 		
 		if (sort != null && !sort.trim().equals("")){

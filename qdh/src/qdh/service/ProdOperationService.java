@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -233,5 +234,67 @@ public class ProdOperationService {
 		response.setReturnValue(dataMap);
 		
 		return response;
+	}
+
+	@Transactional
+	public Response preBarcodeSearch() {
+		Response response = new Response();
+		Map dataMap = new HashMap();
+		
+		List<CurrentBrandVO> brands = transfer(currentBrandsDaoImpl.getAll(true));
+		CurrentBrandVO emptyVo = new CurrentBrandVO();
+		brands.add(0, emptyVo);
+		
+		dataMap.put("cbId", 0);
+		dataMap.put("cb", brands);
+
+		response.setReturnValue(dataMap);
+		return response;
+	}
+
+	@Transactional
+	public DataGrid getBarcodes(Integer cbId, String sort, String order) {
+		DataGrid dg = new DataGrid();
+		
+		List<ProductBarcode> pbs = new ArrayList<>();
+		if (cbId != null && cbId != 0){
+			CurrentBrands cb = currentBrandsDaoImpl.get(cbId, true);
+			if (cb != null){
+				Year year = cb.getYear();
+				Quarter quarter = cb.getQuarter();
+				Brand brand = cb.getBrand();
+				
+				DetachedCriteria productBarcodeCriteria = DetachedCriteria.forClass(ProductBarcode.class);
+				
+				if (sort != null && !sort.trim().equals("")){
+					if (order != null){
+						if (order.equals("asc"))
+					        productBarcodeCriteria.addOrder(Order.asc(sort));
+						else 
+							productBarcodeCriteria.addOrder(Order.desc(sort));
+					}
+				}
+				
+				DetachedCriteria productCriteria = productBarcodeCriteria.createCriteria("product");
+				productCriteria.add(Restrictions.eq("year.year_ID", year.getYear_ID()));
+				productCriteria.add(Restrictions.eq("quarter.quarter_ID", quarter.getQuarter_ID()));
+				productCriteria.add(Restrictions.eq("brand.brand_ID", brand.getBrand_ID()));
+				
+				pbs = productBarcodeDaoImpl.getByCritera(productBarcodeCriteria, true);
+			}
+		}
+		
+		dg.setRows(pbs);
+		return dg;
+	}
+	
+	private List<CurrentBrandVO> transfer(List<CurrentBrands> currentBrands){
+		List<CurrentBrandVO> currentBrandVOs = new ArrayList<>();
+		if (currentBrands != null)
+			for (CurrentBrands brand: currentBrands){
+				CurrentBrandVO vo = new CurrentBrandVO(brand);
+				currentBrandVOs.add(vo);
+			}
+		return currentBrandVOs;
 	}
 }

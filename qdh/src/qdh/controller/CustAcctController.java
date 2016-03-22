@@ -32,8 +32,8 @@ public class CustAcctController {
 	
 	@ResponseBody
 	@RequestMapping("/GetCustAccts")
-	public DataGrid GetCustAccts(Boolean isChain, String namePY, String sort, String order){
-		DataGrid dataGrid = custAcctService.getCustAccts(isChain, namePY, sort, order);
+	public DataGrid GetCustAccts(Integer custType, String custName, String sort, String order){
+		DataGrid dataGrid = custAcctService.getCustAccts(custType, custName, sort, order);
 
 		return dataGrid;
 	}

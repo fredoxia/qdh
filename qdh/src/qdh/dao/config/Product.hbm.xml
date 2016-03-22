@@ -104,6 +104,7 @@
         <many-to-one name="product" fetch="join" column="product_id" class="Product" lazy="false"/>
         <many-to-one name="color" column="color_Id" class="Color" not-null = "false" lazy="false"/>
         <many-to-one name="size" column="size_Id" class="Size" not-null = "false" lazy="false"/>
+        <property name="createDate" column="create_date" type="timestamp"/>
    </class>
 
     <class name="NumPerHand" table="num_per_hand">

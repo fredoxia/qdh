@@ -91,4 +91,28 @@ public class ProdOperationController {
 		return json;
 	}
 	
+	@RequestMapping("/HQBarcodeMgmt")
+	public ModelAndView HQBarcodeMgmt() {
+		ModelAndView mav = new ModelAndView();
+		
+		Response response = new Response();
+		try {
+			response = prodOperationService.preBarcodeSearch();
+		} catch (Exception e){
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		mav.setViewName("/jsp/hq/hqAdmin/BarcodeMgmt.jsp");
+		mav.addAllObjects((Map<String, ?>)response.getReturnValue());
+		
+		return mav;
+	}
+	
+	@ResponseBody
+	@RequestMapping("/GetBarcodes")
+	public DataGrid GetBarcodes(Integer cbId, String sort, String order){
+		DataGrid dataGrid = prodOperationService.getBarcodes(cbId, sort,order);
+		return dataGrid;
+	}
+	
 }

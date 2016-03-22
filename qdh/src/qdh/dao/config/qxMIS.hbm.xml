@@ -97,6 +97,7 @@
         <many-to-one name="color" column="color_Id" class="Color2" not-null = "false" lazy="false"/>
         <many-to-one name="size" column="size_Id" class="Size2" not-null = "false" lazy="false"/>
         <property name="chainId" column="chain_id" type="integer"/>
+        <property name="createDate" column="create_date" type="timestamp"/>
    </class>
 
     <class name="NumPerHand2" table="num_per_hand">

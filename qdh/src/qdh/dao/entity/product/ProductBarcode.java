@@ -3,6 +3,8 @@ package qdh.dao.entity.product;
 import java.io.Serializable;
 
 
+import java.sql.Timestamp;
+
 import org.springframework.beans.BeanUtils;
 
 import qdh.dao.entity.qxMIS.ProductBarcode2;
@@ -24,6 +26,7 @@ public class ProductBarcode implements Serializable {
 	private Size size ;
 	private String barcode;
     private int status = 1;
+    private Timestamp createDate;
 
 	public ProductBarcode(){
 		
@@ -33,6 +36,8 @@ public class ProductBarcode implements Serializable {
 		id = pb2.getId();
 		barcode = pb2.getBarcode();
 		status = pb2.getStatus();
+		createDate = pb2.getCreateDate();
+		
 		product = new Product(pb2.getProduct());
 		
 		if (pb2.getColor() != null){
@@ -46,6 +51,14 @@ public class ProductBarcode implements Serializable {
 		}
 	}
 	
+	public Timestamp getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Timestamp createDate) {
+		this.createDate = createDate;
+	}
+
 	public ProductBarcode(int id){
 		this.setId(id);
 	}
