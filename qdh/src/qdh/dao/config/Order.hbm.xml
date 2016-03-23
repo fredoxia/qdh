@@ -22,5 +22,6 @@
         <property name="chainId" column="chain_id" type="integer"/>
         <property name="updateUser" column="update_user" type="string"/>
         <property name="updateDate" column="update_date" type="timestamp"/>
+        <property name="status" column="status" type="integer"/>
     </class>       
 </hibernate-mapping>

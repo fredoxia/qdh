@@ -60,6 +60,8 @@ public class CustAcctService {
 			}
 		}
 		
+		criteria.add(Restrictions.ne("status", Customer.DELETED));
+		
 		List<Customer> custs = customerDaoImpl.getByCritera(criteria, true);
 		dataGrid.setRows(custs);
 			
@@ -125,7 +127,8 @@ public class CustAcctService {
 		if (cust == null){
 			response.setFail("客户信息已经删除，不能再重复删除");
 		} else {
-			customerDaoImpl.delete(cust, true);
+			cust.setStatus(Customer.DELETED);
+			customerDaoImpl.update(cust, true);
 			response.setSuccess("客户信息 : " + cust.getCustName() + " 已经成功从订货系统删除");
 		}
 		return response;
