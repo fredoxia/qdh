@@ -22,54 +22,68 @@ $(function() {
 		fit : true,
 		fitColumns : true,
 		border : false,
-		pagination : false,
+		pagination : true,
+		pageSize : 40,
+		pageList : [ 40, 80,120],
 		idField : 'id',
+		showFooter:true,
 		rownumbers:true,
 		nowrap : false,
 		singleSelect: true,
 		columns : [ [ {
 			field : 'year',
 			title : '年份',
-			width : 40,
-			formatter: function (value, row, index){
-				return row.product.year.year;
-			}
+			width : 20
 		}, {
 			field : 'quarter',
 			title : '季度',
-			width : 80,
-			formatter: function (value, row, index){
-				return row.product.quarter.quarter_Name;
-			}
+			width : 20
+		}, {
+			field : 'barcode',
+			title : '条码',
+			width : 40
 		}, {
 			field : 'brand',
 			title : '品牌',
-			width : 50,
-			formatter: function (value, row, index){
-				return row.product.brand.brand_Name;
-			}
+			width : 30
 		}, {			
-			field : 'barcode',
-			title : '条码',
-			width : 50
-		}, {
-
 			field : 'productCode',
 			title : '货号',
-			width : 50,
-			formatter: function (value, row, index){
-				return row.product.productCode;
-			}
+			width : 40
+		}, {
+			field : 'color',
+			title : '颜色',
+			width : 20
+		}, {
+			field : 'unit',
+			title : '单位',
+			width : 30
+		}, {
+			field : 'numPerHand',
+			title : '每手数量',
+			width : 30
+		}, {
+			field : 'recCost',
+			title : '成本',
+			width : 30
+		}, {
+			field : 'wholeSalePrice',
+			title : '批发价',
+			width : 30
+		}, {
+			field : 'salesPrice',
+			title : '连锁店终端价',
+			width : 40
 		}, {
 			field : 'createDate',
 			title : '条码系统创建日期',
 			sortable:true,
 			order:'desc',
-			width : 80
+			width : 50
 		}, {
 			field : 'action',
 			title : '',
-			width : 200
+			width : 100
 		} ] ],
 		toolbar : '#toolbar'
 	});
@@ -87,13 +101,13 @@ function cleanFun() {
 </head>
 <body>
 <div class="easyui-layout" data-options="fit:true,border:false">
-		<div data-options="region:'north',title:'查询条件',border:false" style="height: 50px; overflow: hidden;">
+		<div data-options="region:'north',title:'查询条件',border:false" style="height: 60px; overflow: hidden;">
 			<form id="searchForm">
 				<table class="table table-hover table-condensed" style="display: block;">
 					<tr>
 						<th>品牌条码</th>
 						<td>
-							<form:select name="cbId" path="cbId" items="${cb}" itemLabel="fullName"  
+							<form:select id="cbId" name="cbId" path="cbId" items="${cb}" itemLabel="fullName"  
                                itemValue="id"></form:select> 
 						</td>
 					</tr>

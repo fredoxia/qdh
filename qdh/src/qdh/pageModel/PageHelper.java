@@ -8,41 +8,32 @@ package qdh.pageModel;
  */
 public class PageHelper implements java.io.Serializable {
 
-	private int page;// 当前页
-	private int rows;// 每页显示记录数
-	private String sort;// 排序字段
-	private String order;// asc/desc
-
-	public int getPage() {
-		return page;
+	private int currentPage;// 当前页
+	private int rowsPerPage;// 每页显示记录数
+	private int totalRows; //总行数
+	private int firstRow;
+	
+	public PageHelper(){
+		
+	}
+	
+	public PageHelper(Integer rowsPerPage, Integer currentPage,  Integer totalRows){
+		this.currentPage = currentPage;
+		this.rowsPerPage = rowsPerPage;
+		this.totalRows = totalRows;
+		firstRow = rowsPerPage * (currentPage -1);
 	}
 
-	public void setPage(int page) {
-		this.page = page;
-	}
+    public int getFirstRow(){
+    	return firstRow;
+    }
 
-	public int getRows() {
-		return rows;
-	}
-
-	public void setRows(int rows) {
-		this.rows = rows;
-	}
-
-	public String getSort() {
-		return sort;
-	}
-
-	public void setSort(String sort) {
-		this.sort = sort;
-	}
-
-	public String getOrder() {
-		return order;
-	}
-
-	public void setOrder(String order) {
-		this.order = order;
-	}
-
+    
+    public int getTotalRows(){
+    	return totalRows;
+    }
+    
+    public int getRowPerPage(){
+    	return rowsPerPage;
+    }
 }

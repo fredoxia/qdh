@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import qdh.dao.entity.VO.CurrentBrandVO;
+import qdh.dao.entity.VO.ProductBarcodeVO;
 import qdh.dao.entity.order.CurrentBrands;
 import qdh.dao.entity.product.Area;
 import qdh.dao.entity.product.Brand;
@@ -46,6 +49,8 @@ import qdh.dao.impl.qxMIS.ProductBarcode2DaoImpl;
 import qdh.dao.impl.qxMIS.Quarter2DaoImpl;
 import qdh.dao.impl.qxMIS.Year2DaoImpl;
 import qdh.pageModel.DataGrid;
+import qdh.pageModel.PageHelper;
+import qdh.utility.NumUtility;
 
 @Service
 public class ProdOperationService {
@@ -241,7 +246,7 @@ public class ProdOperationService {
 		Response response = new Response();
 		Map dataMap = new HashMap();
 		
-		List<CurrentBrandVO> brands = transfer(currentBrandsDaoImpl.getAll(true));
+		List<CurrentBrandVO> brands = transferCB(currentBrandsDaoImpl.getAll(true));
 		CurrentBrandVO emptyVo = new CurrentBrandVO();
 		brands.add(0, emptyVo);
 		
@@ -253,10 +258,11 @@ public class ProdOperationService {
 	}
 
 	@Transactional
-	public DataGrid getBarcodes(Integer cbId, String sort, String order) {
+	public DataGrid getBarcodes(Integer cbId, String sort, String order, Integer pageNum, Integer rowsPerPage) {
 		DataGrid dg = new DataGrid();
+		PageHelper pHelper = new PageHelper();
 		
-		List<ProductBarcode> pbs = new ArrayList<>();
+		List<ProductBarcodeVO> pbs = new ArrayList<>();
 		if (cbId != null && cbId != 0){
 			CurrentBrands cb = currentBrandsDaoImpl.get(cbId, true);
 			if (cb != null){
@@ -264,31 +270,48 @@ public class ProdOperationService {
 				Quarter quarter = cb.getQuarter();
 				Brand brand = cb.getBrand();
 				
-				DetachedCriteria productBarcodeCriteria = DetachedCriteria.forClass(ProductBarcode.class);
+				DetachedCriteria countCriteria = constructProductBarcodeCriteria(year, quarter, brand, sort, order);
+				DetachedCriteria searchCriteria = constructProductBarcodeCriteria(year, quarter, brand, sort, order);
+
 				
-				if (sort != null && !sort.trim().equals("")){
-					if (order != null){
-						if (order.equals("asc"))
-					        productBarcodeCriteria.addOrder(Order.asc(sort));
-						else 
-							productBarcodeCriteria.addOrder(Order.desc(sort));
-					}
-				}
+				//1. get total rows
+				int totalRow = 0;
+				countCriteria.setProjection(Projections.rowCount());
+				List<Object> totalObj = productBarcodeDaoImpl.getByCriteriaProjection(countCriteria, true);
+				totalRow = NumUtility.getProjectionIntegerValue(totalObj);
 				
-				DetachedCriteria productCriteria = productBarcodeCriteria.createCriteria("product");
-				productCriteria.add(Restrictions.eq("year.year_ID", year.getYear_ID()));
-				productCriteria.add(Restrictions.eq("quarter.quarter_ID", quarter.getQuarter_ID()));
-				productCriteria.add(Restrictions.eq("brand.brand_ID", brand.getBrand_ID()));
-				
-				pbs = productBarcodeDaoImpl.getByCritera(productBarcodeCriteria, true);
+				System.out.println("--------" + totalRow);
+				pHelper = new PageHelper(rowsPerPage, pageNum, totalRow);
+
+				pbs = transferPB(productBarcodeDaoImpl.getByCritera(searchCriteria,pHelper.getFirstRow(), pHelper.getRowPerPage(), true));
 			}
 		}
 		
+		dg.setTotal(new Long(pHelper.getTotalRows()));
 		dg.setRows(pbs);
 		return dg;
 	}
 	
-	private List<CurrentBrandVO> transfer(List<CurrentBrands> currentBrands){
+	private DetachedCriteria constructProductBarcodeCriteria(Year year, Quarter quarter, Brand brand, String sort, String order){
+		DetachedCriteria productBarcodeCriteria = DetachedCriteria.forClass(ProductBarcode.class);
+		
+		if (sort != null && !sort.trim().equals("")){
+			if (order != null){
+				if (order.equals("asc"))
+			        productBarcodeCriteria.addOrder(Order.asc(sort));
+				else 
+					productBarcodeCriteria.addOrder(Order.desc(sort));
+			}
+		}
+		
+		DetachedCriteria productCriteria = productBarcodeCriteria.createCriteria("product");
+		productCriteria.add(Restrictions.eq("year.year_ID", year.getYear_ID()));
+		productCriteria.add(Restrictions.eq("quarter.quarter_ID", quarter.getQuarter_ID()));
+		productCriteria.add(Restrictions.eq("brand.brand_ID", brand.getBrand_ID()));
+		return productBarcodeCriteria;
+	}
+	
+	private List<CurrentBrandVO> transferCB(List<CurrentBrands> currentBrands){
 		List<CurrentBrandVO> currentBrandVOs = new ArrayList<>();
 		if (currentBrands != null)
 			for (CurrentBrands brand: currentBrands){
@@ -296,5 +319,15 @@ public class ProdOperationService {
 				currentBrandVOs.add(vo);
 			}
 		return currentBrandVOs;
+	}
+	
+	private List<ProductBarcodeVO> transferPB(List<ProductBarcode> productBarcodes){
+		List<ProductBarcodeVO> productBarcodeVOs = new ArrayList<>();
+		if (productBarcodes != null)
+			for (ProductBarcode pb: productBarcodes){
+				ProductBarcodeVO vo = new ProductBarcodeVO(pb);
+				productBarcodeVOs.add(vo);
+			}
+		return productBarcodeVOs;
 	}
 }

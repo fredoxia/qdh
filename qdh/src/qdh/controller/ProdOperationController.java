@@ -110,8 +110,8 @@ public class ProdOperationController {
 	
 	@ResponseBody
 	@RequestMapping("/GetBarcodes")
-	public DataGrid GetBarcodes(Integer cbId, String sort, String order){
-		DataGrid dataGrid = prodOperationService.getBarcodes(cbId, sort,order);
+	public DataGrid GetBarcodes(Integer cbId, String sort, String order, Integer page, Integer rows){
+		DataGrid dataGrid = prodOperationService.getBarcodes(cbId, sort,order,page, rows);
 		return dataGrid;
 	}
 	
