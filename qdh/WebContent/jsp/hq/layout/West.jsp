@@ -38,6 +38,13 @@ $(function() {
 	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/custAcctController/CustAcctMgmt'}">客户资料管理</li>
 	        		</ul> 
 		        </li>
+               <li data-options="iconCls:'icon-chart_bar',state:'open',border:false">  
+		            <span>订货会报表</span>  
+	        		<ul>
+	        			 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQProdRpt'}">产品统计报表</li>
+						 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQCustRpt'}">客户订单报表</li>
+	        		</ul> 
+		        </li>		        
 		</ul>
 
 	</div>  

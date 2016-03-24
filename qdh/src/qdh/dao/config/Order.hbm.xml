@@ -23,5 +23,26 @@
         <property name="updateUser" column="update_user" type="string"/>
         <property name="updateDate" column="update_date" type="timestamp"/>
         <property name="status" column="status" type="integer"/>
+    </class>   
+    <class name="Order" table="order">
+        <id name="custId" column="cust_id">
+            <generator class="foreign">
+                <param name="property">customer</param>
+            </generator>
+        </id>
+        <property name="custName" column="num_of_barcodes" type="integer"/>
+        <property name="chainId" column="chain_id" type="integer" not-null="false"/>
+        <property name="chainStoreName" column="chain_store_name" type="string"/>
+        <property name="totalQuantity" column="total_quantity" type="integer"/>
+        <property name="createDate" column="create_date" type="timestamp"/>
+		<one-to-one name="customer" class="Customer"/>
+    </class>  
+    <class name="OrderProduct" table="order_product">
+        <composite-id>
+             <key-many-to-one name="productBarcode" column="product_barcode_id" class="qdh.dao.entity.product.ProductBarcode" lazy="false"/>  
+             <key-property name="custId" column="cust_id" type="integer"></key-property>       
+        </composite-id>
+        <property name="quantity" column="quantity" type="integer"/>
+        <property name="lastUpdateTime" column="last_update_time" type="timestamp"/>
     </class>       
 </hibernate-mapping>
