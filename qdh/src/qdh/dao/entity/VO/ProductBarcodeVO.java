@@ -15,6 +15,7 @@ public class ProductBarcodeVO implements Serializable{
 	private String quarter = "";
 	private String brand = "";
 	private String productCode ="";
+	private String category ="";
 	private String barcode = "";
 	private String color = "";
 	private String size = "";
@@ -79,6 +80,8 @@ public class ProductBarcodeVO implements Serializable{
     	
     	if (pb.getSize() != null)
     		size = pb.getSize().getName();
+    	
+    	category = p.getCategory().getCategory_Name();
     }
     
 	public String getYear() {
@@ -186,6 +189,14 @@ public class ProductBarcodeVO implements Serializable{
 
 	public void setSize(String size) {
 		this.size = size;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
     
     

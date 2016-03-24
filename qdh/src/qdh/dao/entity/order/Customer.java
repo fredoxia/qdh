@@ -15,8 +15,6 @@ public class Customer implements Serializable{
 	private Integer chainId;
 	private String updateUser;
 	private Timestamp updateDate;
-	
-	public static final int DELETED = -1;
 	private int status;
 	
 	public int getStatus() {

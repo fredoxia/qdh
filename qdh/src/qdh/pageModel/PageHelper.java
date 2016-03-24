@@ -23,6 +23,15 @@ public class PageHelper implements java.io.Serializable {
 		this.totalRows = totalRows;
 		firstRow = rowsPerPage * (currentPage -1);
 	}
+	
+	/**
+	 * array of first row , max records
+	 * @return
+	 */
+	public Integer[] getPager(){
+		Integer[] pager = new Integer[]{getFirstRow(), getRowPerPage()};
+		return pager;
+	}
 
     public int getFirstRow(){
     	return firstRow;

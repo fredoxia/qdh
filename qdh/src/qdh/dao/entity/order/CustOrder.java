@@ -12,6 +12,7 @@ public class CustOrder implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1151511966760113877L;
+	
 	private String custName = "";
     private Integer chainId = null;
     private String chainStoreName = "";

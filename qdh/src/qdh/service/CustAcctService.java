@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.qxMIS.ChainStore2;
 import qdh.dao.impl.Response;
@@ -70,7 +71,7 @@ public class CustAcctService {
 			}
 		}
 		
-		criteria.add(Restrictions.ne("status", Customer.DELETED));
+		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
 		
 		List<Customer> custs = customerDaoImpl.getByCritera(criteria, true);
 		dataGrid.setRows(custs);
@@ -138,12 +139,12 @@ public class CustAcctService {
 		if (cust == null){
 			response.setFail("客户信息不存在");
 		} else {
-			cust.setStatus(Customer.DELETED);
+			cust.setStatus(EntityConfig.DELETED);
 			customerDaoImpl.update(cust, true);
 		}
 		
 		//2。delete the order and order_product
-		Object[] values = new Object[]{Customer.DELETED, id};
+		Object[] values = new Object[]{EntityConfig.DELETED, id};
 		String U_ORDER = "UPDATE CustOrder SET status =? WHERE custId =?";
 		String U_ORDER_PRO = "UPDATE CustOrderProduct SET status =? WHERE custId =?";
 		orderDaoImpl.executeHQLUpdateDelete(U_ORDER, values, true);
