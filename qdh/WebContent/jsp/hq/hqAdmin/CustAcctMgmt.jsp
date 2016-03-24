@@ -75,7 +75,7 @@ function deleteFun() {
 	}
 	
 	var	id = rows[0].id;
-	parent.$.messager.confirm('询问', '您确定要从订货系统中删除当前选中客户？', function(b) {
+	parent.$.messager.confirm('询问', '删除客户信息会一并删除当前客户的订单,确认当前客户没有遗留订单？', function(b) {
 		if (b) {
 			parent.$.messager.progress({
 					title : '提示',

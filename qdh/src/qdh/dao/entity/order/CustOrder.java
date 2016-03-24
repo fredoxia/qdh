@@ -7,7 +7,7 @@ import java.util.List;
 
 import qdh.utility.DateUtility;
 
-public class Order implements Serializable{
+public class CustOrder implements Serializable{
     /**
 	 * 
 	 */
@@ -18,14 +18,22 @@ public class Order implements Serializable{
     private int totalQuantity = 0;
     private Timestamp createDate = DateUtility.getToday();
 	private Customer customer = null;
-	private List<OrderProduct> orderProducts = new ArrayList<>();
+	private List<CustOrderProduct> orderProducts = new ArrayList<>();
 	private int custId ;
+	private int status;
 	
-	public List<OrderProduct> getOrderProducts() {
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	
+	public List<CustOrderProduct> getOrderProducts() {
 		return orderProducts;
 	}
 
-	public void setOrderProducts(List<OrderProduct> orderProducts) {
+	public void setOrderProducts(List<CustOrderProduct> orderProducts) {
 		this.orderProducts = orderProducts;
 	}
 

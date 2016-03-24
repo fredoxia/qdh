@@ -10,11 +10,14 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.qxMIS.ChainStore2;
 import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CustomerDaoImpl;
+import qdh.dao.impl.order.OrderDaoImpl;
+import qdh.dao.impl.order.OrderProductDaoImpl;
 import qdh.dao.impl.qxMIS.ChainStore2DaoImpl;
 import qdh.pageModel.DataGrid;
 import qdh.utility.DateUtility;
@@ -31,6 +34,13 @@ public class CustAcctService {
 	
 	@Autowired
 	private ChainStore2DaoImpl chainStore2DaoImpl;
+	
+	@Autowired
+	private OrderDaoImpl orderDaoImpl;
+	
+	@Autowired
+	private OrderProductDaoImpl orderProductDaoImpl;
+	
 	
 	public DataGrid getCustAccts(Integer isChain, String name, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
@@ -119,18 +129,27 @@ public class CustAcctService {
 		return response;
 	}
 
+	@Transactional
 	public Response deleteCustAcct(Integer id, String userName) {
 		Response response = new Response();
 		
+		//1. delete the customer information
 		Customer cust = customerDaoImpl.get(id, true);
-		
 		if (cust == null){
-			response.setFail("客户信息已经删除，不能再重复删除");
+			response.setFail("客户信息不存在");
 		} else {
 			cust.setStatus(Customer.DELETED);
 			customerDaoImpl.update(cust, true);
-			response.setSuccess("客户信息 : " + cust.getCustName() + " 已经成功从订货系统删除");
 		}
+		
+		//2。delete the order and order_product
+		Object[] values = new Object[]{Customer.DELETED, id};
+		String U_ORDER = "UPDATE CustOrder SET status =? WHERE custId =?";
+		String U_ORDER_PRO = "UPDATE CustOrderProduct SET status =? WHERE custId =?";
+		orderDaoImpl.executeHQLUpdateDelete(U_ORDER, values, true);
+		orderProductDaoImpl.executeHQLUpdateDelete(U_ORDER_PRO, values, true);
+		
+		response.setSuccess("客户信息 : " + cust.getCustName() + " 已经成功从订货系统删除");
 		return response;
 	}
 

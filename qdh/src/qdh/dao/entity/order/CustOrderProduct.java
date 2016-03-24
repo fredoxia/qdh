@@ -7,7 +7,7 @@ import java.util.List;
 import qdh.dao.entity.product.ProductBarcode;
 import qdh.utility.DateUtility;
 
-public class OrderProduct implements Serializable{
+public class CustOrderProduct implements Serializable{
 	/**
 	 * 
 	 */
@@ -16,7 +16,15 @@ public class OrderProduct implements Serializable{
     private int custId ;
 	private int quantity;
 	private Timestamp lastUpdateTime = DateUtility.getToday();
+	private int status;
 	
+	
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
 	public ProductBarcode getProductBarcode() {
 		return productBarcode;
 	}
