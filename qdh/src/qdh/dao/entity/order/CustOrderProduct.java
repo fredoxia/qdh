@@ -15,10 +15,17 @@ public class CustOrderProduct implements Serializable{
 	private ProductBarcode productBarcode = new ProductBarcode();
     private int custId ;
 	private int quantity;
+	private double sumWholePrice;
 	private Timestamp lastUpdateTime = DateUtility.getToday();
 	private int status;
 	
 	
+	public double getSumWholePrice() {
+		return sumWholePrice;
+	}
+	public void setSumWholePrice(double sumWholePrice) {
+		this.sumWholePrice = sumWholePrice;
+	}
 	public int getStatus() {
 		return status;
 	}

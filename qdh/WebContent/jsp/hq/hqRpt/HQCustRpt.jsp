@@ -16,7 +16,7 @@ $(function() {
 	var params= $.serializeObject($('#searchForm'));
 	
 	dataGrid = $('#dataGrid').datagrid({
-		url : '<%=request.getContextPath()%>/rptController/GenerateHQProdRpt',
+		url : '<%=request.getContextPath()%>/rptController/GenerateHQCustRpt',
 		queryParams: params,
 		fit : true,
 		fitColumns : true,
@@ -29,45 +29,31 @@ $(function() {
 		nowrap : false,
 		singleSelect: true,
 		columns : [ [ {
-			field : 'year',
-			title : '年份',
+			field : 'custName',
+			title : '客户名字',
 			width : 20
 		}, {
-			field : 'quarter',
-			title : '季度',
-			width : 20
-		}, {
-			field : 'brand',
-			title : '品牌',
+			field : 'chainStoreName',
+			title : '连锁店',
 			width : 30
-		}, {			
-			field : 'productCode',
-			title : '货号',
-			width : 40
-		}, {
-			field : 'color',
-			title : '颜色',
-			width : 20
-		}, {
-			field : 'category',
-			title : '类型',
-			width : 30
-		}, {
-			field : 'numPerHand',
-			title : '每手数量',
-			width : 30
-		}, {
-
+		}, {		
 			field : 'quantity',
 			title : '订货量 (手)',
-			width : 40,
+			width : 30,
+			styler: function(value,row,index){
+				return 'font-weight:bold;color:red;font-size:large';
+			}
+		}, {
+			field : 'sumWholeSalePrice',
+			title : '成交金额',
+			width : 30,
 			styler: function(value,row,index){
 				return 'font-weight:bold;color:red;font-size:large';
 			}
 		}, {
 			field : 'action',
 			title : '',
-			width : 100
+			width : 150
 		} ] ],
 		toolbar : '#toolbar'
 	});
@@ -81,7 +67,7 @@ function refresh() {
 }
 function autoRefresh(){
 	
-	$.messager.prompt("输入","请输入需要多少秒(必须大于10秒)自动刷新报表数据? 默认20秒 <br>(重新点击手动刷新会取消自动刷新)", function(second){
+	$.messager.prompt("输入","请输入需要多少秒自动刷新报表数据? 默认20秒 <br>(重新点击手动刷新会取消自动刷新)", function(second){
 		var interval = 20;
 		if (second != "" && isValidInteger(second)==true){
 			if (second < 10)

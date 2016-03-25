@@ -30,4 +30,22 @@ public class RptController {
 		DataGrid dataGrid = rptService.generateHQProdRpt(page, rows , sort, order);
 		return dataGrid;
 	}
+
+	/**
+	 * 当前订货中的客户订单排名情况
+	 * @return
+	 */
+	@RequestMapping("/HQCustRpt")
+	public String HQCustRpt(){
+		return "/jsp/hq/hqRpt/HQCustRpt.jsp";
+	}
+
+	@ResponseBody
+	@RequestMapping("/GenerateHQCustRpt")
+	public DataGrid GenerateHQCustRpt(Integer page, Integer rows, String sort, String order){
+		DataGrid dataGrid = rptService.generateHQCustRpt(page, rows , sort, order);
+		return dataGrid;
+	}
+	
+	
 }

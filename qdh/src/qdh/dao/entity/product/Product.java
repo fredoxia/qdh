@@ -9,12 +9,7 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 
-import qdh.dao.entity.qxMIS.Area2;
-import qdh.dao.entity.qxMIS.Brand2;
-import qdh.dao.entity.qxMIS.Category2;
 import qdh.dao.entity.qxMIS.Product2;
-import qdh.dao.entity.qxMIS.Quarter2;
-import qdh.dao.entity.qxMIS.Year2;
 
 
 
@@ -283,6 +278,28 @@ public class Product  implements Serializable{
 			return false;
 		return true;
 	}
+	
+	/**
+	 * to get the expected whole sale price
+	 * @return
+	 */
+	public double getWholePrice() {
+		double wholePrice3 = this.getWholeSalePrice3();
+		double wholePrice2 = this.getWholeSalePrice2();
+		double wholePrice1 = this.getWholeSalePrice();
+		double factoryPrice = this.getSalesPriceFactory();
+		double discount = this.getDiscount();
+		
+		if (wholePrice3 != 0)
+			return wholePrice3;
+		else if (wholePrice2 != 0)
+			return wholePrice2;
+		else if (wholePrice1 != 0)
+			return wholePrice1;
+		else 
+			return factoryPrice * discount;
+	}
+	
 	public String toString(){
     	
     	return  this.getArea().getArea_Name() + " " + 

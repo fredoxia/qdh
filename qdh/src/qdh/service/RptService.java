@@ -1,19 +1,21 @@
 package qdh.service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import qdh.dao.config.EntityConfig;
+import qdh.dao.entity.VO.HQCustRptVO;
 import qdh.dao.entity.VO.HQProdRptVO;
-import qdh.dao.entity.order.CustOrder;
+import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.product.ProductBarcode;
 import qdh.dao.impl.order.CustOrderProdDaoImpl;
+import qdh.dao.impl.order.CustomerDaoImpl;
 import qdh.dao.impl.product.ProductBarcodeDaoImpl;
 import qdh.pageModel.DataGrid;
 import qdh.pageModel.PageHelper;
+import qdh.utility.loggerLocal;
 
 @Service
 public class RptService {
@@ -23,6 +25,9 @@ public class RptService {
 	
 	@Autowired
 	private ProductBarcodeDaoImpl productBarcodeDaoImpl;
+	
+	@Autowired
+	private CustomerDaoImpl customerDaoImpl;
 	
 	public DataGrid generateHQProdRpt(Integer page, Integer rowsPerPage, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
@@ -48,7 +53,51 @@ public class RptService {
 				Long quantity =  (Long)recordResult[1];
 				
 				ProductBarcode pBarcode = productBarcodeDaoImpl.get(productId, true);
+				if (pBarcode == null){
+					loggerLocal.error("产品信息不存在 : " + productId);
+					continue;
+				}
 				HQProdRptVO rpt = new HQProdRptVO(pBarcode, quantity.intValue());
+				rpts.add(rpt);
+			  } 
+			dataGrid.setRows(rpts);
+	     }
+		return dataGrid;
+	}
+
+	@Transactional
+	public DataGrid generateHQCustRpt(Integer page, Integer rows, String sort, String order) {
+		DataGrid dataGrid = new DataGrid();
+		
+		Object[] values = new Object[]{EntityConfig.DELETED};
+		String countCriteria = "SELECT COUNT(DISTINCT custId) FROM CustOrderProduct WHERE status != ?";
+		String rptCriteria = "SELECT custId, SUM(quantity), SUM(sumWholePrice) FROM CustOrderProduct WHERE status != ? GROUP BY custId ORDER BY SUM(quantity) DESC";
+		
+		int totalRow = custOrderProdDaoImpl.executeHQLCount(countCriteria, values, false);
+		PageHelper pHelper = new PageHelper(rows, page, totalRow);
+		dataGrid.setTotal(new Long(totalRow));
+		
+		List<Object> data = custOrderProdDaoImpl.executeHQLSelect(rptCriteria, values, pHelper.getPager(), false);
+	     if (data != null && data.size() > 0){	
+	    	 
+	    	List<HQCustRptVO> rpts = new ArrayList<HQCustRptVO>();
+			for (Object object : data)
+			  if (object != null){
+				Object[] recordResult = (Object[])object;
+				if (recordResult[0] == null || recordResult[1] == null)
+					continue;
+				Integer custId = (Integer)recordResult[0];
+				Long quantity =  (Long)recordResult[1];
+				Double sumWholePrice =  (Double)recordResult[2];
+				
+				Customer customer = customerDaoImpl.get(custId, true);
+				HQCustRptVO rpt = null;
+				 try {
+					 rpt = new HQCustRptVO(customer, quantity.intValue(), sumWholePrice);
+				 } catch (Exception e){
+					 loggerLocal.error(e);
+					 continue;
+				 }
 				rpts.add(rpt);
 			  } 
 			dataGrid.setRows(rpts);
