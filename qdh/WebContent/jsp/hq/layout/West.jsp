@@ -35,7 +35,7 @@ $(function() {
 	        		<ul>
 	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/prodOptController/HQProdMgmt'}">订货会品牌管理</li>
 	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/prodOptController/HQBarcodeMgmt'}">当前条码查询</li>
-	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/custAcctController/CustAcctMgmt'}">客户资料管理</li>
+	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/custAcctController/CustAcctMgmt'}">客户数据管理</li>
 	        		</ul> 
 		        </li>
                <li data-options="iconCls:'icon-chart_bar',state:'open',border:false">  
@@ -43,8 +43,9 @@ $(function() {
 	        		<ul>
 	        			 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQProdRpt'}">产品统计报表</li>
 						 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQCustRpt'}">客户订单报表</li>
+						 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQExportBrandOrder'}">厂家订单导出</li>
 	        		</ul> 
-		        </li>		        
+		       </li>		        
 		</ul>
 
 	</div>  

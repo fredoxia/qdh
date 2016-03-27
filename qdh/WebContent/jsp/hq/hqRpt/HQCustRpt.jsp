@@ -31,11 +31,11 @@ $(function() {
 		columns : [ [ {
 			field : 'custName',
 			title : '客户名字',
-			width : 20
+			width : 30
 		}, {
 			field : 'chainStoreName',
 			title : '连锁店',
-			width : 30
+			width : 45
 		}, {		
 			field : 'quantity',
 			title : '订货量 (手)',

@@ -1,15 +1,28 @@
 package qdh.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import qdh.dao.config.EntityConfig;
+import qdh.dao.entity.VO.CurrentBrandVO;
 import qdh.dao.entity.VO.HQCustRptVO;
 import qdh.dao.entity.VO.HQProdRptVO;
+import qdh.dao.entity.order.CurrentBrands;
+import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.product.ProductBarcode;
+import qdh.dao.impl.Response;
+import qdh.dao.impl.order.CurrentBrandsDaoImpl;
 import qdh.dao.impl.order.CustOrderProdDaoImpl;
 import qdh.dao.impl.order.CustomerDaoImpl;
 import qdh.dao.impl.product.ProductBarcodeDaoImpl;
@@ -28,6 +41,9 @@ public class RptService {
 	
 	@Autowired
 	private CustomerDaoImpl customerDaoImpl;
+	
+	@Autowired
+	private CurrentBrandsDaoImpl currentBrandsDaoImpl;
 	
 	public DataGrid generateHQProdRpt(Integer page, Integer rowsPerPage, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
@@ -103,6 +119,54 @@ public class RptService {
 			dataGrid.setRows(rpts);
 	     }
 		return dataGrid;
+	}
+
+	public Response preFactoryExportPage() {
+		Response response = new Response();
+		Map dataMap = new HashMap();
+		
+		List<CurrentBrandVO> brands = ProdOperationService.transferCB(currentBrandsDaoImpl.getAll(true));
+		CurrentBrandVO emptyVo = new CurrentBrandVO();
+		brands.add(0, emptyVo);
+		
+		dataMap.put("cbId", 0);
+		dataMap.put("cb", brands);
+
+		response.setReturnValue(dataMap);
+		return response;
+	}
+
+	@Transactional
+	public Response getCustOrderProducts(Integer cbId) {
+		Response response = new Response();
+		
+		CurrentBrands currentBrands = currentBrandsDaoImpl.get(cbId, true);
+		
+		if (currentBrands != null){
+			int yearId = currentBrands.getYear().getYear_ID();
+			int quarterId = currentBrands.getQuarter().getQuarter_ID();
+			int brandId = currentBrands.getBrand().getBrand_ID();
+			
+			DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+			
+			DetachedCriteria pbCriteria = criteria.createAlias("productBarcode","pb");
+			pbCriteria.add(Restrictions.ne("pb.id", -1));
+//			DetachedCriteria pCriteria = pbCriteria.createCriteria("product");
+//			pCriteria.add(Restrictions.eq("year.year_ID", yearId));
+//			pCriteria.add(Restrictions.eq("quarter.quarter_ID", quarterId));
+//			pCriteria.add(Restrictions.eq("brand.brand_ID", brandId));
+//			criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+//			pCriteria.addOrder(Order.asc("productCode"));
+			
+			List<CustOrderProduct> products = custOrderProdDaoImpl.getByCritera(criteria, true);
+			
+			Map<String, Object> dataMap = new HashMap<>();
+			dataMap.put("data", products);
+			response.setReturnValue(dataMap);
+		} else 
+			response.setFail("无法找到当前品牌 " + cbId);
+		
+		return response;
 	}
 
 }

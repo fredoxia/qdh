@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.sun.xml.internal.ws.policy.sourcemodel.ModelNode;
+
 import qdh.dao.entity.order.Customer;
 import qdh.dao.impl.Response;
 import qdh.pageModel.DataGrid;
@@ -89,4 +91,42 @@ public class CustAcctController {
 		
 		return json;
 	}
+	
+	@ResponseBody
+	@RequestMapping("/CheckCustOrder")
+	public Json CheckCustOrder(Integer id, HttpSession session){
+		Response response = new Response();
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		try {
+			response = custAcctService.checkCustOrder(id);
+		} catch (Exception e){
+			e.printStackTrace();
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
+	}
+	
+	@RequestMapping("/OpenCustOrderJSP")
+	public ModelAndView GetCustOrderJSP(Integer id, HttpSession session){
+		ModelAndView maView = new ModelAndView();
+		maView.setViewName("/jsp/hq/hqAdmin/CustOrder.jsp");
+		maView.addObject("custId", id);
+		return maView;
+	}
+	
+	@ResponseBody
+	@RequestMapping("/GetCustOrderData")
+	public DataGrid GetCustOrderData(Integer id, HttpSession session){
+		DataGrid dataGrid = new DataGrid();
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		
+		dataGrid = custAcctService.getCustOrder(id);
+
+
+		return dataGrid;
+	}
+	
 }

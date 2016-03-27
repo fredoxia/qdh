@@ -311,7 +311,7 @@ public class ProdOperationService {
 		return productBarcodeCriteria;
 	}
 	
-	private List<CurrentBrandVO> transferCB(List<CurrentBrands> currentBrands){
+	public static List<CurrentBrandVO> transferCB(List<CurrentBrands> currentBrands){
 		List<CurrentBrandVO> currentBrandVOs = new ArrayList<>();
 		if (currentBrands != null)
 			for (CurrentBrands brand: currentBrands){

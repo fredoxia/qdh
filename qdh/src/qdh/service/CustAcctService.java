@@ -1,24 +1,30 @@
 package qdh.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import qdh.comparator.CustOrderProductComparatorByBrand;
 import qdh.dao.config.EntityConfig;
+import qdh.dao.entity.VO.CustOrderProductVO;
+import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.qxMIS.ChainStore2;
 import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CustomerDaoImpl;
-import qdh.dao.impl.order.OrderDaoImpl;
-import qdh.dao.impl.order.OrderProductDaoImpl;
+import qdh.dao.impl.order.CustOrderDaoImpl;
+import qdh.dao.impl.order.CustOrderProductDaoImpl;
 import qdh.dao.impl.qxMIS.ChainStore2DaoImpl;
 import qdh.pageModel.DataGrid;
 import qdh.utility.DateUtility;
@@ -37,10 +43,10 @@ public class CustAcctService {
 	private ChainStore2DaoImpl chainStore2DaoImpl;
 	
 	@Autowired
-	private OrderDaoImpl orderDaoImpl;
+	private CustOrderDaoImpl orderDaoImpl;
 	
 	@Autowired
-	private OrderProductDaoImpl orderProductDaoImpl;
+	private CustOrderProductDaoImpl custOrderProductDaoImpl;
 	
 	
 	public DataGrid getCustAccts(Integer isChain, String name, String sort, String order) {
@@ -148,10 +154,85 @@ public class CustAcctService {
 		String U_ORDER = "UPDATE CustOrder SET status =? WHERE custId =?";
 		String U_ORDER_PRO = "UPDATE CustOrderProduct SET status =? WHERE custId =?";
 		orderDaoImpl.executeHQLUpdateDelete(U_ORDER, values, true);
-		orderProductDaoImpl.executeHQLUpdateDelete(U_ORDER_PRO, values, true);
+		custOrderProductDaoImpl.executeHQLUpdateDelete(U_ORDER_PRO, values, true);
 		
 		response.setSuccess("客户信息 : " + cust.getCustName() + " 已经成功从订货系统删除");
 		return response;
 	}
 
+	/**
+	 * 通过Id查找有无订单
+	 * @param id
+	 * @return
+	 */
+	@Transactional
+	public Response checkCustOrder(Integer id) {
+		Response response = new Response();
+		
+		String queryString = "SELECT COUNT(*) FROM CustOrderProduct WHERE custId =? AND status <> ?";
+		Object[] values = new Object[]{id, EntityConfig.DELETED};
+		
+		int rows = custOrderProductDaoImpl.executeHQLCount(queryString, values, true);
+		
+		if (rows == 0)
+			response.setFail("当前客户没有订单");
+		else {
+			Customer cust = customerDaoImpl.get(id, true);
+			response.setSuccess("");
+			response.setReturnValue(cust);
+		}
+		
+		return response;
+	}
+	
+	/**
+	 * 通过Id查找有无订单
+	 * @param id
+	 * @return
+	 */
+	public DataGrid getCustOrder(Integer id) {
+		DataGrid dataGrid = new DataGrid();
+		
+		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+		criteria.add(Restrictions.eq("custId", id));
+		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+		
+		List<CustOrderProduct> products = custOrderProductDaoImpl.getByCritera(criteria, true);
+
+		List<CustOrderProductVO> footer = new ArrayList<>();
+		
+		dataGrid.setRows(transferCustOrderProductVOs(products,footer));
+		dataGrid.setFooter(footer);
+		dataGrid.setTotal(new Long(20));
+		
+		return dataGrid;
+	}
+
+
+
+	private List<CustOrderProductVO> transferCustOrderProductVOs(List<CustOrderProduct> products,List<CustOrderProductVO> footer){
+		List<CustOrderProductVO> vos = new ArrayList<>();
+		int totalQ = 0;
+		double totalSum = 0;
+		if (products != null){
+			for (CustOrderProduct crp : products){
+				CustOrderProductVO vo = new CustOrderProductVO(crp);
+				vos.add(vo);
+				
+				totalQ += vo.getQuantity();
+				totalSum += vo.getSumWholePrice();
+			}
+		}
+		
+		CustOrderProductVO footerVo = new CustOrderProductVO();
+		footerVo.setQuantity(totalQ);
+		footerVo.setSumWholePrice(totalSum);
+		footerVo.setLastUpdateTime(null);
+		footerVo.setProductCode("总计");
+		footer.add(footerVo);
+		
+		Collections.sort(vos, new CustOrderProductComparatorByBrand());
+		
+		return vos;
+	}
 }

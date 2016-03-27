@@ -1,10 +1,15 @@
 package qdh.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
+import qdh.dao.entity.VO.FactoryOrderExcelVO;
+import qdh.dao.impl.Response;
 import qdh.pageModel.DataGrid;
 import qdh.service.RptService;
 
@@ -47,5 +52,36 @@ public class RptController {
 		return dataGrid;
 	}
 	
+	@RequestMapping("/HQExportBrandOrder")
+	public ModelAndView HQExportBrandOrder() {
+		ModelAndView mav = new ModelAndView();
+		
+		Response response = new Response();
+		try {
+			response = rptService.preFactoryExportPage();
+		} catch (Exception e){
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		mav.setViewName("/jsp/hq/hqRpt/HQExportBrandOrder.jsp");
+		mav.addAllObjects((Map<String, ?>)response.getReturnValue());
+		
+		return mav;
+	}
+	
+	@RequestMapping("/HQExportFactoryOrder")
+	public ModelAndView HQExportFactoryOrder(Integer cbId){
+		
+		Response response = new Response();
+		try {
+			response = rptService.getCustOrderProducts(cbId);
+		} catch (Exception e){
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		ModelAndView mav = new ModelAndView(new FactoryOrderExcelVO(), (Map<String, ?>)response.getReturnValue()); 
+		
+		return mav;
+	}
 	
 }

@@ -142,6 +142,34 @@ function cleanFun() {
 	$("#custType").attr("value", -1);
 	dataGrid.datagrid('load', {});
 }
+function checkOrder(){
+	var rows = dataGrid.datagrid('getSelections');
+	if (rows.length == 0){
+		parent.$.messager.alert('错误', '请选中一个客户信息再继续操作', 'error');
+		return;
+	}
+	
+	var	id = rows[0].id;
+	$.post('<%=request.getContextPath()%>/custAcctController/CheckCustOrder', {
+		id : id
+	}, function(result) {
+		if (result.success) {
+				var param = "id="+ id;
+				var cust = result.obj;
+				$.modalDialog({
+					title : "客户订单 " + cust.custName + " " + cust.chainStoreName,
+					width : 900,
+					height : 500,
+					modal : false,
+					draggable:true,
+					href : '<%=request.getContextPath()%>/custAcctController/OpenCustOrderJSP?' + param
+				});
+
+		} else {
+			parent.$.messager.alert('失败警告', result.msg, 'error');
+		}
+	}, 'JSON');
+}
 </script>
 </head>
 <body>
@@ -176,6 +204,7 @@ function cleanFun() {
 			<a onclick="deleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">删除客户</a>
 			<a onclick="searchFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">过滤条件</a>
 			<a onclick="cleanFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true">清空条件</a>
+			<a onclick="checkOrder();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true">调出客户订单</a>
 	</div>
 
 

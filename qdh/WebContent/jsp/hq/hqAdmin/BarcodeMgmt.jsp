@@ -39,10 +39,7 @@ $(function() {
 			title : '季度',
 			width : 20
 		}, {
-			field : 'barcode',
-			title : '条码',
-			width : 40
-		}, {
+
 			field : 'brand',
 			title : '品牌',
 			width : 30
@@ -53,7 +50,11 @@ $(function() {
 		}, {
 			field : 'color',
 			title : '颜色',
-			width : 20
+			width : 35
+		}, {
+			field : 'barcode',
+			title : '条码',
+			width : 40
 		}, {
 			field : 'unit',
 			title : '单位',
@@ -68,7 +69,15 @@ $(function() {
 			width : 30
 		}, {
 			field : 'wholeSalePrice',
-			title : '批发价',
+			title : '批发价1',
+			width : 30
+		}, {
+			field : 'salesPriceFactory',
+			title : '厂家零售价',
+			width : 40
+		}, {
+			field : 'discount',
+			title : '折扣',
 			width : 30
 		}, {
 			field : 'salesPrice',
@@ -79,11 +88,7 @@ $(function() {
 			title : '条码系统创建日期',
 			sortable:true,
 			order:'desc',
-			width : 50
-		}, {
-			field : 'action',
-			title : '',
-			width : 100
+			width : 70
 		} ] ],
 		toolbar : '#toolbar'
 	});
@@ -117,10 +122,10 @@ function cleanFun() {
 		<div data-options="region:'center',border:false">
 			<table id="dataGrid"></table>
 		</div>
-			<div id="toolbar" style="display: none;">
-			<a onclick="searchFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">过滤条件</a>
+		<div id="toolbar" style="display: none;">
+			<a onclick="searchFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">查询条码</a>
 			<a onclick="cleanFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true">清空条件</a>
-	</div>
+		</div>
 </div>
 </body>
 </html>
