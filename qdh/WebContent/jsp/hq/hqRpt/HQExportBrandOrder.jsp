@@ -31,7 +31,7 @@ function exportOrder() {
 			<form id="exportForm" name="exportForm">
 				<table class="table table-hover table-condensed" style="display: block;">
 					<tr>
-						<th height="40">品牌条码</th>
+						<th height="40">产品品牌</th>
 						<td>
 							<form:select id="cbId" name="cbId" path="cbId" items="${cb}" itemLabel="fullName"  
                                itemValue="id"></form:select> 

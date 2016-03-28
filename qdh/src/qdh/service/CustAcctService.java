@@ -5,17 +5,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import qdh.comparator.CustOrderProductComparatorByBrand;
+import qdh.comparator.CustOrderProductComparatorByYQBrandProductCode;
 import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.VO.CustOrderProductVO;
 import qdh.dao.entity.order.CustOrderProduct;
@@ -215,6 +212,8 @@ public class CustAcctService {
 		int totalQ = 0;
 		double totalSum = 0;
 		if (products != null){
+			Collections.sort(products, new CustOrderProductComparatorByYQBrandProductCode());
+			
 			for (CustOrderProduct crp : products){
 				CustOrderProductVO vo = new CustOrderProductVO(crp);
 				vos.add(vo);
@@ -231,8 +230,27 @@ public class CustAcctService {
 		footerVo.setProductCode("总计");
 		footer.add(footerVo);
 		
-		Collections.sort(vos, new CustOrderProductComparatorByBrand());
-		
 		return vos;
+	}
+
+	public Response getCustOrderProducts(Integer custId) {
+		Response response = new Response();
+		
+		Map<String, Object> dataMap= new HashMap<>();
+		
+		Customer cust = customerDaoImpl.get(custId, true);
+	
+		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+		criteria.add(Restrictions.eq("custId", custId));
+		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+		
+		List<CustOrderProduct> products = custOrderProductDaoImpl.getByCritera(criteria, true);
+		
+		dataMap.put("customer", cust);
+		dataMap.put("data", products);
+		
+		response.setReturnValue(dataMap);
+		
+		return response;
 	}
 }

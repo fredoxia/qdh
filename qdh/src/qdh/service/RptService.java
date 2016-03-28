@@ -2,8 +2,10 @@ package qdh.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
@@ -45,12 +47,37 @@ public class RptService {
 	@Autowired
 	private CurrentBrandsDaoImpl currentBrandsDaoImpl;
 	
-	public DataGrid generateHQProdRpt(Integer page, Integer rowsPerPage, String sort, String order) {
+	public DataGrid generateHQProdRpt(Integer currentBrandId, Integer page, Integer rowsPerPage, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
 		
+		//1. 限制产品信息
+		String pbConstraints = "";
+		if (currentBrandId != null && currentBrandId != 0){
+			CurrentBrands currentBrands = currentBrandsDaoImpl.get(currentBrandId, true);
+			
+			if (currentBrands != null){
+				int yearId = currentBrands.getYear().getYear_ID();
+				int quarterId = currentBrands.getQuarter().getQuarter_ID();
+				int brandId = currentBrands.getBrand().getBrand_ID();
+				
+				//1. find all products barcode
+				Set<Integer> barcodeIds = productBarcodeDaoImpl.getIds(yearId, quarterId, brandId);
+				if (barcodeIds.size() > 0){
+					Iterator<Integer> barIterator = barcodeIds.iterator();
+					while (barIterator.hasNext()){
+						pbConstraints += barIterator.next() + ",";
+					}
+					
+					pbConstraints = pbConstraints.substring(0, pbConstraints.lastIndexOf(","));
+					
+					pbConstraints = " AND productBarcode.id IN (" + pbConstraints + ") ";
+				}
+			}
+		}
+		
 		Object[] values = new Object[]{EntityConfig.DELETED};
-		String countCriteria = "SELECT COUNT(DISTINCT productBarcode.id) FROM CustOrderProduct WHERE status != ?";
-		String rptCriteria = "SELECT productBarcode.id, SUM(quantity) FROM CustOrderProduct WHERE status != ? GROUP BY productBarcode.id ORDER BY SUM(quantity) DESC";
+		String countCriteria = "SELECT COUNT(DISTINCT productBarcode.id) FROM CustOrderProduct WHERE status != ?" + pbConstraints;
+		String rptCriteria = "SELECT productBarcode.id, SUM(quantity) FROM CustOrderProduct WHERE status != ?" + pbConstraints +" GROUP BY productBarcode.id ORDER BY SUM(quantity) DESC";
 		
 		int totalRow = custOrderProdDaoImpl.executeHQLCount(countCriteria, values, false);
 		PageHelper pHelper = new PageHelper(rowsPerPage, page, totalRow);
@@ -147,25 +174,41 @@ public class RptService {
 			int quarterId = currentBrands.getQuarter().getQuarter_ID();
 			int brandId = currentBrands.getBrand().getBrand_ID();
 			
-			DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
 			
-			DetachedCriteria pbCriteria = criteria.createAlias("productBarcode","pb");
-			pbCriteria.add(Restrictions.ne("pb.id", -1));
-//			DetachedCriteria pCriteria = pbCriteria.createCriteria("product");
-//			pCriteria.add(Restrictions.eq("year.year_ID", yearId));
-//			pCriteria.add(Restrictions.eq("quarter.quarter_ID", quarterId));
-//			pCriteria.add(Restrictions.eq("brand.brand_ID", brandId));
-//			criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
-//			pCriteria.addOrder(Order.asc("productCode"));
+			//1. find all products barcode
+			Set<Integer> barcodeIds = productBarcodeDaoImpl.getIds(yearId, quarterId, brandId);
+
+			//2. find all records
+			DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+			criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+			criteria.add(Restrictions.in("productBarcode.id", barcodeIds));
 			
 			List<CustOrderProduct> products = custOrderProdDaoImpl.getByCritera(criteria, true);
 			
 			Map<String, Object> dataMap = new HashMap<>();
 			dataMap.put("data", products);
+			dataMap.put("brand", currentBrands);
 			response.setReturnValue(dataMap);
 		} else 
 			response.setFail("无法找到当前品牌 " + cbId);
 		
+		return response;
+	}
+
+	@Transactional
+	public Response preGenHQProdRpt() {
+		Response response = new Response();
+		Map dataMap = new HashMap();
+		
+		List<CurrentBrandVO> brands = ProdOperationService.transferCB(currentBrandsDaoImpl.getAll(true));
+		CurrentBrandVO emptyVo = new CurrentBrandVO();
+		emptyVo.setFullName("全部");
+		brands.add(0, emptyVo);
+		
+		dataMap.put("cbId", 0);
+		dataMap.put("cb", brands);
+
+		response.setReturnValue(dataMap);
 		return response;
 	}
 

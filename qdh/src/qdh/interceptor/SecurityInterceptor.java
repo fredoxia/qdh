@@ -16,7 +16,7 @@ import qdh.sysParms.DefaultFunction;
 
 
 public class SecurityInterceptor implements HandlerInterceptor {
-
+	private final String MOBILE ="/Mobile";
 	private static final Logger logger = Logger.getLogger(SecurityInterceptor.class);
 
 
@@ -53,7 +53,10 @@ public class SecurityInterceptor implements HandlerInterceptor {
 		SessionInfo sessionInfo = (SessionInfo) request.getSession().getAttribute(ControllerConfig.HQ_SESSION_INFO);
 		if (sessionInfo == null || sessionInfo.getUserId() == 0) {// 如果没有登录或登录超时
 			request.setAttribute("msg", "您还没有登录或登录已超时，请重新登录，然后再刷新本功能！");
-			request.getRequestDispatcher("/index.jsp").forward(request, response);
+			if (url.indexOf(MOBILE) == -1)
+				request.getRequestDispatcher("/index.jsp").forward(request, response);
+			else 
+				request.getRequestDispatcher("/indexC.jsp").forward(request, response);
 			return false;
 		}
 

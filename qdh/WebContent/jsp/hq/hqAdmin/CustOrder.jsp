@@ -51,15 +51,24 @@ $(function() {
 			field : 'lastUpdateTime',
 			title : '最后下单时间',
 			width : 70
-		} ] ]
+		} ] ],
+		toolbar : '#toolbar2'
 	});
 });
+
+function downloadOrder(){
+    document.form.action="<%=request.getContextPath()%>/custAcctController/HQExportCustOrder";
+    document.form.submit();
+}
 </script>
 <div class="easyui-layout" data-options="fit:true,border:false">
 	<div data-options="region:'center',border:false" title="" style="overflow: hidden;">
-			<form id="form" method="post">
+			<form id="form" name="form" method="post">
 			    <input type="hidden" id="id" name="id" value ="${custId} "/>
 			</form>
 			<table id="dataGrid2"></table>
+	</div>
+	<div id="toolbar2" style="display: none;">
+			<a onclick="downloadOrder();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true">下载Excel订单</a>
 	</div>
 </div>

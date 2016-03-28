@@ -41,8 +41,8 @@ $(function() {
                <li data-options="iconCls:'icon-chart_bar',state:'open',border:false">  
 		            <span>订货会报表</span>  
 	        		<ul>
-	        			 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQProdRpt'}">产品统计报表</li>
-						 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQCustRpt'}">客户订单报表</li>
+	        			 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQProdRpt'}">产品排名统计</li>
+						 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQCustRpt'}">客户排名统计</li>
 						 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQExportBrandOrder'}">厂家订单导出</li>
 	        		</ul> 
 		       </li>		        

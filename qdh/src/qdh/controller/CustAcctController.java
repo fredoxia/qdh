@@ -12,6 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.sun.xml.internal.ws.policy.sourcemodel.ModelNode;
 
+import qdh.dao.entity.VO.CustomerOrderExcelVO;
+import qdh.dao.entity.VO.FactoryOrderExcelVO;
 import qdh.dao.entity.order.Customer;
 import qdh.dao.impl.Response;
 import qdh.pageModel.DataGrid;
@@ -127,6 +129,21 @@ public class CustAcctController {
 
 
 		return dataGrid;
+	}
+	
+	@RequestMapping("/HQExportCustOrder")
+	public ModelAndView HQExportCustOrder(Integer id){
+		
+		Response response = new Response();
+		try {
+			response = custAcctService.getCustOrderProducts(id);
+		} catch (Exception e){
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		ModelAndView mav = new ModelAndView(new CustomerOrderExcelVO(), (Map<String, ?>)response.getReturnValue()); 
+		
+		return mav;
 	}
 	
 }

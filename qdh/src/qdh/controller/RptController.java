@@ -25,14 +25,26 @@ public class RptController {
 	 * @return
 	 */
 	@RequestMapping("/HQProdRpt")
-	public String HQProdRpt(){
-		return "/jsp/hq/hqRpt/HQProdRpt.jsp";
+	public ModelAndView HQProdRpt(){
+		ModelAndView mav = new ModelAndView();
+		
+		Response response = new Response();
+		try {
+			response = rptService.preGenHQProdRpt();
+		} catch (Exception e){
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		mav.setViewName("/jsp/hq/hqRpt/HQProdRpt.jsp");
+		mav.addAllObjects((Map<String, ?>)response.getReturnValue());
+		
+		return mav;
 	}
 
 	@ResponseBody
 	@RequestMapping("/GenerateHQProdRpt")
-	public DataGrid GenerateHQProdRpt(Integer page, Integer rows, String sort, String order){
-		DataGrid dataGrid = rptService.generateHQProdRpt(page, rows , sort, order);
+	public DataGrid GenerateHQProdRpt(Integer cbId, Integer page, Integer rows, String sort, String order){
+		DataGrid dataGrid = rptService.generateHQProdRpt(cbId, page, rows , sort, order);
 		return dataGrid;
 	}
 
@@ -42,6 +54,7 @@ public class RptController {
 	 */
 	@RequestMapping("/HQCustRpt")
 	public String HQCustRpt(){
+		
 		return "/jsp/hq/hqRpt/HQCustRpt.jsp";
 	}
 
