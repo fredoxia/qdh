@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="qdh.dao.entity.systemConfig">
+ 
+    <class name="SystemConfig" table="system_conf">
+    	<cache usage="read-write" region="qdh"/>
+        <id name="id" column="id">
+            <generator class="assigned" />
+        </id>
+         <property name="lockUpdateCust" column="lock_update_customer" type="integer"/>
+         <property name="lockUpdateProduct" column="lock_update_product" type="integer"/>
+         <property name="systemAdminMode" column="system_admin_mode" type="integer"/>
+    </class>      
+</hibernate-mapping>

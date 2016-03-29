@@ -23,6 +23,7 @@ import qdh.dao.impl.order.CustomerDaoImpl;
 import qdh.dao.impl.order.CustOrderDaoImpl;
 import qdh.dao.impl.order.CustOrderProductDaoImpl;
 import qdh.dao.impl.qxMIS.ChainStore2DaoImpl;
+import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 import qdh.pageModel.DataGrid;
 import qdh.utility.DateUtility;
 import qdh.utility.StringUtility;
@@ -44,6 +45,9 @@ public class CustAcctService {
 	
 	@Autowired
 	private CustOrderProductDaoImpl custOrderProductDaoImpl;
+	
+	@Autowired
+	private SystemConfigDaoImpl systemConfigDaoImpl;
 	
 	
 	public DataGrid getCustAccts(Integer isChain, String name, String sort, String order) {
@@ -116,6 +120,10 @@ public class CustAcctService {
 		
 		Customer custOrig = null;
 		if (cust.getId() != 0){
+			if (!systemConfigDaoImpl.canUpdateCust()){
+				response.setFail("管理员已经锁定客户信息和单据更新,请联系管理员");
+				return response;
+			}
 			custOrig = customerDaoImpl.get(cust.getId(), true);
 		}
 		
@@ -141,7 +149,12 @@ public class CustAcctService {
 		Customer cust = customerDaoImpl.get(id, true);
 		if (cust == null){
 			response.setFail("客户信息不存在");
+			return response;
 		} else {
+			if (!systemConfigDaoImpl.canUpdateCust()){
+				response.setFail("管理员已经锁定客户信息和单据更新,请联系管理员");
+				return response;
+			}
 			cust.setStatus(EntityConfig.DELETED);
 			customerDaoImpl.update(cust, true);
 		}

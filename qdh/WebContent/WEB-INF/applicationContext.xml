@@ -76,6 +76,7 @@
 	     <list>
 	          <value>qdh/dao/config/Product.hbm.xml</value>
 	          <value>qdh/dao/config/Order.hbm.xml</value>
+	          <value>qdh/dao/config/SystemConfig.hbm.xml</value>
 	     </list>
         </property>
 	    <property name="hibernateProperties">

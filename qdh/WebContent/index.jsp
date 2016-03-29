@@ -1,49 +1,45 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<%@ include file="jsp/common/Style.jsp"%>
-<title>千禧宝贝订货信息系统</title>
-<script type="text/javascript" charset="utf-8">
-function login(){
-    var params=$("#loginForm").serialize(); 
-    if (validateLoginForm()){
-		$.post('<%=request.getContextPath()%>/userController/HQLogin', params,loginBackProcess,'json');
-    }
-}
-function loginBackProcess(data){
-	if (data.success)
-		window.location.href = "<%=request.getContextPath()%>/userController/HQMain";
-	else 
-		alert(data.msg);	
-}
+<meta name="viewport" content ="width=device-width, initial-scale=1">
+<%@ include file="jsp/common/JQMStyle.jsp"%>
+<script>
+
 </script>
 </head>
 <body>
-<div id="loginDialog" class="easyui-dialog" title="千禧宝贝在线订货系统" data-options="iconCls:'icon-status_online',resizable:false,modal:true,draggable:false,closable:false,buttons:[{text:'登陆',handler:function(){ login(); }}]" style="width:330px;height:200px;padding:5px">
-	  <form id="loginForm" name="loginForm" method="post" action="">
-		  <table width="100%">
-		    <tr>
-		      <td colspan="2" align="center"><strong>总部用户登录 </strong></td>
-		    </tr>
-		    <tr>
-		      <td width="85" height="30">用户名：</td>
-		      <td width="180">
-		      <input type="text" name="userName" id="userName" class="easyui-validatebox" data-options="required:true"/></td>
-		    </tr>
-		    <tr>
-		      <td height="30">密码：</td>
-		      <td>
-		      <input type="password" name="password" id="password" class="easyui-validatebox" data-options="required:true"/>
+	<section id="page1" data-role="page">
 
-		      </td>
-		    </tr>
-		  </table>
-		</form>
-</div>
+		<header data-role="header" data-theme="b">
+			<h1>千禧宝贝在线订货系统</h1>
+		</header>
 
+		<div data-role="content" class="content">
 
+			<p style="">
+				登录系统
+			</p>
+			<form method="post" id="loginform">
+				<div data-role="fieldcontainer">
+					<label for="userName">用户名 : </label> <input type="number"
+						id="userName" name="userName" placeholder="我们提供给你的数字登录账号" />
+				</div>
+				<div data-role="fieldcontainer">
+					<label for="password">密码 : </label> <input type="number"
+						id="password" name="password" placeholder="四位数的数字密码" />
+				</div>
+				<div data-role="fieldcontainer">
+					<a data-role="button" id="submit" data-theme="b">登录</a>
+				</div>
+			</form>
+		</div>
+
+		<footer data-role="footer">
+			<h1>©2016 千禧宝贝科技</h1>
+		</footer>
+	</section>
 </body>
 </html>

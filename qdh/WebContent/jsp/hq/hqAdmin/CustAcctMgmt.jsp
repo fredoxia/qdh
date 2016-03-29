@@ -156,7 +156,7 @@ function checkOrder(){
 		if (result.success) {
 				var param = "id="+ id;
 				var cust = result.obj;
-				$.modalDialog({
+				parent.$.modalDialog({
 					title : "客户订单 " + cust.custName + " " + cust.chainStoreName,
 					width : 900,
 					height : 500,
@@ -174,7 +174,7 @@ function checkOrder(){
 </head>
 <body>
 	<div class="easyui-layout" data-options="fit : true,border : false">
-		<div data-options="region:'north',title:'查询条件',border:false" style="height: 90px; overflow: hidden;">
+		<div data-options="region:'north',border:false" style="height: 55px; overflow: hidden;">
 			<form id="searchForm">
 				<table class="table table-hover table-condensed" style="display: block;">
 					<tr>

@@ -45,7 +45,13 @@ $(function() {
 						 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQCustRpt'}">客户排名统计</li>
 						 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQExportBrandOrder'}">厂家订单导出</li>
 	        		</ul> 
-		       </li>		        
+		       </li>
+               <li data-options="iconCls:'icon-cog',state:'open',border:false">  
+		            <span>系统管理</span>  
+	        		<ul>
+	        			 <li data-options="iconCls:'icon-cog',attributes:{url:'<%=request.getContextPath()%>/systemConfigController/PreSystemConfig'}">系统配置</li>
+	        		</ul> 
+		       </li>		       		        
 		</ul>
 
 	</div>  

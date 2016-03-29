@@ -83,7 +83,7 @@ function deleteFun() {
 					parent.$.messager.alert('成功提示', result.msg, 'info');
 					dataGrid.datagrid('reload');
 				} else {
-					parent.$.messager.alert('失败警告', result.msg, 'info');
+					parent.$.messager.alert('失败警告', result.msg, 'error');
 				}
 				parent.$.messager.progress('close');
 			}, 'JSON');

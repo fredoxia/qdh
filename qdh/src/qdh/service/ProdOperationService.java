@@ -48,6 +48,7 @@ import qdh.dao.impl.qxMIS.Brand2DaoImpl;
 import qdh.dao.impl.qxMIS.ProductBarcode2DaoImpl;
 import qdh.dao.impl.qxMIS.Quarter2DaoImpl;
 import qdh.dao.impl.qxMIS.Year2DaoImpl;
+import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 import qdh.pageModel.DataGrid;
 import qdh.pageModel.PageHelper;
 import qdh.utility.NumUtility;
@@ -97,7 +98,8 @@ public class ProdOperationService {
 	@Autowired
 	private Brand2DaoImpl brand2DaoImpl;
 	
-	
+	@Autowired
+	private SystemConfigDaoImpl systemConfigDaoImpl;
 	
 	/**
 	 * 获取所有的current brands然后组成datagrid
@@ -124,6 +126,11 @@ public class ProdOperationService {
 	@Transactional
 	public Response deleteCurrentBrand(int id){
 		Response response = new Response();
+		
+		if (!systemConfigDaoImpl.canUpdateProduct()){
+			response.setFail("管理员已经锁定产品资料更新,请联系管理员");
+			return response;
+		}
 		
 		CurrentBrands currentBrands = currentBrandsDaoImpl.get(id, true);
 		if (currentBrands != null){
@@ -167,6 +174,9 @@ public class ProdOperationService {
 		
 		if (currentBrands != null){
 			response.setFail(currentBrands.getYear().getYear() + "-" + currentBrands.getQuarter().getQuarter_Name() + "-" + currentBrands.getBrand().getBrand_Name() + " 已经导入。请先删除再导入。");
+			return response;
+		} else if (!systemConfigDaoImpl.canUpdateProduct()){
+			response.setFail("管理员已经锁定产品资料更新,请联系管理员");
 			return response;
 		}
 		
@@ -280,7 +290,7 @@ public class ProdOperationService {
 				List<Object> totalObj = productBarcodeDaoImpl.getByCriteriaProjection(countCriteria, true);
 				totalRow = NumUtility.getProjectionIntegerValue(totalObj);
 				
-				System.out.println("--------" + totalRow);
+
 				pHelper = new PageHelper(rowsPerPage, pageNum, totalRow);
 
 				pbs = transferPB(productBarcodeDaoImpl.getByCritera(searchCriteria,pHelper.getFirstRow(), pHelper.getRowPerPage(), true));
