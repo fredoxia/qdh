@@ -67,5 +67,20 @@ public class Customer implements Serializable{
 		this.updateDate = updateDate;
 	}
 	
+	public String getCustNameVO(){
+		String name = custName;
+		
+		if (chainStoreName != null && chainStoreName.trim().length() > 0){
+			String storeNamec = chainStoreName.trim();
+			int length = storeNamec.length();
+			
+			if (length >4)
+				name += " " + storeNamec.substring(0, 4);
+			else 
+				name += " " + storeNamec;
+		}
+		
+		return name;
+	}
 	
 }

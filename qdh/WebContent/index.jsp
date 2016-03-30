@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,7 +6,18 @@
 <meta name="viewport" content ="width=device-width, initial-scale=1">
 <%@ include file="jsp/common/JQMStyle.jsp"%>
 <script>
-
+function login() {
+	var params=$("#loginform").serialize();
+	alert(params);
+	$.post('<%=request.getContextPath()%>/userController/login/mobile', params, 
+	function(result) {
+		if (result.success) {
+			$.messager.alert('信息', result.msg, 'info');
+		} else {
+			$("#loginFail").popup("open");
+		}
+	}, 'JSON');
+}
 </script>
 </head>
 <body>
@@ -32,7 +42,7 @@
 						id="password" name="password" placeholder="四位数的数字密码" />
 				</div>
 				<div data-role="fieldcontainer">
-					<a data-role="button" id="submit" data-theme="b">登录</a>
+					<a data-role="button" id="submit" data-theme="b" onclick ="login();">登录</a>
 				</div>
 			</form>
 		</div>
@@ -40,6 +50,7 @@
 		<footer data-role="footer">
 			<h1>©2016 千禧宝贝科技</h1>
 		</footer>
+		<div id="loginFail" data-role="popup">登陆失败</div>
 	</section>
 </body>
 </html>

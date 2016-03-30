@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.qxMIS.UserInfor2;
 import qdh.dao.impl.Response;
 import qdh.pageModel.Json;
@@ -34,6 +36,30 @@ public class UserController {
 			BeanUtils.copyProperties((UserInfor2)response.getReturnValue(), sessionInfo);
 			//sessionInfo.setIp(IpUtil.getIpAddr(request));
 			//sessionInfo.setResourceList(userService.resourceList(u.getId()));
+			
+			session.setAttribute(ControllerConfig.HQ_SESSION_INFO, sessionInfo);
+
+			j.setObj(sessionInfo);
+		} else {
+			j.setMsg(response.getMessage());
+		}
+		return j;
+	}
+	
+	@ResponseBody
+	@RequestMapping("/login/mobile")
+	public Json login(Customer cust, HttpSession session) {
+		Json j = new Json();
+		Response response = userService.loginMobile(cust);
+		if (response.isSuccess()) {
+			j.setSuccess(true);
+			j.setMsg("登陆成功！");
+
+			SessionInfo sessionInfo = new SessionInfo();
+			cust = (Customer)response.getReturnValue();
+			
+			sessionInfo.setUserId(cust.getId());
+			sessionInfo.setUserName(cust.getCustNameVO());
 			
 			session.setAttribute(ControllerConfig.HQ_SESSION_INFO, sessionInfo);
 
