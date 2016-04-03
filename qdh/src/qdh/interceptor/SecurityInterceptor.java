@@ -16,7 +16,7 @@ import qdh.sysParms.DefaultFunction;
 
 
 public class SecurityInterceptor implements HandlerInterceptor {
-	private final String MOBILE ="/Mobile";
+	private final String MOBILE ="/mobile";
 	private static final Logger logger = Logger.getLogger(SecurityInterceptor.class);
 
 

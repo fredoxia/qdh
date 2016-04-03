@@ -6,17 +6,35 @@
 <meta name="viewport" content ="width=device-width, initial-scale=1">
 <%@ include file="jsp/common/JQMStyle.jsp"%>
 <script>
+$(document).ready(function(){
+	
+});
 function login() {
-	var params=$("#loginform").serialize();
-	alert(params);
-	$.post('<%=request.getContextPath()%>/userController/login/mobile', params, 
-	function(result) {
-		if (result.success) {
-			$.messager.alert('信息', result.msg, 'info');
-		} else {
-			$("#loginFail").popup("open");
-		}
-	}, 'JSON');
+	if (validateLoginForm()){
+		var params=$("#loginform").serialize();
+
+		$.post('<%=request.getContextPath()%>/userController/login/mobile', params, 
+		function(result) {
+			if (result.success) {
+				$.mobile.changePage('<%=request.getContextPath()%>/userController/Main/mobile', { 
+				    transition: "slideup", 
+				    changeHash: false
+				});
+			} else {
+				renderPopup("登录错误",result.msg)
+			}
+		}, 'JSON');
+	}
+}
+
+function validateLoginForm(){
+	var userName = $("#id").val();
+	var password = $("#password").val();
+	if (userName == "" || password ==""){
+		renderPopup("验证错误","登录名和密码不能为空");
+		return false;
+	}
+	return true;
 }
 </script>
 </head>
@@ -24,7 +42,7 @@ function login() {
 	<section id="page1" data-role="page">
 
 		<header data-role="header" data-theme="b">
-			<h1>千禧宝贝在线订货系统</h1>
+			<h1>千禧在线订货</h1>
 		</header>
 
 		<div data-role="content" class="content">
@@ -35,14 +53,14 @@ function login() {
 			<form method="post" id="loginform">
 				<div data-role="fieldcontainer">
 					<label for="userName">用户名 : </label> <input type="number"
-						id="userName" name="userName" placeholder="我们提供给你的数字登录账号" />
+						id="id" name="id" placeholder="我们提供给你的数字登录账号" />
 				</div>
 				<div data-role="fieldcontainer">
 					<label for="password">密码 : </label> <input type="number"
-						id="password" name="password" placeholder="四位数的数字密码" />
+						id="password" name="password" required placeholder="四位数的数字密码" />
 				</div>
 				<div data-role="fieldcontainer">
-					<a data-role="button" id="submit" data-theme="b" onclick ="login();">登录</a>
+					<input type="button" id="submitBt" data-theme="b" onclick ="login();" value="登录"/>
 				</div>
 			</form>
 		</div>
@@ -50,7 +68,10 @@ function login() {
 		<footer data-role="footer">
 			<h1>©2016 千禧宝贝科技</h1>
 		</footer>
-		<div id="loginFail" data-role="popup">登陆失败</div>
+
+		<jsp:include  page="jsp/common/Popup.jsp"/>
+
 	</section>
+
 </body>
 </html>

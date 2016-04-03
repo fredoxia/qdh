@@ -70,6 +70,12 @@ public class UserController {
 		return j;
 	}
 	
+	@RequestMapping("/Main/mobile")
+	public String MobileMain() {
+		
+		return"/jsp/chainOrder/Main.jsp";
+	}
+	
 	@RequestMapping("/HQMain")
 	public String HQMain() {
 		

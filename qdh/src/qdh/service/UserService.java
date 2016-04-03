@@ -24,8 +24,20 @@ public class UserService {
 	}
 
 	public Response loginMobile(Customer cust) {
-		
-		return customerDaoImpl.getCustByUserNamePwd(cust.getId(), cust.getPassword());
+		Response response = new Response();
+		if (cust.getId() == 0)
+			response.setFail("用户名不存在");
+		else {
+			Customer cust2 = customerDaoImpl.get(cust.getId(), false);
+			
+			if (cust2 == null)
+				response.setFail("用户名不存在");
+			else if (!cust.getPassword().equals(cust2.getPassword()))
+				response.setFail("登录密码错误");
+			else 
+				response.setReturnValue(cust2);
+		}
+		return response;
 	}
 
 	
