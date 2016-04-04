@@ -6,8 +6,8 @@
 <meta name="viewport" content ="width=device-width, initial-scale=1">
 <%@ include file="jsp/common/JQMStyle.jsp"%>
 <script>
-$(document).ready(function(){
-	
+$(document).bind('mobileinit',function(){
+	$.mobile.loadPage.defaults.reloadPage = false;
 });
 function login() {
 	if (validateLoginForm()){
@@ -17,8 +17,9 @@ function login() {
 		function(result) {
 			if (result.success) {
 				$.mobile.changePage('<%=request.getContextPath()%>/userController/Main/mobile', { 
-				    transition: "slideup", 
-				    changeHash: false
+				    transition: "slideup",
+				    type:"post",
+				    dataUrl:"<%=request.getContextPath()%>/userController/Main/mobile"
 				});
 			} else {
 				renderPopup("登录错误",result.msg)
@@ -39,7 +40,7 @@ function validateLoginForm(){
 </script>
 </head>
 <body>
-	<section id="page1" data-role="page">
+	<div data-role="page">
 
 		<header data-role="header" data-theme="b">
 			<h1>千禧在线订货</h1>
@@ -65,13 +66,13 @@ function validateLoginForm(){
 			</form>
 		</div>
 
-		<footer data-role="footer">
+		<footer data-role="footer" data-theme="a">
 			<h1>©2016 千禧宝贝科技</h1>
 		</footer>
 
 		<jsp:include  page="jsp/common/Popup.jsp"/>
 
-	</section>
+	</div>
 
 </body>
 </html>

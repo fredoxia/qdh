@@ -14,25 +14,23 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
-	<section id="page1" data-role="page">
+	<div id="page2" data-role="page" data-url="../common/MobileHeader.jsp">
 
 		<jsp:include  page="../common/MobileHeader.jsp"/>
 
 		<div data-role="content" class="content">
 
 			<p style="">
-				登录系统
+				登录系统2
 			</p>
 			
 		</div>
 
-		<footer data-role="footer">
-			<h1>©2016 千禧宝贝科技</h1>
-		</footer>
+		<jsp:include  page="../common/MobileFooter.jsp"/>
 
 		<jsp:include  page="../common/Popup.jsp"/>
 
-	</section>
+	</div>
 
 </body>
 </html>
