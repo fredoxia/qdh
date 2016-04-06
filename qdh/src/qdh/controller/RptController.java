@@ -97,4 +97,22 @@ public class RptController {
 		return mav;
 	}
 	
+	
+	@RequestMapping("/GenerateProdRpt/mobile")
+	public ModelAndView GenerateMobileProdRpt(Integer cbId){
+		ModelAndView mav = new ModelAndView();
+		
+		Response response = new Response();
+		try {
+			response = rptService.generateMobileProdRpt(cbId);
+		} catch (Exception e){
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		mav.setViewName("/jsp/chainOrder/BarcodeRank.jsp");
+		mav.addObject("barcodeRank", response.getReturnValue());
+		
+		return mav;
+	}
+	
 }

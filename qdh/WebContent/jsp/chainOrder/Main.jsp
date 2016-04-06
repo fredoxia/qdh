@@ -14,7 +14,7 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
-	<div id="page2" data-role="page" data-url="../common/MobileHeader.jsp">
+	<div id="mainPage" data-role="page">
 
 		<jsp:include  page="../common/MobileHeader.jsp"/>
 

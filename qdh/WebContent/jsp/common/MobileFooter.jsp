@@ -4,7 +4,7 @@
 	<div data-role="navbar">
       <ul>
       	<li><a href="logout" data-icon="bullets">我的订单</a></li>
-      	<li><a href="logout" data-icon="star">品牌排名</a></li>
+      	<li><a href="<%=request.getContextPath()%>/rptController/GenerateProdRpt/mobile" data-icon="star">品牌排名</a></li>
       	<li></li>
       	<li></li>
       </ul>

@@ -76,6 +76,14 @@ public class UserController {
 		return"/jsp/chainOrder/Main.jsp";
 	}
 	
+	@RequestMapping("/Logout/mobile")
+	public String MobileLogout(HttpSession session) {
+		if (session != null) {
+			session.invalidate();
+		}
+		return"redirect:/index.jsp";
+	}
+	
 	@RequestMapping("/HQMain")
 	public String HQMain() {
 		
@@ -87,7 +95,7 @@ public class UserController {
 		if (session != null) {
 			session.invalidate();
 		}
-		return "/index.jsp";
+		return "/indexh.jsp";
 	}
 
 }

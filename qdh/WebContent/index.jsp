@@ -5,42 +5,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content ="width=device-width, initial-scale=1">
 <%@ include file="jsp/common/JQMStyle.jsp"%>
-<script>
-$(document).bind('mobileinit',function(){
-	$.mobile.loadPage.defaults.reloadPage = false;
-});
-function login() {
-	if (validateLoginForm()){
-		var params=$("#loginform").serialize();
 
-		$.post('<%=request.getContextPath()%>/userController/login/mobile', params, 
-		function(result) {
-			if (result.success) {
-				$.mobile.changePage('<%=request.getContextPath()%>/userController/Main/mobile', { 
-				    transition: "slideup",
-				    type:"post",
-				    dataUrl:"<%=request.getContextPath()%>/userController/Main/mobile"
-				});
-			} else {
-				renderPopup("登录错误",result.msg)
-			}
-		}, 'JSON');
-	}
-}
-
-function validateLoginForm(){
-	var userName = $("#id").val();
-	var password = $("#password").val();
-	if (userName == "" || password ==""){
-		renderPopup("验证错误","登录名和密码不能为空");
-		return false;
-	}
-	return true;
-}
-</script>
 </head>
 <body>
-	<div data-role="page">
+	<div id="loginPage" data-role="page">
 
 		<header data-role="header" data-theme="b">
 			<h1>千禧在线订货</h1>
@@ -71,7 +39,39 @@ function validateLoginForm(){
 		</footer>
 
 		<jsp:include  page="jsp/common/Popup.jsp"/>
+		
+		<script>
+			function login() {
+				if (validateLoginForm()){
+					var params=$("#loginform").serialize();
 
+					$.post('<%=request.getContextPath()%>/userController/login/mobile', params, 
+					function(result) {
+						if (result.success) {
+							$("#password").attr("value","");
+							$("#id").attr("value","");
+							$.mobile.changePage('<%=request.getContextPath()%>/userController/Main/mobile', { 
+							    transition: "slideup",
+							    type:"post",
+							    dataUrl:"<%=request.getContextPath()%>/userController/Main/mobile"
+							});
+						} else {
+							renderPopup("登录错误",result.msg)
+						}
+					}, 'JSON');
+				}
+			}
+			
+			function validateLoginForm(){
+				var userName = $("#id").val();
+				var password = $("#password").val();
+				if (userName == "" || password ==""){
+					renderPopup("验证错误","登录名和密码不能为空");
+					return false;
+				}
+				return true;
+			}
+		</script>
 	</div>
 
 </body>

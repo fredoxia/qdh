@@ -16,13 +16,14 @@ public class HQProdRptVO implements Serializable {
 	private String barcode ;
 	private String productCode;
 	private String category ;
-	private int numPerHand;
+	private Integer numPerHand;
 	private String color ;
 	private String size ;
-	private int quantity;
+	private Integer quantity;
 	private double wholePrice;
 	
-	public HQProdRptVO(ProductBarcode pb, int quantity){
+
+	public HQProdRptVO(ProductBarcode pb, Integer quantity){
 		Product p = pb.getProduct();
 		year = p.getYear().getYear();
 		quarter = p.getQuarter().getQuarter_Name();
@@ -38,8 +39,9 @@ public class HQProdRptVO implements Serializable {
 			size = pb.getSize().getName();
 		}
 		barcode = pb.getBarcode();
+		
 	}
-	
+
 	public String getCategory() {
 		return category;
 	}
@@ -90,10 +92,10 @@ public class HQProdRptVO implements Serializable {
 	public void setSize(String size) {
 		this.size = size;
 	}
-	public int getQuantity() {
+	public Integer getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(int quantity) {
+	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
 
@@ -101,7 +103,7 @@ public class HQProdRptVO implements Serializable {
 		return numPerHand;
 	}
 
-	public void setNumPerHand(int numPerHand) {
+	public void setNumPerHand(Integer numPerHand) {
 		this.numPerHand = numPerHand;
 	}
 

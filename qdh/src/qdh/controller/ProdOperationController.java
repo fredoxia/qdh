@@ -114,5 +114,6 @@ public class ProdOperationController {
 		DataGrid dataGrid = prodOperationService.getBarcodes(cbId, sort,order,page, rows);
 		return dataGrid;
 	}
+
 	
 }
