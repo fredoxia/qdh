@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,7 +52,7 @@
 							$("#password").attr("value","");
 							$("#id").attr("value","");
 							$.mobile.changePage('<%=request.getContextPath()%>/userController/Main/mobile', { 
-							    transition: "slideup",
+							    transition: "fade",
 							    type:"post",
 							    dataUrl:"<%=request.getContextPath()%>/userController/Main/mobile"
 							});

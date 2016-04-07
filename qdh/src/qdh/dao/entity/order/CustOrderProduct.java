@@ -19,6 +19,16 @@ public class CustOrderProduct implements Serializable{
 	private Timestamp lastUpdateTime = DateUtility.getToday();
 	private int status;
 	
+	public CustOrderProduct(){
+		
+	}
+	
+	public CustOrderProduct(int custId, ProductBarcode pb, int quantity){
+		this.custId = custId;
+		this.productBarcode = pb;
+		this.quantity = quantity;
+		this.sumWholePrice = quantity * pb.getProduct().getWholePrice();
+	}
 	
 	public double getSumWholePrice() {
 		return sumWholePrice;
@@ -57,5 +67,23 @@ public class CustOrderProduct implements Serializable{
 	public void setLastUpdateTime(Timestamp lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
+
+	public void addQ(Integer q) {
+		quantity += q;
+		sumWholePrice = productBarcode.getProduct().getWholePrice() * quantity;
+		lastUpdateTime = DateUtility.getToday();
+	}
 	
+	public void reduceQ(Integer q){
+		if (quantity == 0)
+			return ;
+		else {
+			if (quantity <= q)
+				q = quantity;
+			
+			quantity -= q;
+			sumWholePrice = productBarcode.getProduct().getWholePrice() * quantity;
+			lastUpdateTime = DateUtility.getToday();
+		}
+	}
 }

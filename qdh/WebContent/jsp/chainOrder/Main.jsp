@@ -26,7 +26,16 @@ $(document).ready(function(){
 			
 		</div>
 
-		<jsp:include  page="../common/MobileFooter.jsp"/>
+		<div data-role="footer" data-theme="b" data-position="fixed">
+			<div data-role="navbar">
+		      <ul>
+		      	<li><a href="logout" data-icon="bullets" class="ui-btn-active ui-state-persist">我的订单</a></li>
+		      	<li><a id="brandRankFooter" href="<%=request.getContextPath()%>/rptController/GenerateProdRpt/mobile" data-icon="star"  data-ajax="false">品牌排名</a></li>
+		      	<li></li>
+		      	<li></li>
+		      </ul>
+		     </div>
+		</div> 
 
 		<jsp:include  page="../common/Popup.jsp"/>
 

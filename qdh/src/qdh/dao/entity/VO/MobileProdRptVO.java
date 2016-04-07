@@ -14,6 +14,7 @@ public class MobileProdRptVO extends HQProdRptVO {
 	public MobileProdRptVO(ProductBarcode pb, Integer quantity, Integer myQuantity, Integer rank){
 		super(pb, quantity);
 		this.rank = rank;
+		this.myQuantity = myQuantity;
 		setWholePrice(pb.getProduct().getWholePrice());
 	}
 

@@ -2,15 +2,20 @@ package qdh.controller;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import qdh.dao.entity.VO.FactoryOrderExcelVO;
+import qdh.dao.entity.order.CurrentBrands;
 import qdh.dao.impl.Response;
 import qdh.pageModel.DataGrid;
+import qdh.pageModel.SessionInfo;
 import qdh.service.RptService;
 
 @Controller
@@ -99,18 +104,21 @@ public class RptController {
 	
 	
 	@RequestMapping("/GenerateProdRpt/mobile")
-	public ModelAndView GenerateMobileProdRpt(Integer cbId){
+	public ModelAndView GenerateMobileProdRpt(CurrentBrands cb, HttpSession session){
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		
 		ModelAndView mav = new ModelAndView();
 		
 		Response response = new Response();
 		try {
-			response = rptService.generateMobileProdRpt(cbId);
+	
+			response = rptService.generateMobileProdRpt(cb,loginUser.getUserId());
 		} catch (Exception e){
 			response.setFail("系统错误 : " + e.getMessage());
 		}
 		
 		mav.setViewName("/jsp/chainOrder/BarcodeRank.jsp");
-		mav.addObject("barcodeRank", response.getReturnValue());
+		mav.addAllObjects((Map<String, ?>)response.getReturnValue());
 		
 		return mav;
 	}

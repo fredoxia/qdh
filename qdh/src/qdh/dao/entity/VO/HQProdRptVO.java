@@ -10,6 +10,7 @@ public class HQProdRptVO implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 8494586214121087738L;
+	private int pbId;
 	private String year;
 	private String quarter;
 	private String brand;
@@ -39,7 +40,16 @@ public class HQProdRptVO implements Serializable {
 			size = pb.getSize().getName();
 		}
 		barcode = pb.getBarcode();
+		pbId = pb.getId();
 		
+	}
+
+	public int getPbId() {
+		return pbId;
+	}
+
+	public void setPbId(int pbId) {
+		this.pbId = pbId;
 	}
 
 	public String getCategory() {

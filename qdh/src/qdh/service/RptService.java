@@ -214,13 +214,23 @@ public class RptService {
 	}
 
 	@Transactional
-	public Response generateMobileProdRpt(Integer currentBrandId) {
+	public Response generateMobileProdRpt(CurrentBrands cb, Integer custId) {
 		Response response = new Response();
+		Map dataMap = new HashMap();
+		
+		//1. 页面下拉菜单
+		List<CurrentBrandVO> brands = ProdOperationService.transferCB(currentBrandsDaoImpl.getAll(true));
+		CurrentBrandVO emptyVo = new CurrentBrandVO();
+		emptyVo.setFullName("所有品牌");
+		brands.add(0, emptyVo);
+	
+		dataMap.put("currentBrand", cb);
+		dataMap.put("cb", brands);
 		
 		//1. 限制产品信息
 		String pbConstraints = "";
-		if (currentBrandId != null && currentBrandId != 0){
-			CurrentBrands currentBrands = currentBrandsDaoImpl.get(currentBrandId, true);
+		if (cb != null && cb.getId() != 0){
+			CurrentBrands currentBrands = currentBrandsDaoImpl.get(cb.getId(), true);
 			
 			if (currentBrands != null){
 				int yearId = currentBrands.getYear().getYear_ID();
@@ -265,13 +275,21 @@ public class RptService {
 							loggerLocal.error("产品信息不存在 : " + productId);
 							continue;
 						}
-						MobileProdRptVO rpt = new MobileProdRptVO(pBarcode, quantity.intValue(), 0, i+1);
+						
+						CustOrderProduct custOrderProduct = custOrderProdDaoImpl.getByPk(custId, pBarcode.getId());
+						int myQ = 0;
+						if (custOrderProduct != null)
+							myQ = custOrderProduct.getQuantity();
+						
+						MobileProdRptVO rpt = new MobileProdRptVO(pBarcode, quantity.intValue(), myQ, i+1);
 						rpts.add(rpt);
 				  } 
 			}
-			response.setReturnValue(rpts);
+			dataMap.put("barcodeRank",rpts);
 	     }
-		 return response;
+	    
+	    response.setReturnValue(dataMap);
+		return response;
 	}
 
 }
