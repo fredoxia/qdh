@@ -69,12 +69,7 @@ public class UserController {
 		}
 		return j;
 	}
-	
-	@RequestMapping("/Main/mobile")
-	public String MobileMain() {
-		
-		return"/jsp/chainOrder/Main.jsp";
-	}
+
 	
 	@RequestMapping("/Logout/mobile")
 	public String MobileLogout(HttpSession session) {

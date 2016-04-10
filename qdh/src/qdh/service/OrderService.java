@@ -1,6 +1,10 @@
 package qdh.service;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +56,16 @@ public class OrderService {
 			custOrderProduct.addQ(quantity);
 			custOrderProdDaoImpl.update(custOrderProduct, true);
 		}
+		
+		//2.获取这个货品的当前数量
+		int myQ = custOrderProdDaoImpl.getMyQ(userId, pbId);
+		int totalQ = custOrderProdDaoImpl.getTotalQ(pbId);
+		
+		Map<String, Integer> qMap = new HashMap();
+		qMap.put("myQ", myQ);
+		qMap.put("totalQ", totalQ);
+		
+		response.setReturnValue(qMap);
 		
 		return response;
 	}

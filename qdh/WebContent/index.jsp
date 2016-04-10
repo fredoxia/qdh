@@ -44,17 +44,19 @@
 		<script>
 			function login() {
 				if (validateLoginForm()){
+					$.mobile.loading("show",{ theme: "b", text: "正在加载数据", textonly: false});
 					var params=$("#loginform").serialize();
 
 					$.post('<%=request.getContextPath()%>/userController/login/mobile', params, 
 					function(result) {
+						$.mobile.loading("hide");
 						if (result.success) {
 							$("#password").attr("value","");
 							$("#id").attr("value","");
-							$.mobile.changePage('<%=request.getContextPath()%>/userController/Main/mobile', { 
+							$.mobile.changePage('<%=request.getContextPath()%>/orderController/StartOrder/mobile', { 
 							    transition: "fade",
 							    type:"post",
-							    dataUrl:"<%=request.getContextPath()%>/userController/Main/mobile"
+							    dataUrl:"<%=request.getContextPath()%>/orderController/StartOrder/mobile"
 							});
 						} else {
 							renderPopup("登录错误",result.msg)

@@ -220,7 +220,7 @@ public class CustAcctService {
 
 
 
-	private List<CustOrderProductVO> transferCustOrderProductVOs(List<CustOrderProduct> products,List<CustOrderProductVO> footer){
+	public static List<CustOrderProductVO> transferCustOrderProductVOs(List<CustOrderProduct> products,List<CustOrderProductVO> footer){
 		List<CustOrderProductVO> vos = new ArrayList<>();
 		int totalQ = 0;
 		double totalSum = 0;
@@ -236,12 +236,14 @@ public class CustAcctService {
 			}
 		}
 		
-		CustOrderProductVO footerVo = new CustOrderProductVO();
-		footerVo.setQuantity(totalQ);
-		footerVo.setSumWholePrice(totalSum);
-		footerVo.setLastUpdateTime(null);
-		footerVo.setProductCode("总计");
-		footer.add(footerVo);
+		if (footer != null){
+			CustOrderProductVO footerVo = new CustOrderProductVO();
+			footerVo.setQuantity(totalQ);
+			footerVo.setSumWholePrice(totalSum);
+			footerVo.setLastUpdateTime(null);
+			footerVo.setProductCode("总计");
+			footer.add(footerVo);
+		}
 		
 		return vos;
 	}

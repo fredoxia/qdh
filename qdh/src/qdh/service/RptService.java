@@ -10,6 +10,7 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.VO.CurrentBrandVO;
+import qdh.dao.entity.VO.CustOrderProductVO;
 import qdh.dao.entity.VO.HQCustRptVO;
 import qdh.dao.entity.VO.HQProdRptVO;
 import qdh.dao.entity.VO.MobileProdRptVO;
@@ -213,6 +215,12 @@ public class RptService {
 		return response;
 	}
 
+	/**
+	 * 所有连锁店订货产品排名
+	 * @param cb
+	 * @param custId
+	 * @return
+	 */
 	@Transactional
 	public Response generateMobileProdRpt(CurrentBrands cb, Integer custId) {
 		Response response = new Response();
@@ -290,6 +298,77 @@ public class RptService {
 	    
 	    response.setReturnValue(dataMap);
 		return response;
+	}
+
+	/**
+	 * 连锁店自己订货的情况
+	 * @param userId
+	 * @param cb
+	 * @return
+	 */
+	public Response generateMobileCustRpt(int userId, CurrentBrands cb) {
+		Response response = new Response();
+
+		Map dataMap = new HashMap();
+		
+		//1. 页面下拉菜单
+		List<CurrentBrandVO> brands = ProdOperationService.transferCB(currentBrandsDaoImpl.getAll(true));
+		CurrentBrandVO emptyVo = new CurrentBrandVO();
+		emptyVo.setFullName("所有品牌");
+		brands.add(0, emptyVo);
+	
+		dataMap.put("cb", brands);
+		if (cb == null || cb.getId() == 0)
+		    dataMap.put("currentBrand", emptyVo);
+		else
+			dataMap.put("currentBrand", cb);
+		
+//		DetachedCriteria countCriteria = buildMobileCustRptCriteria(cb);
+//		countCriteria.setProjection(Projections.rowCount());
+//
+//		List countObj = custOrderProdDaoImpl.getByCritera(countCriteria, true);
+//		int totalRow = 0;
+//		if (countObj != null && countObj.size() > 0){
+//			totalRow = (Integer)countObj.get(0);
+//		}
+
+		
+		DetachedCriteria resultCriteria = buildMobileCustRptCriteria(cb);
+		List<CustOrderProduct> products = custOrderProdDaoImpl.getByCritera(resultCriteria, true);
+
+		List<CustOrderProductVO> footer = new ArrayList<>();
+		List<CustOrderProductVO> corpVos = CustAcctService.transferCustOrderProductVOs(products, footer);
+
+		dataMap.put("cops", corpVos);
+		dataMap.put("copsFooter", footer.get(0));
+	    response.setReturnValue(dataMap);
+
+		return response;
+	}
+	
+	private DetachedCriteria buildMobileCustRptCriteria(CurrentBrands cb){
+		//1. 限制产品信息
+		Set<Integer> barcodeIds = null;
+		if (cb != null && cb.getId() != 0){
+			int currentBrandId = cb.getId();
+			CurrentBrands currentBrands = currentBrandsDaoImpl.get(currentBrandId, true);
+			
+			if (currentBrands != null){
+				int yearId = currentBrands.getYear().getYear_ID();
+				int quarterId = currentBrands.getQuarter().getQuarter_ID();
+				int brandId = currentBrands.getBrand().getBrand_ID();
+				
+				//1. find all products barcode
+				barcodeIds = productBarcodeDaoImpl.getIds(yearId, quarterId, brandId);
+			}
+		}
+		
+		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+		if (barcodeIds != null)
+			criteria.add(Restrictions.in("productBarcode.id", barcodeIds));
+		
+		return criteria;
 	}
 
 }

@@ -34,4 +34,10 @@ public class OrderController {
 		
 		return json;
 	}
+	
+	
+	@RequestMapping("/StartOrder/mobile")
+	public String StartOrder(HttpSession session){
+		return "/jsp/chainOrder/StartOrder.jsp";
+	}
 }

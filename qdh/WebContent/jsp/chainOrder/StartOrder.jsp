@@ -29,9 +29,9 @@ $(document).ready(function(){
 		<div data-role="footer" data-theme="b" data-position="fixed">
 			<div data-role="navbar">
 		      <ul>
-		      	<li><a href="logout" data-icon="bullets" class="ui-btn-active ui-state-persist">我的订单</a></li>
+		      	<li><a href="<%=request.getContextPath()%>/orderController/StartOrder/mobile" data-icon="edit" data-ajax="false" class="ui-btn-active ui-state-persist">我要订货</a></li>
+		      	<li><a href="<%=request.getContextPath()%>/rptController/CustRpt/mobile" data-icon="bullets" data-ajax="false">我的订单</a></li>
 		      	<li><a id="brandRankFooter" href="<%=request.getContextPath()%>/rptController/GenerateProdRpt/mobile" data-icon="star"  data-ajax="false">品牌排名</a></li>
-		      	<li></li>
 		      	<li></li>
 		      </ul>
 		     </div>

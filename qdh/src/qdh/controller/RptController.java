@@ -102,7 +102,12 @@ public class RptController {
 		return mav;
 	}
 	
-	
+	/**
+	 * 所有连锁店订货排名情况
+	 * @param cb
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/GenerateProdRpt/mobile")
 	public ModelAndView GenerateMobileProdRpt(CurrentBrands cb, HttpSession session){
 		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
@@ -122,5 +127,50 @@ public class RptController {
 		
 		return mav;
 	}
+	
+	/**
+	 * 连锁店客户自己的订货情况
+	 * @param cb
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/CustRpt/mobile")
+	public ModelAndView CustRpt(CurrentBrands cb, HttpSession session){
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		ModelAndView mav = new ModelAndView();
+		
+		Response response = new Response();
+		try {
+	
+			response = rptService.generateMobileCustRpt(loginUser.getUserId(),cb);
+		} catch (Exception e){
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		mav.setViewName("/jsp/chainOrder/MyOrder.jsp");
+		mav.addAllObjects((Map<String, ?>)response.getReturnValue());
+		
+		return mav;
+	}
+	
+//	@ResponseBody
+//	@RequestMapping("/GenerateProdRptData/mobile")
+//	public DataGrid GenerateMobileCustRptData(CurrentBrands cb, Integer page, Integer rows, String sort, String order, HttpSession session){
+//		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+//	
+//		Response response = new Response();
+//		DataGrid dataGrid = new DataGrid();
+//		
+//		try {
+//	
+//			response = rptService.generateMobileCustRpt(loginUser.getUserId(),cb, page, rows, sort, order);
+//			dataGrid = (DataGrid)response.getReturnValue();
+//		} catch (Exception e){
+//			response.setFail("系统错误 : " + e.getMessage());
+//		}
+//		
+//
+//		return dataGrid;
+//	}
 	
 }
