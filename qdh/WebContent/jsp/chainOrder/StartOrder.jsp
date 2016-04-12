@@ -8,9 +8,12 @@
 <%@ include file="../common/JQMStyle.jsp"%>
 <script>
 $(document).ready(function(){
-	
-});
-
+	$("#productCode").focus();
+})
+function clearProductCode(){
+	$("#productCode").focus();
+	$("#productCode").attr("value","");
+}
 </script>
 </head>
 <body>
@@ -19,13 +22,20 @@ $(document).ready(function(){
 		<jsp:include  page="../common/MobileHeader.jsp"/>
 
 		<div data-role="content" class="content">
+				<table>
+				    <tr>
+						<td><label for="productCode">货号 : </label></td> 
+						<td><input type="text" id="productCode" name="productCode"  placeholder="输入至少三位货号,自动查找"/></td>
+					</tr>
 
-			<p style="">
-				登录系统2
-			</p>
-			
+				</table>
+				<div class="ui-grid-a ui-responsive">
+    				<div class="ui-block-a"><input type="button" id="searchBnt" data-theme="a" onclick ="search();" value="查找货品"/></div>
+    				<div class="ui-block-b"><input type="button" id="clearBnt" data-theme="b" onclick ="clearProductCode();" value="清空查询条件"/></div>
+				</div>
+
+				
 		</div>
-
 		<div data-role="footer" data-theme="b" data-position="fixed">
 			<div data-role="navbar">
 		      <ul>
@@ -38,7 +48,6 @@ $(document).ready(function(){
 		</div> 
 
 		<jsp:include  page="../common/Popup.jsp"/>
-
 	</div>
 
 </body>
