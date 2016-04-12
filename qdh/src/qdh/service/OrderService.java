@@ -2,6 +2,7 @@ package qdh.service;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.map.HashedMap;
@@ -50,7 +51,7 @@ public class OrderService {
 		
 		CustOrderProduct custOrderProduct = custOrderProdDaoImpl.getByPk(userId, pbId);
 		if (custOrderProduct == null){
-			custOrderProduct = new CustOrderProduct(userId, pBarcode, 1);
+			custOrderProduct = new CustOrderProduct(userId, pBarcode, quantity);
 			custOrderProdDaoImpl.save(custOrderProduct, true);
 		} else {
 			custOrderProduct.addQ(quantity);
@@ -64,6 +65,64 @@ public class OrderService {
 		Map<String, Integer> qMap = new HashMap();
 		qMap.put("myQ", myQ);
 		qMap.put("totalQ", totalQ);
+		
+		response.setReturnValue(qMap);
+		
+		return response;
+	}
+
+	@Transactional
+	public Response myOrderMore(SessionInfo loginUser, Integer pbId,
+			Integer quantity) {
+		Response response = new Response();
+		ProductBarcode pBarcode = productBarcodeDaoImpl.get(pbId, true);
+		if (pBarcode == null){
+			response.setFail("无法找到当前产品");
+			return response;
+		}
+		
+		if (quantity == null)
+			quantity = 1;
+		
+		int userId = loginUser.getUserId();
+		
+		CustOrderProduct custOrderProduct = custOrderProdDaoImpl.getByPk(userId, pbId);
+		if (custOrderProduct == null){
+			if (quantity > 0){
+				custOrderProduct = new CustOrderProduct(userId, pBarcode, quantity);
+				custOrderProdDaoImpl.save(custOrderProduct, true);
+			} else {
+				response.setFail("还没有此货品定单,无法减订");
+				return response;
+			}
+				
+		} else {
+			int newQ = quantity + custOrderProduct.getQuantity();
+			
+			if (newQ > 0){
+				custOrderProduct.addQ(quantity);
+				custOrderProdDaoImpl.update(custOrderProduct, true);
+			} else {
+				custOrderProdDaoImpl.delete(custOrderProduct, true);
+				response.setReturnCode(Response.WARNING);
+			}
+
+		}
+		
+		//2.获取用户的当前数量
+		List<Object> myTotal = custOrderProdDaoImpl.getMyTotal(userId);
+		
+		//3. 获取这个货品的当前信息
+		CustOrderProduct coProduct = custOrderProdDaoImpl.getByPk(userId, pbId);
+		
+		Map<String, Object> qMap = new HashMap();
+		qMap.put("myQ", myTotal.get(0));
+		qMap.put("mySum", myTotal.get(1));
+		
+		if (coProduct != null){
+			qMap.put("pQ", coProduct.getQuantity());
+			qMap.put("pSum", coProduct.getSumWholePrice());
+		}
 		
 		response.setReturnValue(qMap);
 		

@@ -333,7 +333,7 @@ public class RptService {
 //		}
 
 		
-		DetachedCriteria resultCriteria = buildMobileCustRptCriteria(cb);
+		DetachedCriteria resultCriteria = buildMobileCustRptCriteria(cb,userId);
 		List<CustOrderProduct> products = custOrderProdDaoImpl.getByCritera(resultCriteria, true);
 
 		List<CustOrderProductVO> footer = new ArrayList<>();
@@ -346,7 +346,7 @@ public class RptService {
 		return response;
 	}
 	
-	private DetachedCriteria buildMobileCustRptCriteria(CurrentBrands cb){
+	private DetachedCriteria buildMobileCustRptCriteria(CurrentBrands cb, Integer custId){
 		//1. 限制产品信息
 		Set<Integer> barcodeIds = null;
 		if (cb != null && cb.getId() != 0){
@@ -365,6 +365,7 @@ public class RptService {
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
 		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+		criteria.add(Restrictions.eq("custId", custId));
 		if (barcodeIds != null)
 			criteria.add(Restrictions.in("productBarcode.id", barcodeIds));
 		

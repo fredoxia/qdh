@@ -230,7 +230,7 @@ public class CustAcctService {
 			for (CustOrderProduct crp : products){
 				CustOrderProductVO vo = new CustOrderProductVO(crp);
 				vos.add(vo);
-				
+				//System.out.println(vo.getBrand() + "," + vo.getProductCode() + "," + vo.getQuantity() + "," + vo.getSumWholePrice());
 				totalQ += vo.getQuantity();
 				totalSum += vo.getSumWholePrice();
 			}

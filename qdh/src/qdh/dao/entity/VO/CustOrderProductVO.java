@@ -14,6 +14,7 @@ public class CustOrderProductVO implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -8713286109297381876L;
+	private Integer pbId = null;
 	private String year = "";
 	private String quarter = "";
 	private String brand = "";
@@ -37,6 +38,7 @@ public class CustOrderProductVO implements Serializable {
 		
     	Product p = pb.getProduct();
     	
+    	pbId = pb.getId();
     	year = p.getYear().getYear();
     	quarter = p.getQuarter().getQuarter_Name();
     	brand = p.getBrand().getBrand_Name();
@@ -55,6 +57,14 @@ public class CustOrderProductVO implements Serializable {
     	quantity = crp.getQuantity();
     	sumWholePrice = crp.getSumWholePrice();
     	lastUpdateTime = crp.getLastUpdateTime();
+	}
+
+	public Integer getPbId() {
+		return pbId;
+	}
+
+	public void setPbId(Integer pbId) {
+		this.pbId = pbId;
 	}
 
 	public int getNumPerHand() {

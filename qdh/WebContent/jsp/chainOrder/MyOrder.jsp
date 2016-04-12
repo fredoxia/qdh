@@ -6,29 +6,43 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<meta name="viewport" content ="width=device-width, initial-scale=1">
 <%@ include file="../common/JQMStyle.jsp"%>
 </head>
 <body>
 	<div id="myOrder" data-role="page">
 		<script>
-			function addOrder(pbId){
+		    function myOrder(pbId, quantity){
 				$.mobile.loading("show",{ theme: "b", text: "正在加载数据", textonly: false});
-				var params="pbId=" + pbId;
+				var params="pbId=" + pbId + "&quantity=" + quantity;
 
-				$.post('<%=request.getContextPath()%>/orderController/OrderMore/mobile', params, 
+				$.post('<%=request.getContextPath()%>/orderController/MyOrderMore/mobile', params, 
 				function(result) {
 					$.mobile.loading("hide");
 					if (result.success) {
 						var resultData = result.obj;
 						var myQ = resultData.myQ;
-						var totalQ = resultData.totalQ;
-						$("#myQ" + pbId).html(myQ);
-						$("#totalQ" + pbId).html(totalQ);
+						var mySum = resultData.mySum;
+						var pQ = resultData.pQ;
+						var pSum = resultData.pSum;
+						$("#pQ" + pbId).html(pQ);
+						$("#pSum" + pbId).html(pSum);
+						$("#myQ1").html(myQ);
+						$("#mySum1").html(mySum);
+						$("#myQ2").html(myQ);
+						$("#mySum2").html(mySum);
+					} else if (result.returnCode == WARNING){
+						$("#pRow"+pbId).remove(); 
 					} else {
 						renderPopup("系统错误",result.msg)
 					}
 				}, 'JSON');
+		    }
+		    function deductOrder(pbId){
+		    	myOrder(pbId, -1);
+		    }
+			function addOrder(pbId){
+				myOrder(pbId, 1);
 			}
 			function changeCb(changeVal){
 				var params = "id=" +changeVal;
@@ -41,39 +55,49 @@
 			<form id="form1" name="form1">
 		    	<form:select id="cbId"  path="currentBrand.id" items="${cb}" itemLabel="fullName" itemValue="id" onchange="changeCb(this.value);"></form:select> 
 			</form>
-			<table data-role="table" id="table-column-toggle" class="ui-responsive table-stroke">
+			<table data-role="table" id="table-column-toggle"  data-mode="columntoggle" class="ui-responsive table-stroke" data-column-btn-text="挑选列..">
 			     <thead>
 			       <tr>
-			         <th>品牌</th>
+			         <th data-priority="1">品牌</th>
 			         <th>货号</th>
 			         <th>数量(手)</th>
-			         <th>总价</th>
+			         <th data-priority="2">总价</th>
+			         <th></th>
+			         <th></th>
 			       </tr>
 			     </thead>
 			     <tbody>
 					<c:if test="${fn:length(cops) == 0}">
-						<td colspan="7">暂时还没有订货数据</td>				
+						<td colspan="6">暂时还没有订货数据</td>				
 					</c:if>
-					<c:if test="${fn:length(cops) > 10 && not empty copsFooter}">
+					<c:if test="${fn:length(cops) > 0 && not empty copsFooter}">
 						<tr>
-							<th colspan="2">当前合计</th>
-						    <th>${copsFooter.quantity}</th>
-							<th>${copsFooter.sumWholePrice}</th>
+							<th></th>
+							<th>合计</th>
+						    <th id="myQ1">${copsFooter.quantity}</th>
+							<th id="mySum1">${copsFooter.sumWholePrice}</th>
+							<th width="4%"></th>
+							<th width="4%"></th>
 						</tr>
 					</c:if>
 					<c:forEach items="${cops}" var="cop">
-						<tr>
+						<tr id="pRow${cop.pbId}">
 							<td style="vertical-align:middle;">${cop.brand}</td>
 						    <td style="vertical-align:middle;">${cop.productCode} ${cop.color}</td>
-						    <td style="vertical-align:middle;" id="myQ${barcodeB.pbId}">${cop.quantity}</td>
-							<td style="vertical-align:middle;">${cop.sumWholePrice}</td>
+						    <td style="vertical-align:middle;" id="pQ${cop.pbId}">${cop.quantity}</td>
+							<td style="vertical-align:middle;" id="pSum${cop.pbId}">${cop.sumWholePrice}</td>
+							<td style="vertical-align:middle;"><input type="button" value="加订" data-mini="true" onclick="addOrder(${cop.pbId});"/></td>
+							<td style="vertical-align:middle;"><input type="button" value="减订" data-mini="true" onclick="deductOrder(${cop.pbId});"/></td>
 						</tr>
 					</c:forEach>
 					<c:if test="${fn:length(cops) > 0 && not empty copsFooter}">
 						<tr>
-							<th colspan="2">当前合计</th>
-						    <th>${copsFooter.quantity}</th>
-							<th>${copsFooter.sumWholePrice}</th>
+							<th></th>
+							<th>合计</th>
+						    <th id="myQ2">${copsFooter.quantity}</th>
+							<th id="mySum2">${copsFooter.sumWholePrice}</th>
+							<th></th>
+							<th></th>
 						</tr>
 					</c:if>
 			     </tbody>
@@ -91,7 +115,7 @@
 		      </ul>
 		     </div>
 		</div> 
-
+		<jsp:include  page="../common/Popup.jsp"/>
 
 	</div>
 

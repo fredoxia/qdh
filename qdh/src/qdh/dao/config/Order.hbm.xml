@@ -27,6 +27,7 @@
         <property name="status" column="status" type="integer"/>
     </class>   
     <class name="CustOrder" table="cust_order">
+    	<cache usage="read-write" region="qdh"/>
         <id name="custId" column="cust_id">
             <generator class="foreign">
                 <param name="property">customer</param>
@@ -41,6 +42,7 @@
 		<one-to-one name="customer" class="Customer"/>
     </class>  
     <class name="CustOrderProduct" table="cust_order_product">
+    	<cache usage="read-write" region="qdh"/>
         <composite-id>
              <key-many-to-one name="productBarcode" column="product_barcode_id" class="qdh.dao.entity.product.ProductBarcode" lazy="false"/>  
              <key-property name="custId" column="cust_id" type="integer"></key-property>       

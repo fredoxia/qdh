@@ -19,6 +19,8 @@ public class Json implements java.io.Serializable {
 	private static final long serialVersionUID = -8035480926731148678L;
 
 	private boolean success = false;
+	
+	private int returnCode = 0;
 
 	private String msg = "";
 
@@ -35,6 +37,16 @@ public class Json implements java.io.Serializable {
 			success = true;
 		else 
 			success = false;
+		
+		returnCode = response.getReturnCode();
+	}
+
+	public int getReturnCode() {
+		return returnCode;
+	}
+
+	public void setReturnCode(int returnCode) {
+		this.returnCode = returnCode;
 	}
 
 	public boolean isSuccess() {

@@ -1,5 +1,6 @@
 package qdh.dao.impl.order;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -45,5 +46,26 @@ public class CustOrderProdDaoImpl extends BaseDAO<CustOrderProduct>{
 		List<Object> totalObj = this.getByCriteriaProjection(criteria, true);
 		int q = NumUtility.getProjectionIntegerValue(totalObj);
 		return q;
+	}
+	
+	public List<Object> getMyTotal(Integer custId) {
+		List<Object> myTotal = new ArrayList<>();
+		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+		criteria.setProjection(Projections.projectionList().add(Projections.sum("quantity")).add(Projections.sum("sumWholePrice")));
+		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+		criteria.add(Restrictions.eq("custId", custId));
+		List<Object> resultObj = this.getByCriteriaProjection(criteria, true);
+		Object[] totalObj = null;
+		if (resultObj == null || resultObj.size()<1){
+			myTotal.add(0);
+			myTotal.add(0);
+		} else 
+			totalObj = (Object[])resultObj.get(0);
+		
+		for (Object object : totalObj){
+			if (object != null)
+				myTotal.add(object);
+		}
+		return myTotal;
 	}
 }
