@@ -2,6 +2,8 @@ package qdh.dao.impl.order;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
@@ -68,4 +70,6 @@ public class CustOrderProdDaoImpl extends BaseDAO<CustOrderProduct>{
 		}
 		return myTotal;
 	}
+
+
 }

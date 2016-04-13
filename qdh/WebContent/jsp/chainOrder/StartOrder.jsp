@@ -13,6 +13,100 @@ $(document).ready(function(){
 function clearProductCode(){
 	$("#productCode").focus();
 	$("#productCode").attr("value","");
+	
+    $("#products").hide();
+    
+    $('#productBody tr').each(function () {                
+        $(this).remove();
+    });
+
+}
+function checkSearch(){
+	if ($.trim($("#productCode").val()).length >= 3)
+		searchProduct();
+}
+function searchProduct(){
+	if (validateSearch()){
+		var params = "productCode=" + $("#productCode").val();
+		
+		$.mobile.loading("show",{ theme: "b", text: "正在加载数据", textonly: false});
+		
+		$.post('<%=request.getContextPath()%>/orderController/SearchProduct/mobile', params, 
+		function(result) {
+			
+			if (result.success) {
+			    $('#productBody tr').each(function () {                
+			        $(this).remove();
+			    });
+			    
+			    var cops = result.obj;
+			    if (cops != null && cops.length != 0){
+				    for (var i = 0; i < cops.length; i++){
+				    	
+				    	var j = i +1;
+				        if (cops[i] != "")  {
+					          $("<tr id='pRow"+cops[i].pbId+"'><td>"+
+					        		  cops[i].brand +"</td><td>"+
+					        		  cops[i].productCode +" " + cops[i].color+"</td><td id='pQ"+cops[i].pbId+"'>"+
+					        		  cops[i].quantity+"</td><td id='pSum"+cops[i].pbId+"'>"+
+					        		  cops[i].sumWholePrice+"</td><td>"+
+										"<div name='btnGroup' data-role='controlgroup' data-type='horizontal'>"+
+											"<input name='addBtn' type='button' value='加订' data-mini='true'  data-inline='true' onclick='addOrder("+cops[i].pbId+");'/>"+
+											"<input name='addBtn' type='button' value='减订' data-mini='true'  data-inline='true' onclick='deductOrder("+cops[i].pbId+");'/>"+
+										"</div>"+
+							          "</td></tr>").appendTo("#productBody");
+				        }
+				    }
+			    } else {
+			    	$("<tr><td colspan=5><font color='red'>没有查询到产品</font> </td></tr>").appendTo("#productBody");
+			    }
+			    
+			    $("#products").show();
+			    $("[name='addBtn']").button();
+			    $("[name='btnGroup']").controlgroup();
+
+			    $.mobile.loading("hide");
+			} else {
+				$.mobile.loading("hide");
+				renderPopup("系统错误",result.msg)
+			}
+		}, 'JSON');
+	}
+}
+function validateSearch(){
+	if ($.trim($("#productCode").val()).length < 1){
+		renderPopup("查询错误","请输入至少一位货号作为查询条件");
+		$("#productCode").focus();
+		return false;
+	} else 
+		return true;
+}
+function myOrder(pbId, quantity){
+	$.mobile.loading("show",{ theme: "b", text: "正在加载数据", textonly: false});
+	var params="pbId=" + pbId + "&quantity=" + quantity;
+
+	$.post('<%=request.getContextPath()%>/orderController/StartOrderMore/mobile', params, 
+	function(result) {
+		$.mobile.loading("hide");
+		if (result.success) {
+			var resultData = result.obj;
+			var pQ = resultData.pQ;
+			var pSum = resultData.pSum;
+			$("#pQ" + pbId).html(pQ);
+			$("#pSum" + pbId).html(pSum);
+		} else if (result.returnCode == WARNING){
+			$("#pQ" + pbId).html(0);
+			$("#pSum" + pbId).html(0);
+		} else {
+			renderPopup("系统错误",result.msg)
+		}
+	}, 'JSON');
+}
+function deductOrder(pbId){
+	myOrder(pbId, -1);
+}
+function addOrder(pbId){
+	myOrder(pbId, 1);
 }
 </script>
 </head>
@@ -25,15 +119,29 @@ function clearProductCode(){
 				<table>
 				    <tr>
 						<td><label for="productCode">货号 : </label></td> 
-						<td><input type="text" id="productCode" name="productCode"  placeholder="输入至少三位货号,自动查找"/></td>
+						<td><input type="text" id="productCode" name="productCode"  placeholder="输入至少三位货号,自动查找" onkeydown="checkSearch();"/></td>
 					</tr>
 
 				</table>
 				<div class="ui-grid-a ui-responsive">
-    				<div class="ui-block-a"><input type="button" id="searchBnt" data-theme="a" onclick ="search();" value="查找货品"/></div>
+    				<div class="ui-block-a"><input type="button" id="searchBnt" data-theme="a" onclick ="searchProduct();" value="查找货品"/></div>
     				<div class="ui-block-b"><input type="button" id="clearBnt" data-theme="b" onclick ="clearProductCode();" value="清空查询条件"/></div>
 				</div>
-
+				<div id="products" style="display:none">
+					<table data-role="table" id="table-column-toggle" class="ui-responsive table-stroke">
+						<thead>
+					       <tr>
+					         <th data-priority="1">品牌</th>
+					         <th>货号</th>
+					         <th>已定(手)</th>
+					         <th data-priority="2">总价</th>
+					         <th width="13%"></th>
+					       </tr>
+					     </thead>
+					     <tbody id="productBody">
+					     </tbody>
+				    </table>	
+				</div>
 				
 		</div>
 		<div data-role="footer" data-theme="b" data-position="fixed">

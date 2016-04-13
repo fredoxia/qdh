@@ -51,11 +51,11 @@
 		</script>
 		<jsp:include  page="../common/MobileHeader.jsp"/>
 
-		<div class="easyui-layout" data-options="fit:true,border:false">
+		<div  data-role="content" class="content">
 			<form id="form1" name="form1">
 		    	<form:select id="cbId"  path="currentBrand.id" items="${cb}" itemLabel="fullName" itemValue="id" onchange="changeCb(this.value);"></form:select> 
 			</form>
-			<table data-role="table" id="table-column-toggle"  data-mode="columntoggle" class="ui-responsive table-stroke" data-column-btn-text="挑选列..">
+			<table data-role="table" id="table-column-toggle" class="ui-responsive table-stroke">
 			     <thead>
 			       <tr>
 			         <th data-priority="1">品牌</th>
@@ -63,12 +63,11 @@
 			         <th>数量(手)</th>
 			         <th data-priority="2">总价</th>
 			         <th></th>
-			         <th></th>
 			       </tr>
 			     </thead>
 			     <tbody>
 					<c:if test="${fn:length(cops) == 0}">
-						<td colspan="6">暂时还没有订货数据</td>				
+						<td colspan="5">暂时还没有订货数据</td>				
 					</c:if>
 					<c:if test="${fn:length(cops) > 0 && not empty copsFooter}">
 						<tr>
@@ -76,8 +75,7 @@
 							<th>合计</th>
 						    <th id="myQ1">${copsFooter.quantity}</th>
 							<th id="mySum1">${copsFooter.sumWholePrice}</th>
-							<th width="4%"></th>
-							<th width="4%"></th>
+							<th width="13%"></th>
 						</tr>
 					</c:if>
 					<c:forEach items="${cops}" var="cop">
@@ -86,8 +84,12 @@
 						    <td style="vertical-align:middle;">${cop.productCode} ${cop.color}</td>
 						    <td style="vertical-align:middle;" id="pQ${cop.pbId}">${cop.quantity}</td>
 							<td style="vertical-align:middle;" id="pSum${cop.pbId}">${cop.sumWholePrice}</td>
-							<td style="vertical-align:middle;"><input type="button" value="加订" data-mini="true" onclick="addOrder(${cop.pbId});"/></td>
-							<td style="vertical-align:middle;"><input type="button" value="减订" data-mini="true" onclick="deductOrder(${cop.pbId});"/></td>
+							<td style="vertical-align:middle;">
+								<div data-role="controlgroup" data-type="horizontal">
+									<input type="button" value="加订" data-mini="true" data-inline="true" onclick="addOrder(${cop.pbId});"/>
+									<input type="button" value="减订" data-mini="true" data-inline="true" onclick="deductOrder(${cop.pbId});"/>
+								</div>
+							</td>
 						</tr>
 					</c:forEach>
 					<c:if test="${fn:length(cops) > 0 && not empty copsFooter}">
@@ -96,7 +98,6 @@
 							<th>合计</th>
 						    <th id="myQ2">${copsFooter.quantity}</th>
 							<th id="mySum2">${copsFooter.sumWholePrice}</th>
-							<th></th>
 							<th></th>
 						</tr>
 					</c:if>

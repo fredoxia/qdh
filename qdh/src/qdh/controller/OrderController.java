@@ -65,8 +65,54 @@ public class OrderController {
 		return json;
 	}
 	
+	
+	/**
+	 * 在start order页面上 点击 加订 减订
+	 * @param pbId
+	 * @param quantity
+	 * @param session
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/StartOrderMore/mobile")
+	public Json StartOrderMore(Integer pbId, Integer quantity, HttpSession session){
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		Response response = new Response();
+		try {
+			response = orderService.startOrderMore(loginUser, pbId, quantity);
+		} catch (Exception e){
+			response.setFail(e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
+	}
+	
 	@RequestMapping("/StartOrder/mobile")
 	public String StartOrder(HttpSession session){
 		return "/jsp/chainOrder/StartOrder.jsp";
+	}
+	
+	/**
+	 * 客户查询产品
+	 * @param productCode
+	 * @param session
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/SearchProduct/mobile")
+	public Json SearchProduct(String productCode, HttpSession session){
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		Response response = new Response();
+		try {
+			response = orderService.searchProduct(loginUser.getUserId(), productCode);
+		} catch (Exception e){
+			response.setFail(e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
 	}
 }
