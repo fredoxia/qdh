@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import qdh.dao.entity.VO.CustOrderProductVO;
+import qdh.dao.entity.order.CurrentBrands;
 import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.product.Product;
 import qdh.dao.entity.product.ProductBarcode;
@@ -43,6 +44,13 @@ public class OrderService {
 	@Autowired
 	private CurrentBrandsDaoImpl currentBrandsDaoImpl;
 
+	/**
+	 * 在品牌排名中点击 加订
+	 * @param loginUser
+	 * @param pbId
+	 * @param quantity
+	 * @return
+	 */
 	@Transactional
 	public Response orderMore(SessionInfo loginUser, Integer pbId, Integer quantity) {
 		Response response = new Response();
@@ -80,7 +88,7 @@ public class OrderService {
 	}
 
 	@Transactional
-	public Response myOrderMore(SessionInfo loginUser, Integer pbId,
+	public Response myOrderMore(SessionInfo loginUser, Integer pbId, Integer cbId,
 			Integer quantity) {
 		Response response = new Response();
 		ProductBarcode pBarcode = productBarcodeDaoImpl.get(pbId, true);
@@ -118,7 +126,21 @@ public class OrderService {
 		}
 		
 		//2.获取用户的当前数量
-		List<Object> myTotal = custOrderProdDaoImpl.getMyTotal(userId);
+		//1. 限制产品信息
+		Set<Integer> barcodeIds = null;
+		if (cbId != null){
+				CurrentBrands currentBrands = currentBrandsDaoImpl.get(cbId, true);
+				
+				if (currentBrands != null){
+					int yearId = currentBrands.getYear().getYear_ID();
+					int quarterId = currentBrands.getQuarter().getQuarter_ID();
+					int brandId = currentBrands.getBrand().getBrand_ID();
+					
+					//1. find all products barcode
+					barcodeIds = productBarcodeDaoImpl.getIds(yearId, quarterId, brandId);
+				}
+		}
+		List<Object> myTotal = custOrderProdDaoImpl.getMyTotal(userId, barcodeIds);
 		
 		//3. 获取这个货品的当前信息
 		CustOrderProduct coProduct = custOrderProdDaoImpl.getByPk(userId, pbId);
@@ -126,6 +148,8 @@ public class OrderService {
 		Map<String, Object> qMap = new HashMap();
 		qMap.put("myQ", myTotal.get(0));
 		qMap.put("mySum", myTotal.get(1));
+		
+		System.out.println(myTotal.get(0) +"," + myTotal.get(1));
 		
 		if (coProduct != null){
 			qMap.put("pQ", coProduct.getQuantity());
@@ -144,6 +168,9 @@ public class OrderService {
 	 * @return
 	 */
 	public Response searchProduct(Integer custId, String productCode) {
+		System.out.println("-----------" + productCode);
+		productCode = productCode.replaceAll("\\.", "_");
+		System.out.println("-----------" + productCode);
 		Response response = new Response();
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(ProductBarcode.class);

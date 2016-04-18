@@ -13,8 +13,9 @@
 	<div id="myOrder" data-role="page">
 		<script>
 		    function myOrder(pbId, quantity){
+		
 				$.mobile.loading("show",{ theme: "b", text: "正在加载数据", textonly: false});
-				var params="pbId=" + pbId + "&quantity=" + quantity;
+				var params="pbId=" + pbId + "&quantity=" + quantity +"&cbId="+$("#cbId").val();
 
 				$.post('<%=request.getContextPath()%>/orderController/MyOrderMore/mobile', params, 
 				function(result) {
@@ -32,6 +33,14 @@
 						$("#myQ2").html(myQ);
 						$("#mySum2").html(mySum);
 					} else if (result.returnCode == WARNING){
+						var resultData = result.obj;
+						var myQ = resultData.myQ;
+						var mySum = resultData.mySum;
+						$("#myQ1").html(myQ);
+						$("#mySum1").html(mySum);
+						$("#myQ2").html(myQ);
+						$("#mySum2").html(mySum);
+						
 						$("#pRow"+pbId).remove(); 
 					} else {
 						renderPopup("系统错误",result.msg)
@@ -75,7 +84,7 @@
 							<th>合计</th>
 						    <th id="myQ1">${copsFooter.quantity}</th>
 							<th id="mySum1">${copsFooter.sumWholePrice}</th>
-							<th width="13%"></th>
+							<th width="27%"></th>
 						</tr>
 					</c:if>
 					<c:forEach items="${cops}" var="cop">

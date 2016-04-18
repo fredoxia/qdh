@@ -51,12 +51,13 @@ public class OrderController {
 	 */
 	@ResponseBody
 	@RequestMapping("/MyOrderMore/mobile")
-	public Json MyOrderMore(Integer pbId, Integer quantity, HttpSession session){
+	public Json MyOrderMore(Integer pbId, Integer quantity, Integer cbId, HttpSession session){
 		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
 		Response response = new Response();
 		try {
-			response = orderService.myOrderMore(loginUser, pbId, quantity);
+			response = orderService.myOrderMore(loginUser, pbId, cbId, quantity);
 		} catch (Exception e){
+			e.printStackTrace();
 			response.setFail(e.getMessage());
 		}
 		

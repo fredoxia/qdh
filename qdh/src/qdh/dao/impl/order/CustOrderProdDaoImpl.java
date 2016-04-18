@@ -50,12 +50,14 @@ public class CustOrderProdDaoImpl extends BaseDAO<CustOrderProduct>{
 		return q;
 	}
 	
-	public List<Object> getMyTotal(Integer custId) {
+	public List<Object> getMyTotal(Integer custId, Set<Integer> ids) {
 		List<Object> myTotal = new ArrayList<>();
 		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
 		criteria.setProjection(Projections.projectionList().add(Projections.sum("quantity")).add(Projections.sum("sumWholePrice")));
 		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
 		criteria.add(Restrictions.eq("custId", custId));
+		if (ids != null)
+			criteria.add(Restrictions.in("productBarcode.id", ids));
 		List<Object> resultObj = this.getByCriteriaProjection(criteria, true);
 		Object[] totalObj = null;
 		if (resultObj == null || resultObj.size()<1){
@@ -67,6 +69,8 @@ public class CustOrderProdDaoImpl extends BaseDAO<CustOrderProduct>{
 		for (Object object : totalObj){
 			if (object != null)
 				myTotal.add(object);
+			else 
+				myTotal.add(0);
 		}
 		return myTotal;
 	}

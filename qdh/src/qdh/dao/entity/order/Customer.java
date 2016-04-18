@@ -10,6 +10,7 @@ public class Customer implements Serializable{
 	private static final long serialVersionUID = -572552511649843048L;
 	private int id;
 	private String custName;
+	private String custRegion;
 	private String password;
 	private String chainStoreName;
 	private Integer chainId;
@@ -17,6 +18,12 @@ public class Customer implements Serializable{
 	private Timestamp updateDate;
 	private int status;
 	
+	public String getCustRegion() {
+		return custRegion;
+	}
+	public void setCustRegion(String custRegion) {
+		this.custRegion = custRegion;
+	}
 	public int getStatus() {
 		return status;
 	}

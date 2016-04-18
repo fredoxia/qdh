@@ -78,12 +78,29 @@ public class CustAcctController {
 	}
 	
 	@ResponseBody
-	@RequestMapping("/DeleteCustAcct")
-	public Json DeleteCustAcct(Integer id, HttpSession session){
+	@RequestMapping("/InactiveCustAcct")
+	public Json InactiveCustAcct(Integer id, HttpSession session){
 		Response response = new Response();
 		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
 		try {
-			response = custAcctService.deleteCustAcct(id,loginUser.getUserName());
+			response = custAcctService.inactiveCustAcct(id,loginUser.getUserName());
+		} catch (Exception e){
+			e.printStackTrace();
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
+	}
+	
+	@ResponseBody
+	@RequestMapping("/ActiveCustAcct")
+	public Json ActiveCustAcct(Integer id, HttpSession session){
+		Response response = new Response();
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		try {
+			response = custAcctService.activeCustAcct(id,loginUser.getUserName());
 		} catch (Exception e){
 			e.printStackTrace();
 			response.setFail("系统错误 : " + e.getMessage());

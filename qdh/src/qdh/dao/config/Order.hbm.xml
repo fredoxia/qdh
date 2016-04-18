@@ -16,9 +16,10 @@
     <class name="Customer" table="customer">
     	<cache usage="read-write" region="qdh"/>
         <id name="id" column="id">
-            <generator class="identity" />
+            <generator class="assigned" />
         </id>
         <property name="custName" column="cust_name" type="string"/>
+        <property name="custRegion" column="cust_region" type="string"/>
         <property name="password" column="password" type="string"/>
         <property name="chainStoreName" column="chain_store_name" type="string"/>
         <property name="chainId" column="chain_id" type="integer"/>

@@ -67,7 +67,7 @@ $(function() {
 		}
 	});
 });
-function deleteFun() {
+function inactiveFun() {
 	var rows = dataGrid.datagrid('getSelections');
 	if (rows.length == 0){
 		parent.$.messager.alert('错误', '请选中一个客户信息再继续操作', 'error');
@@ -75,13 +75,11 @@ function deleteFun() {
 	}
 	
 	var	id = rows[0].id;
-	parent.$.messager.confirm('询问', '删除客户信息会一并删除当前客户的订单,确认当前客户没有遗留订单？', function(b) {
-		if (b) {
-			parent.$.messager.progress({
+	parent.$.messager.progress({
 					title : '提示',
 					text : '数据处理中，请稍后....'
 			});
-			$.post('<%=request.getContextPath()%>/custAcctController/DeleteCustAcct', {
+			$.post('<%=request.getContextPath()%>/custAcctController/InactiveCustAcct', {
 				id : id
 			}, function(result) {
 				if (result.success) {
@@ -92,8 +90,30 @@ function deleteFun() {
 				}
 				parent.$.messager.progress('close');
 			}, 'JSON');
-		}
-	});
+}
+function activeFun() {
+	var rows = dataGrid.datagrid('getSelections');
+	if (rows.length == 0){
+		parent.$.messager.alert('错误', '请选中一个客户信息再继续操作', 'error');
+		return;
+	}
+	
+	var	id = rows[0].id;
+	parent.$.messager.progress({
+					title : '提示',
+					text : '数据处理中，请稍后....'
+			});
+			$.post('<%=request.getContextPath()%>/custAcctController/ActiveCustAcct', {
+				id : id
+			}, function(result) {
+				if (result.success) {
+					parent.$.messager.alert('成功提示', result.msg, 'info');
+					dataGrid.datagrid('reload');
+				} else {
+					parent.$.messager.alert('失败警告', result.msg, 'error');
+				}
+				parent.$.messager.progress('close');
+			}, 'JSON');
 }
 function addFun() {
 	parent.$.modalDialog({
@@ -159,7 +179,7 @@ function checkOrder(){
 				parent.$.modalDialog({
 					title : "客户订单 " + cust.custName + " " + cust.chainStoreName,
 					width : 900,
-					height : 500,
+					height : 550,
 					modal : false,
 					draggable:true,
 					href : '<%=request.getContextPath()%>/custAcctController/OpenCustOrderJSP?' + param
@@ -199,11 +219,13 @@ function checkOrder(){
 		</div>
 	</div>
 	<div id="toolbar" style="display: none;">
+			<a onclick="searchFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">搜索客户</a>
+			<a onclick="cleanFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true">清空查询</a>
 			<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">添加客户</a>
 			<a onclick="updateFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">修改客户</a>
-			<a onclick="deleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">删除客户</a>
-			<a onclick="searchFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">搜索客户</a>
-			<a onclick="cleanFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true">清空条件</a>
+			<a onclick="activeFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">激活客户</a>
+			<a onclick="inactiveFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-no'">冻结客户</a>
+
 			<a onclick="checkOrder();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true">打开订单</a>
 	</div>
 

@@ -144,6 +144,46 @@
    </bean>
    <tx:annotation-driven transaction-manager="txManager"/>
  
+    <!-- SQL Server datasource -->
+	<bean id="dataSourceMS" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
+		<property name="driverClassName" value="${SQLServer.jdbc.driverClassName}"/>
+		<property name="url" value="${SQLServer.jdbc.url}"/>
+		<property name="username" value="${SQLServer.jdbc.username}"/>
+		<property name="password" value="${SQLServer.jdbc.password}"/>
+	    <property name="testOnBorrow" value="true"/> 
+         <property name="testWhileIdle" value="false"/> 
+        <property name="validationInterval" value="30000"/>  
+        <property name="validationQuery" value="SELECT 1"/>   
+        <property name="timeBetweenEvictionRunsMillis" value="5000"/>   
+        <property name="maxActive" value="10"/>   
+        <property name="initialSize" value="5"/>    
+        <property name="minIdle" value="10"/>     
+        <property name="logAbandoned" value="false"/>   
+        <property name="removeAbandoned" value="true"/>   
+        <property name="removeAbandonedTimeout" value="600"/> 
+        <property name="jdbcInterceptors" value="org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer"/>   
+    
+    </bean>
+    <bean id="sessionFactoryMS" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+	    <property name="dataSource" ref="dataSourceMS"/>
+	    <property name="mappingResources">
+	     <list>
+	           <value>qdh/dao/config/SQLServer.hbm.xml</value>
+	     </list>
+        </property>
+	    <property name="hibernateProperties">
+		 <props>
+			<prop key="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</prop>
+			<prop key="hibernate.show_sql">true</prop>
+			<prop key="hibernate.generate_statistics">true</prop>
+			<prop key="hibernate.connection.release_mode">auto</prop>
+			<prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop> 
+            <prop key="hibernate.cache.use_query_cache">true</prop>
+            <prop key="hibernate.cache.use_second_level_cache">true</prop>  
+			<prop key="hibernate.autoReconnect">true</prop>
+		 </props>
+		</property>
+   </bean>   
    
    <!-- the hibernate template for mysql and sqlServer -->
    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
@@ -151,5 +191,8 @@
    </bean>
    <bean id="hibernateTemplate2" class="org.springframework.orm.hibernate3.HibernateTemplate">
          <property name="sessionFactory" ref="sessionFactory2"/>  
+   </bean>
+   <bean id="hibernateTemplateMS" class="org.springframework.orm.hibernate3.HibernateTemplate">
+         <property name="sessionFactory" ref="sessionFactoryMS"/>  
    </bean>
 </beans>

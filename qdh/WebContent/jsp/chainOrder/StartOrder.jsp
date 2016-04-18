@@ -28,7 +28,7 @@ function checkSearch(){
 function searchProduct(){
 	if (validateSearch()){
 		var params = "productCode=" + $("#productCode").val();
-		
+
 		$.mobile.loading("show",{ theme: "b", text: "正在加载数据", textonly: false});
 		
 		$.post('<%=request.getContextPath()%>/orderController/SearchProduct/mobile', params, 
@@ -45,10 +45,10 @@ function searchProduct(){
 				    	
 				    	var j = i +1;
 				        if (cops[i] != "")  {
-					          $("<tr id='pRow"+cops[i].pbId+"'><td>"+
-					        		  cops[i].brand +"</td><td>"+
-					        		  cops[i].productCode +" " + cops[i].color+"</td><td id='pQ"+cops[i].pbId+"'>"+
-					        		  cops[i].quantity+"</td><td id='pSum"+cops[i].pbId+"'>"+
+					          $("<tr id='pRow"+cops[i].pbId+"'><td style='vertical-align:middle;'>"+
+					        		  cops[i].brand +"</td><td style='vertical-align:middle;'>"+
+					        		  cops[i].productCode +" " + cops[i].color+"</td><td style='vertical-align:middle;' id='pQ"+cops[i].pbId+"'>"+
+					        		  cops[i].quantity+"</td><td style='vertical-align:middle;' id='pSum"+cops[i].pbId+"'>"+
 					        		  cops[i].sumWholePrice+"</td><td>"+
 										"<div name='btnGroup' data-role='controlgroup' data-type='horizontal'>"+
 											"<input name='addBtn' type='button' value='加订' data-mini='true'  data-inline='true' onclick='addOrder("+cops[i].pbId+");'/>"+
@@ -119,7 +119,7 @@ function addOrder(pbId){
 				<table>
 				    <tr>
 						<td><label for="productCode">货号 : </label></td> 
-						<td><input type="text" id="productCode" name="productCode"  placeholder="输入至少三位货号,自动查找" onkeydown="checkSearch();"/></td>
+						<td><input type="number" id="productCode" name="productCode"  placeholder="输入至少三位货号,自动查找" onkeyup="checkSearch();"/></td>
 					</tr>
 
 				</table>
@@ -132,10 +132,10 @@ function addOrder(pbId){
 						<thead>
 					       <tr>
 					         <th data-priority="1">品牌</th>
-					         <th>货号</th>
-					         <th>已定(手)</th>
-					         <th data-priority="2">总价</th>
-					         <th width="13%"></th>
+					         <th width="20%">货号</th>
+					         <th width="15%">已定(手)</th>
+					         <th width="12%" data-priority="2">总价</th>
+					         <th width="27%"></th>
 					       </tr>
 					     </thead>
 					     <tbody id="productBody">

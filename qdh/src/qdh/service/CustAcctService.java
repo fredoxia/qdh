@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -12,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import qdh.comparator.CustOrderProductComparatorByYQBrandProductCode;
 import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.VO.CustOrderProductVO;
@@ -142,7 +144,7 @@ public class CustAcctService {
 	}
 
 	@Transactional
-	public Response deleteCustAcct(Integer id, String userName) {
+	public Response inactiveCustAcct(Integer id, String userName) {
 		Response response = new Response();
 		
 		//1. delete the customer information
@@ -164,9 +166,12 @@ public class CustAcctService {
 		String U_ORDER = "UPDATE CustOrder SET status =? WHERE custId =?";
 		String U_ORDER_PRO = "UPDATE CustOrderProduct SET status =? WHERE custId =?";
 		orderDaoImpl.executeHQLUpdateDelete(U_ORDER, values, true);
-		custOrderProductDaoImpl.executeHQLUpdateDelete(U_ORDER_PRO, values, true);
+		int numOfRecords = custOrderProductDaoImpl.executeHQLUpdateDelete(U_ORDER_PRO, values, true);
+		String activeRecords = "";
+		if (numOfRecords > 0)
+			activeRecords = numOfRecords + "条客户订单记录也被冻结";
 		
-		response.setSuccess("客户信息 : " + cust.getCustName() + " 已经成功从订货系统删除");
+		response.setSuccess("客户信息 : " + cust.getCustName() + " 已经成功被冻结." + activeRecords);
 		return response;
 	}
 
@@ -266,6 +271,38 @@ public class CustAcctService {
 		
 		response.setReturnValue(dataMap);
 		
+		return response;
+	}
+	
+	@Transactional
+	public Response activeCustAcct(Integer id, String userName) {
+		Response response = new Response();
+		
+		//1. active the customer information
+		Customer cust = customerDaoImpl.get(id, true);
+		if (cust == null){
+			response.setFail("客户信息不存在");
+			return response;
+		} else {
+			if (!systemConfigDaoImpl.canUpdateCust()){
+				response.setFail("管理员已经锁定客户信息和单据更新,请联系管理员");
+				return response;
+			}
+			cust.setStatus(EntityConfig.ACTIVE);
+			customerDaoImpl.update(cust, true);
+		}
+		
+		//2。active the order and order_product
+		Object[] values = new Object[]{EntityConfig.ACTIVE, id};
+		String U_ORDER = "UPDATE CustOrder SET status =? WHERE custId =?";
+		String U_ORDER_PRO = "UPDATE CustOrderProduct SET status =? WHERE custId =?";
+		orderDaoImpl.executeHQLUpdateDelete(U_ORDER, values, true);
+		int numOfRecords = custOrderProductDaoImpl.executeHQLUpdateDelete(U_ORDER_PRO, values, true);
+		String activeRecords = "";
+		if (numOfRecords > 0)
+			activeRecords = numOfRecords + "条客户订单记录也被激活";
+		
+		response.setSuccess("客户信息 : " + cust.getCustName() + " 已经成功被激活。" + activeRecords);
 		return response;
 	}
 }

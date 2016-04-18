@@ -63,12 +63,13 @@ function downloadOrder(){
 </script>
 <div class="easyui-layout" data-options="fit:true,border:false">
 	<div data-options="region:'center',border:false" title="" style="overflow: hidden;">
-			<form id="form" name="form" method="post">
-			    <input type="hidden" id="id" name="id" value ="${custId} "/>
-			</form>
 			<table id="dataGrid2"></table>
+			<form id="form" name="form" method="post">
+				<input type="hidden" id="id" name="id" value ="${custId} "/>
+			</form>
 	</div>
 	<div id="toolbar2" style="display: none;">
 			<a onclick="downloadOrder();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true">下载Excel订单</a>
 	</div>
+
 </div>
