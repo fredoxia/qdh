@@ -32,7 +32,7 @@ public class CustOrderProdDaoImpl extends BaseDAO<CustOrderProduct>{
 	public int getMyQ(int userId, Integer pbId) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
 		criteria.setProjection(Projections.sum("quantity"));
-		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+		criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
 		criteria.add(Restrictions.eq("custId", userId));
 		criteria.add(Restrictions.eq("productBarcode.id", pbId));
 		List<Object> totalObj = this.getByCriteriaProjection(criteria, true);
@@ -43,7 +43,7 @@ public class CustOrderProdDaoImpl extends BaseDAO<CustOrderProduct>{
 	public int getTotalQ(Integer pbId) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
 		criteria.setProjection(Projections.sum("quantity"));
-		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+		criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
 		criteria.add(Restrictions.eq("productBarcode.id", pbId));
 		List<Object> totalObj = this.getByCriteriaProjection(criteria, true);
 		int q = NumUtility.getProjectionIntegerValue(totalObj);
@@ -54,7 +54,7 @@ public class CustOrderProdDaoImpl extends BaseDAO<CustOrderProduct>{
 		List<Object> myTotal = new ArrayList<>();
 		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
 		criteria.setProjection(Projections.projectionList().add(Projections.sum("quantity")).add(Projections.sum("sumWholePrice")));
-		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+		criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
 		criteria.add(Restrictions.eq("custId", custId));
 		if (ids != null)
 			criteria.add(Restrictions.in("productBarcode.id", ids));

@@ -25,6 +25,13 @@ $(function() {
 		sortOrder : 'asc',
 		nowrap : false,
 		singleSelect: true,
+		rowStyler: function(index,row){
+			var style = "";
+			if (row.status == -1)
+				style += 'color:red;';
+
+			return style;
+		},
 		columns : [ [ {
 			field : 'custName',
 			sortable:true,
@@ -46,7 +53,20 @@ $(function() {
 			title : '登录密码',
 			width : 50
 		}, {
-
+			field : 'statusS',
+			title : '状态',
+			width : 50,
+			formatter : function(value, row, index) {
+				var str = '';
+				if (row.status == -1){
+					str = "被冻结";
+				} else if (row.status == 0){
+					str = "正常";
+				}
+				
+				return str;
+			}
+		}, {
 			field : 'updateUser',
 			title : '操作人员',
 			width : 50
@@ -160,6 +180,7 @@ function searchFun() {
 function cleanFun() {
 	$('#searchForm input').val('');
 	$("#custType").attr("value", -1);
+	$("#status").attr("value", 0);
 	dataGrid.datagrid('load', {});
 }
 function checkOrder(){
@@ -196,18 +217,27 @@ function checkOrder(){
 	<div class="easyui-layout" data-options="fit : true,border : false">
 		<div data-options="region:'north',border:false" style="height: 55px; overflow: hidden;">
 			<form id="searchForm">
-				<table class="table table-hover table-condensed" style="display: block;">
+				<table border="0" class="table table-hover table-condensed" style="display: block;">
 					<tr>
 						<th>客户名字</th>
 						<td><input name="custName" id="custName" placeholder="可以模糊查询客户名字"/></td>
+						<th colspan="2"></th>
 					</tr>
 					<tr>
 						<th>客户种类</th>
 						<td>
 							<select name="custType" id="custType">
-								<option value="-1">所有</option>
+								<option value="-99">所有</option>
 								<option value="1">连锁店客户</option>
 								<option value="2">零散客户</option>
+							</select>
+						</td>
+						<th>客户状态</th>
+						<td>
+							<select name="status" id="status">
+								<option value="-99">所有</option>
+								<option value="0" selected>正常状态</option>
+								<option value="-1">冻结状态</option>
 							</select>
 						</td>
 					</tr>

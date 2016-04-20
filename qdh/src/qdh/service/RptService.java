@@ -78,7 +78,7 @@ public class RptService {
 			}
 		}
 		
-		Object[] values = new Object[]{EntityConfig.DELETED};
+		Object[] values = new Object[]{EntityConfig.INACTIVE};
 		String countCriteria = "SELECT COUNT(DISTINCT productBarcode.id) FROM CustOrderProduct WHERE status != ?" + pbConstraints;
 		String rptCriteria = "SELECT productBarcode.id, SUM(quantity) FROM CustOrderProduct WHERE status != ?" + pbConstraints +" GROUP BY productBarcode.id ORDER BY SUM(quantity) DESC";
 		
@@ -115,7 +115,7 @@ public class RptService {
 	public DataGrid generateHQCustRpt(Integer page, Integer rows, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
 		
-		Object[] values = new Object[]{EntityConfig.DELETED};
+		Object[] values = new Object[]{EntityConfig.INACTIVE};
 		String countCriteria = "SELECT COUNT(DISTINCT custId) FROM CustOrderProduct WHERE status != ?";
 		String rptCriteria = "SELECT custId, SUM(quantity), SUM(sumWholePrice) FROM CustOrderProduct WHERE status != ? GROUP BY custId ORDER BY SUM(quantity) DESC";
 		
@@ -183,7 +183,7 @@ public class RptService {
 
 			//2. find all records
 			DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
-			criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+			criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
 			criteria.add(Restrictions.in("productBarcode.id", barcodeIds));
 			
 			List<CustOrderProduct> products = custOrderProdDaoImpl.getByCritera(criteria, true);
@@ -260,7 +260,7 @@ public class RptService {
 			}
 		}
 		
-		Object[] values = new Object[]{EntityConfig.DELETED};
+		Object[] values = new Object[]{EntityConfig.INACTIVE};
 		String rptCriteria = "SELECT productBarcode.id, SUM(quantity) FROM CustOrderProduct WHERE status != ?" + pbConstraints +" GROUP BY productBarcode.id ORDER BY SUM(quantity) DESC";
 		
 		Integer[] pager = new Integer[]{0,30};
@@ -364,7 +364,7 @@ public class RptService {
 		}
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
-		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+		criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
 		criteria.add(Restrictions.eq("custId", custId));
 		if (barcodeIds != null)
 			criteria.add(Restrictions.in("productBarcode.id", barcodeIds));

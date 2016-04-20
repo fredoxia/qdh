@@ -36,8 +36,8 @@ public class CustAcctController {
 	
 	@ResponseBody
 	@RequestMapping("/GetCustAccts")
-	public DataGrid GetCustAccts(Integer custType, String custName, String sort, String order){
-		DataGrid dataGrid = custAcctService.getCustAccts(custType, custName, sort, order);
+	public DataGrid GetCustAccts(Integer custType, Integer status, String custName, String sort, String order){
+		DataGrid dataGrid = custAcctService.getCustAccts(custType,status, custName, sort, order);
 
 		return dataGrid;
 	}

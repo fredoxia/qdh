@@ -32,7 +32,6 @@ import qdh.utility.StringUtility;
 
 @Service
 public class CustAcctService {
-	private final int CUST_TYPE_ALL = -1;
 	private final int CUST_TYPE_CHAIN = 1;
 	private final int CUST_TYPE_OTHER = 2;
 
@@ -52,20 +51,25 @@ public class CustAcctService {
 	private SystemConfigDaoImpl systemConfigDaoImpl;
 	
 	
-	public DataGrid getCustAccts(Integer isChain, String name, String sort, String order) {
+	public DataGrid getCustAccts(Integer isChain, Integer status, String name, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(Customer.class);
 		
 		System.out.println(sort + "," + order);
 		
-		if (isChain!= null && isChain != CUST_TYPE_ALL){
+		if (isChain!= null && isChain != EntityConfig.ALL_RECORD){
 			if (isChain == CUST_TYPE_CHAIN){
 				criteria.add(Restrictions.isNotNull("chainId"));
 			} else {
 				criteria.add(Restrictions.isNull("chainId"));
 			}
 		}
+		
+		if (status == null)
+			status = EntityConfig.ACTIVE;
+		if (status != null && status != EntityConfig.ALL_RECORD)
+			criteria.add(Restrictions.eq("status", status));
 		
 		if (name != null && !name.trim().equals("")){
 			criteria.add(Restrictions.or(Restrictions.like("chainStoreName", "%" + name + "%"), Restrictions.like("custName", "%" + name + "%")));
@@ -79,8 +83,6 @@ public class CustAcctService {
 					criteria.addOrder(Order.desc(sort));
 			}
 		}
-		
-		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
 		
 		List<Customer> custs = customerDaoImpl.getByCritera(criteria, true);
 		dataGrid.setRows(custs);
@@ -157,12 +159,12 @@ public class CustAcctService {
 				response.setFail("管理员已经锁定客户信息和单据更新,请联系管理员");
 				return response;
 			}
-			cust.setStatus(EntityConfig.DELETED);
+			cust.setStatus(EntityConfig.INACTIVE);
 			customerDaoImpl.update(cust, true);
 		}
 		
 		//2。delete the order and order_product
-		Object[] values = new Object[]{EntityConfig.DELETED, id};
+		Object[] values = new Object[]{EntityConfig.INACTIVE, id};
 		String U_ORDER = "UPDATE CustOrder SET status =? WHERE custId =?";
 		String U_ORDER_PRO = "UPDATE CustOrderProduct SET status =? WHERE custId =?";
 		orderDaoImpl.executeHQLUpdateDelete(U_ORDER, values, true);
@@ -185,7 +187,7 @@ public class CustAcctService {
 		Response response = new Response();
 		
 		String queryString = "SELECT COUNT(*) FROM CustOrderProduct WHERE custId =? AND status <> ?";
-		Object[] values = new Object[]{id, EntityConfig.DELETED};
+		Object[] values = new Object[]{id, EntityConfig.INACTIVE};
 		
 		int rows = custOrderProductDaoImpl.executeHQLCount(queryString, values, true);
 		
@@ -210,7 +212,7 @@ public class CustAcctService {
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
 		criteria.add(Restrictions.eq("custId", id));
-		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+		criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
 		
 		List<CustOrderProduct> products = custOrderProductDaoImpl.getByCritera(criteria, true);
 
@@ -262,7 +264,7 @@ public class CustAcctService {
 	
 		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
 		criteria.add(Restrictions.eq("custId", custId));
-		criteria.add(Restrictions.ne("status", EntityConfig.DELETED));
+		criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
 		
 		List<CustOrderProduct> products = custOrderProductDaoImpl.getByCritera(criteria, true);
 		
