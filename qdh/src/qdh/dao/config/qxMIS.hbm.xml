@@ -129,5 +129,38 @@
         <property name="ownerName" column="owner_name" type="string"/>
 		<property name="clientId" column="client_id" type="integer"/>
 		<property name="status" column="status" type="integer"/>
-    </class>       
+    </class>    
+    <class name="CustPreOrder" table="cust_preorder">
+        <id name="id" column="id">
+            <generator class="identity" />
+        </id>
+        <property name="custId" column="cust_id" type="integer"/>
+        <property name="custName" column="cust_name" type="string"/>
+        <property name="chainId" column="chain_id" type="integer" not-null="false"/>
+        <property name="chainStoreName" column="chain_store_name" type="string"/>
+        <property name="totalQuantity" column="total_quantity" type="integer"/>
+        <property name="sumCost" column="sum_cost" type="double"/>
+        <property name="sumWholePrice" column="sum_whole_price" type="double"/>
+        <property name="sumRetailPrice" column="sum_retail_price" type="double"/>
+        <property name="createDate" column="create_date" type="timestamp"/>
+        <property name="exportDate" column="export_date" type="timestamp" not-null="false"/>
+        <property name="comment" column="comment" type="string"/>
+        <property name="status" column="status" type="integer"/>
+        <set name="productSet" cascade="all" inverse="true" lazy="true" fetch="subselect" batch-size="20">
+             <key column="preorder_id"/>
+             <one-to-many class="CustPreOrderProduct"/>
+        </set>
+    </class>  
+    <class name="CustPreOrderProduct" table="cust_preorder_product">
+         <composite-id>
+         	 <key-many-to-one name="custPreOrder" column="preorder_id" class="CustPreOrder" lazy="false"/>  
+             <key-property name="pbId" column="product_barcode_id" type="integer"></key-property>      
+        </composite-id>
+        
+        <property name="indexNum" column="index_num" type="integer"/>
+        <property name="totalQuantity" column="total_quantity" type="integer"/>
+        <property name="sumCost" column="sum_cost" type="double"/>
+        <property name="sumWholePrice" column="sum_whole_price" type="double"/>
+        <property name="sumRetailPrice" column="sum_retail_price" type="double"/>
+    </class>   
 </hibernate-mapping>

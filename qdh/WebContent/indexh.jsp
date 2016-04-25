@@ -22,7 +22,7 @@ function loginBackProcess(data){
 </script>
 </head>
 <body>
-<div id="loginDialog" class="easyui-dialog" title="千禧宝贝在线订货系统" data-options="iconCls:'icon-lorry',resizable:false,modal:true,draggable:false,closable:false,buttons:[{text:'登陆',handler:function(){ login(); }}]" style="width:330px;height:200px;padding:5px">
+<div id="loginDialog" class="easyui-dialog" title="千禧宝贝在线订货系统" data-options="iconCls:'icon-lorry',resizable:false,modal:true,draggable:false,closable:false,buttons:[{text:'登陆订货系统',handler:function(){ login(); }}]" style="width:330px;height:200px;padding:5px">
 	  <form id="loginForm" name="loginForm" method="post" action="">
 		  <table width="100%">
 		    <tr>
