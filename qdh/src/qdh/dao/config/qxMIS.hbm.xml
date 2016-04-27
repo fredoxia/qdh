@@ -155,7 +155,7 @@
         </composite-id>
         
         <property name="indexNum" column="index_num" type="integer"/>
-        <property name="totalQuantity" column="total_quantity" type="integer"/>
+        <property name="totalQuantity" column="quantity" type="integer"/>
         <property name="sumCost" column="sum_cost" type="double"/>
         <property name="sumWholePrice" column="sum_whole_price" type="double"/>
         <property name="sumRetailPrice" column="sum_retail_price" type="double"/>

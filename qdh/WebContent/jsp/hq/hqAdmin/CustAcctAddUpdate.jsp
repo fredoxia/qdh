@@ -47,26 +47,91 @@
 		}
 	}
 	
+	var dataGrid2;
 
+	$(function() {
+		dataGrid2 = $('#searchCustGrid').datagrid({
+			url : '<%=request.getContextPath()%>/custAcctController/GetCustAccts',
+			fit : true,
+			fitColumns : true,
+			border : false,
+			pagination : false,
+			idField : 'id',
+			sortName : 'updateDate',
+			rownumbers:true,
+			sortOrder : 'asc',
+			nowrap : false,
+			singleSelect: true,
+			rowStyler: function(index,row){
+				var style = "";
+				if (row.status == -1)
+					style += 'color:red;';
+
+				return style;
+			},
+			columns : [ [ {
+				field : 'custName',
+				sortable:true,
+				order:'desc',
+				title : '客户名字',
+				width : 80
+			}, {
+				field : 'chainStoreName',
+				sortable:true,
+				order:'desc',
+				title : '连锁店名字',
+				width : 80
+			}, {
+				field : 'id',
+				title : '登录账号',
+				width : 50
+			}, {			
+				field : 'password',
+				title : '登录密码',
+				width : 50
+			}, {
+				field : 'statusS',
+				title : '状态',
+				width : 50,
+				formatter : function(value, row, index) {
+					var str = '';
+					if (row.status == -1){
+						str = "被冻结";
+					} else if (row.status == 0){
+						str = "正常";
+					}
+					
+					return str;
+				}
+			}, {
+				field : 'updateUser',
+				title : '操作人员',
+				width : 50
+			}, {
+				field : 'updateDate',
+				title : '操作日期',
+				width : 80
+			}, {
+				field : 'action',
+				title : '',
+				width : 200
+			} ] ],
+			toolbar : '#toolbar',
+			onRowContextMenu : function(e, rowIndex, rowData) {
+				e.preventDefault();
+				$(this).datagrid('unselectAll').datagrid('uncheckAll');
+				$(this).datagrid('selectRow', rowIndex);
+			}
+		});
+	});
 </script>
 <div class="easyui-layout" data-options="fit:true,border:false">
-	<div data-options="region:'center',border:false" title="" style="overflow: hidden;">
+	<div data-options="region:'north',border:false" title="" style="height: 45px; overflow: hidden;">
 		<form id="form" method="post">
-			<table border="0">
-				<form:hidden id="id" path="cust.id"/>
-			   <tr>
-					<th height="30">客户名字</th>
-					<td><form:input id="custName" path="cust.custName"/> *散客必须输入，方便以后查找</td>
-				</tr>
-
-				<tr>
-					<th width="80" height="30">连锁店客户</th>
-					<td>
-					      <form:select path="cust.chainId"  cssClass="easyui-combobox" items="${chainStores}" itemLabel="chainName"  
-                               itemValue="chainId"></form:select> 
-					</td>
-				</tr>
-		   </table>
+			客户名字 : <form:input id="custName" path="cust.custName"/> <input type="button" value="查询"/>
 		</form>
+	</div>
+	<div data-options="region:'center',border:false">
+			<table id="searchCustGrid"></table>
 	</div>
 </div>

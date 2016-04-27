@@ -131,6 +131,7 @@ public class OrderController {
 		try {
 			response = orderService.exportOrders(loginUser.getUserId());
 		} catch (Exception e){
+			e.printStackTrace();
 			response.setFail(e.getMessage());
 		}
 		

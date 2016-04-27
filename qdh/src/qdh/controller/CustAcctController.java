@@ -35,6 +35,14 @@ public class CustAcctController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("/SearchCustFromJinsuan")
+	public DataGrid SearchCustFromJinsuan(String custName){
+		DataGrid dataGrid = null ; //custAcctService.searchCustFromJinsuan(custType,status, custName, sort, order);
+
+		return dataGrid;
+	}
+	
+	@ResponseBody
 	@RequestMapping("/GetCustAccts")
 	public DataGrid GetCustAccts(Integer custType, Integer status, String custName, String sort, String order){
 		DataGrid dataGrid = custAcctService.getCustAccts(custType,status, custName, sort, order);
@@ -64,13 +72,13 @@ public class CustAcctController {
 	@RequestMapping("/AddUpdateCustAcct")
 	public Json AddUpdateCustAcct(Customer cust, HttpSession session){
 		Response response = new Response();
-		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
-		try {
-			response = custAcctService.addUpdateAcct(cust,loginUser.getUserName());
-		} catch (Exception e){
-			e.printStackTrace();
-			response.setFail("系统错误 : " + e.getMessage());
-		}
+//		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+//		try {
+//			response = custAcctService.addUpdateAcct(cust,loginUser.getUserName());
+//		} catch (Exception e){
+//			e.printStackTrace();
+//			response.setFail("系统错误 : " + e.getMessage());
+//		}
 		
 		Json json = new Json(response);
 		

@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 
 import qdh.dao.entity.qxMIS.CustPreOrder;
 import qdh.dao.impl.BaseDAO2;
 
+@Repository
 public class CustPreOrderDaoImpl  extends BaseDAO2<CustPreOrder> {
 
 	public CustPreOrder getByCustIdOrderIdentity(Integer custId, String orderIdentity) {
@@ -19,6 +21,26 @@ public class CustPreOrderDaoImpl  extends BaseDAO2<CustPreOrder> {
 		   return null;
 		else 
 		   return custPreOrders.get(0);
+	}
+	@Override
+	public void delete(CustPreOrder entity, boolean cached){
+		getHibernateTemplateMS().setCacheQueries(cached);
+		
+		this.getHibernateTemplateMS().delete(entity);
+	}
+	
+	@Override
+	public void save(CustPreOrder entity, boolean cached) {
+		getHibernateTemplateMS().setCacheQueries(cached);
+		
+		this.getHibernateTemplateMS().save(entity);
+	}
+
+	@Override
+	public void update(CustPreOrder entity, boolean cached) {
+		getHibernateTemplateMS().setCacheQueries(cached);
+		
+		this.getHibernateTemplateMS().update(entity);
 	}
 
 }

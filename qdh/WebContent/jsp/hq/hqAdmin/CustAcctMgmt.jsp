@@ -137,7 +137,7 @@ function activeFun() {
 }
 function addFun() {
 	parent.$.modalDialog({
-		title : '添加客户',
+		title : '精算导入客户',
 		width : 500,
 		height : 200,
 		href : '<%=request.getContextPath()%>/custAcctController/PreAddUpdateCustAcct',
@@ -151,29 +151,7 @@ function addFun() {
 		} ]
 	});
 }
-function updateFun(){
-	var rows = dataGrid.datagrid('getSelections');
-	if (rows.length == 0){
-		parent.$.messager.alert('错误', '请选中一个客户信息再继续操作', 'error');
-		return;
-	}
-	
-	var	id = rows[0].id;
-	parent.$.modalDialog({
-		title : '修改客户',
-		width : 500,
-		height : 200,
-		href : '<%=request.getContextPath()%>/custAcctController/PreAddUpdateCustAcct?id=' + id,
-		buttons : [ {
-			text : '提交信息',
-			handler : function() {
-				parent.$.modalDialog.openner_dataGrid = dataGrid;
-				var f = parent.$.modalDialog.handler.find('#form');
-				f.submit();
-			}
-		} ]
-	});
-}
+
 function searchFun() {
 	dataGrid.datagrid('load', $.serializeObject($('#searchForm')));
 }
@@ -252,7 +230,6 @@ function checkOrder(){
 			<a onclick="searchFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">搜索客户</a>
 			<a onclick="cleanFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true">清空查询</a>
 			<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">添加客户</a>
-			<a onclick="updateFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">修改客户</a>
 			<a onclick="activeFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">激活客户</a>
 			<a onclick="inactiveFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-no'">冻结客户</a>
 

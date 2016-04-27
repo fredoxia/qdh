@@ -22,6 +22,7 @@ import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.VO.CustOrderProductVO;
 import qdh.dao.entity.order.CurrentBrands;
 import qdh.dao.entity.order.CustOrderProduct;
+import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.product.Product;
 import qdh.dao.entity.product.ProductBarcode;
 import qdh.dao.entity.qxMIS.CustPreOrder;
@@ -35,6 +36,7 @@ import qdh.dao.impl.qxMIS.CustPreOrderDaoImpl;
 import qdh.dao.impl.qxMIS.CustPreOrderProductDaoImpl;
 import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 import qdh.pageModel.SessionInfo;
+import qdh.utility.DateUtility;
 import qdh.utility.loggerLocal;
 
 
@@ -58,6 +60,9 @@ public class OrderService {
 	
 	@Autowired
 	private CustPreOrderProductDaoImpl custPreOrderProductDaoImpl;
+	
+	@Autowired
+	private CustomerDaoImpl customerDaoImpl;
 	
 	/**
 	 * 在品牌排名中点击 加订
@@ -297,6 +302,8 @@ public class OrderService {
 	 */
 	@Transactional
 	public Response exportOrders(int userId) {
+		String errorMsg = "";
+		String successMsg = "";
 		Response response = new Response();
 		
 		String orderIdentity = systemConfigDaoImpl.getOrderIdentity();
@@ -317,26 +324,65 @@ public class OrderService {
 				//2. 删除原始数据
 				CustPreOrder preOrder = custPreOrderDaoImpl.getByCustIdOrderIdentity(custId, orderIdentity);
 				if (preOrder != null){
-					custPreOrderDaoImpl.delete(preOrder, false);
-					
 					int custPreOrderId = preOrder.getId();
 					custPreOrderProductDaoImpl.deleteByOrderId(custPreOrderId);
+				} else {
+				    //3. 保存custPreOrder 数据
+				    preOrder = new CustPreOrder();
+				    
+				    Customer cust = customerDaoImpl.get(custId, true);
+				    if (cust == null){
+				    	errorMsg += "客户Id为 " + custId + " 无法找到信息\n";
+				    	continue;
+				    } else {
+				    	preOrder.setOrderIdentity(orderIdentity);
+				    	preOrder.setChainId(cust.getChainId());
+				    	preOrder.setChainStoreName(cust.getChainStoreName());
+				    	preOrder.setCustId(custId);
+				    	preOrder.setCustName(cust.getCustName());
+				    	custPreOrderDaoImpl.save(preOrder, false);
+				    }
 				}
 				
-				//3. 保存custPreOrder 数据
-				
-				
-				//3. 获取客户数据
+				//4. 获取客户数据
 				DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
 				criteria.add(Restrictions.eq("custId", custId));
 				criteria.add(Restrictions.eq("orderIdentity", orderIdentity));
 				criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
 				List<CustOrderProduct> custOrderProducts = custOrderProdDaoImpl.getByCritera(criteria, false);
 				
-				int indexNum = 1;
-				for (CustOrderProduct cop : custOrderProducts){
-					CustPreOrderProduct cpop = new CustPreOrderProduct(cop, indexNum++, orderIdentity);
+				if (custOrderProducts == null || custOrderProducts.size() == 0){
+					custPreOrderDaoImpl.delete(preOrder, false);
+					continue;
 				}
+				
+				int indexNum = 1;
+				int totalQ = 0;
+				double sumCost = 0;
+				double sumWholePrice = 0;
+				double sumRetailPrice = 0;
+				for (CustOrderProduct cop : custOrderProducts){
+					Product product = cop.getProductBarcode().getProduct();
+					
+					totalQ += cop.getQuantity();
+					sumCost += product.getRecCost();
+					sumWholePrice += product.getWholePrice();
+					sumRetailPrice += product.getSalesPrice();
+					
+					CustPreOrderProduct cpop = new CustPreOrderProduct(cop, indexNum++, preOrder.getId());
+					custPreOrderProductDaoImpl.save(cpop, false);
+				}
+				
+				//5. 更新order 信息
+				if (preOrder.getCreateDate() == null)
+					preOrder.setCreateDate(DateUtility.getToday());
+				preOrder.setExportDate(DateUtility.getToday());
+				preOrder.setSumCost(sumCost);
+				preOrder.setSumRetailPrice(sumRetailPrice);
+				preOrder.setSumWholePrice(sumWholePrice);
+				preOrder.setTotalQuantity(totalQ);
+				
+				custPreOrderDaoImpl.update(preOrder, false);
 			}
 		}
 		return response;
