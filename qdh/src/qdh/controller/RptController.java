@@ -102,6 +102,19 @@ public class RptController {
 		return mav;
 	}
 	
+	@RequestMapping("/HQOrderExportLog")
+	public String HQOrderExportLog(){
+		
+		return "/jsp/hq/hqAdmin/CustOrderExport.jsp";
+	}
+	
+	@ResponseBody
+	@RequestMapping("/GetHQOrderExportLog")
+	public DataGrid GetHQOrderExportLog(){
+		DataGrid dataGrid = rptService.getHQOrderExportLog();
+		return dataGrid;
+	}
+	
 	/**
 	 * 所有连锁店订货排名情况
 	 * @param cb

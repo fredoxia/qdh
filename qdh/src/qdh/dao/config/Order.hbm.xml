@@ -37,6 +37,7 @@
         <property name="sumWholePrice" column="sum_whole_price" type="double"/>
         <property name="lastUpdateTime" column="last_update_time" type="timestamp"/>
         <property name="status" column="status" type="integer"/>
+        <property name="orderIdentity" column="order_identity" type="string"/>
     </class>   
        
 </hibernate-mapping>

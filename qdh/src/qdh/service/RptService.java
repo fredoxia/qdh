@@ -26,11 +26,13 @@ import qdh.dao.entity.order.CurrentBrands;
 import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.product.ProductBarcode;
+import qdh.dao.entity.systemConfig.OrderExportLog;
 import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CurrentBrandsDaoImpl;
 import qdh.dao.impl.order.CustOrderProdDaoImpl;
 import qdh.dao.impl.order.CustomerDaoImpl;
 import qdh.dao.impl.product.ProductBarcodeDaoImpl;
+import qdh.dao.impl.systemConfig.OrderExportLogDaoImpl;
 import qdh.pageModel.DataGrid;
 import qdh.pageModel.PageHelper;
 import qdh.utility.loggerLocal;
@@ -49,6 +51,9 @@ public class RptService {
 	
 	@Autowired
 	private CurrentBrandsDaoImpl currentBrandsDaoImpl;
+	
+	@Autowired
+	private OrderExportLogDaoImpl orderExportLogDaoImpl;
 	
 	public DataGrid generateHQProdRpt(Integer currentBrandId, Integer page, Integer rowsPerPage, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
@@ -370,6 +375,19 @@ public class RptService {
 			criteria.add(Restrictions.in("productBarcode.id", barcodeIds));
 		
 		return criteria;
+	}
+
+	public DataGrid getHQOrderExportLog() {
+		DataGrid dataGrid = new DataGrid();
+		
+		DetachedCriteria criteria = DetachedCriteria.forClass(OrderExportLog.class);
+		criteria.addOrder(Order.desc("importTime"));
+		
+		List<OrderExportLog> logs = orderExportLogDaoImpl.getByCritera(criteria, 0, 10, true);
+		
+		dataGrid.setRows(logs);
+	 
+		return dataGrid;
 	}
 
 }

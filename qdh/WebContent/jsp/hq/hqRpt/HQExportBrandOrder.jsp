@@ -40,7 +40,7 @@ function exportOrder() {
 					<tr>
 						<th height="40"></th>
 						<td>
-							<a onclick="exportOrder();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-redo'">导出厂家订单</a>
+							<a onclick="exportOrder();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-redo'">下载厂家订单</a>
 						</td>
 					</tr>
 				</table>

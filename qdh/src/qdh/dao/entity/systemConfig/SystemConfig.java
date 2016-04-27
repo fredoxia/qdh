@@ -19,10 +19,26 @@ public class SystemConfig implements Serializable {
 	}
 
 	private int id = 1;
+	/**
+	 * 不能修改客户信息
+	 */
 	private int lockUpdateCust = 0;
+	/**
+	 * 不能修改订单
+	 */
 	private int lockUpdateProduct = 0;
+	/**
+	 * 暂时未用
+	 */
 	private int systemAdminMode = 0;
+	private String orderIdentity = "";
 	
+	public String getOrderIdentity() {
+		return orderIdentity;
+	}
+	public void setOrderIdentity(String orderIdentity) {
+		this.orderIdentity = orderIdentity;
+	}
 	public int getId() {
 		return id;
 	}

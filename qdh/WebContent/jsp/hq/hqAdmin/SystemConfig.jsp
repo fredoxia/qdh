@@ -34,7 +34,7 @@ function updateConfig() {
 					<tr>
 						<th height="35">能否删除客户</th>
 						<td>
-							<form:select id="lockUpdateCust" name="lockUpdateCust" path="lockUpdateCust">
+							<form:select id="lockUpdateCust" path="lockUpdateCust">
 							   <form:option value="0">允许更新客户信息</form:option> 
 							   <form:option value="1">不能更新客户信息</form:option> 
 							</form:select> 
@@ -43,7 +43,7 @@ function updateConfig() {
 					<tr>
 						<th height="35">能否更新品牌</th>
 						<td>
-							<form:select id="lockUpdateProduct" name="lockUpdateProduct" path="lockUpdateProduct">
+							<form:select id="lockUpdateProduct" path="lockUpdateProduct">
 							   <form:option value="0">允许更新品牌信息</form:option> 
 							   <form:option value="1">不能更新品牌信息</form:option> 
 							</form:select> 
@@ -52,12 +52,18 @@ function updateConfig() {
 					<tr>
 						<th height="35">是否管理员模式</th>
 						<td>
-							<form:select id="systemAdminMode" name="systemAdminMode" path="systemAdminMode">
+							<form:select id="systemAdminMode" path="systemAdminMode">
 							   <form:option value="0">非管理员模式</form:option> 
 							   <form:option value="1">管理员模式</form:option> 
 							</form:select> 
 						</td>
 					</tr>	
+					<tr>
+					<th height="35">订货会序号</th>
+						<td>
+							<form:input id="orderIdentity" path="orderIdentity" maxlength="15"/> 例如: 201604
+						</td>
+					</tr>						
 					<tr>
 						<th height="35"></th>
 						<td>

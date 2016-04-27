@@ -18,18 +18,26 @@ public class CustOrderProduct implements Serializable{
 	private double sumWholePrice;
 	private Timestamp lastUpdateTime = DateUtility.getToday();
 	private int status;
+	private String orderIdentity = "";
 	
 	public CustOrderProduct(){
 		
 	}
 	
-	public CustOrderProduct(int custId, ProductBarcode pb, int quantity){
+	public CustOrderProduct(int custId, ProductBarcode pb, int quantity, String orderIdentity){
 		this.custId = custId;
 		this.productBarcode = pb;
 		this.quantity = quantity;
 		this.sumWholePrice = quantity * pb.getProduct().getWholePrice();
+		this.orderIdentity = orderIdentity;
 	}
 	
+	public String getOrderIdentity() {
+		return orderIdentity;
+	}
+	public void setOrderIdentity(String orderIdentity) {
+		this.orderIdentity = orderIdentity;
+	}
 	public double getSumWholePrice() {
 		return sumWholePrice;
 	}

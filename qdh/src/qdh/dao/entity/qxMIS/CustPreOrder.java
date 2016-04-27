@@ -18,6 +18,7 @@ public class CustPreOrder implements Serializable{
 	private static final long serialVersionUID = 1151511966760113877L;
 	private int id;
 	private int custId ;
+	private String orderIdentity;
 	private String custName = "";
     private Integer chainId = null;
     private String chainStoreName = "";
@@ -29,28 +30,20 @@ public class CustPreOrder implements Serializable{
     private Timestamp exportDate = null;
     private int status;
     private String comment = "";
-    private Set<CustPreOrderProduct> productSet = new HashSet<>();
-    private List<CustPreOrderProduct> productList = new ArrayList<>();
     
-    
+	public String getOrderIdentity() {
+		return orderIdentity;
+	}
+	public void setOrderIdentity(String orderIdentity) {
+		this.orderIdentity = orderIdentity;
+	}
 	public String getComment() {
 		return comment;
 	}
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	public Set<CustPreOrderProduct> getProductSet() {
-		return productSet;
-	}
-	public void setProductSet(Set<CustPreOrderProduct> productSet) {
-		this.productSet = productSet;
-	}
-	public List<CustPreOrderProduct> getProductList() {
-		return productList;
-	}
-	public void setProductList(List<CustPreOrderProduct> productList) {
-		this.productList = productList;
-	}
+
 	public int getId() {
 		return id;
 	}

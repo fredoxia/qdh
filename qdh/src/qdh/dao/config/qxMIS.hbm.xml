@@ -135,6 +135,7 @@
             <generator class="identity" />
         </id>
         <property name="custId" column="cust_id" type="integer"/>
+        <property name="orderIdentity" column="order_identity" type="string"/>
         <property name="custName" column="cust_name" type="string"/>
         <property name="chainId" column="chain_id" type="integer" not-null="false"/>
         <property name="chainStoreName" column="chain_store_name" type="string"/>
@@ -146,14 +147,10 @@
         <property name="exportDate" column="export_date" type="timestamp" not-null="false"/>
         <property name="comment" column="comment" type="string"/>
         <property name="status" column="status" type="integer"/>
-        <set name="productSet" cascade="all" inverse="true" lazy="true" fetch="subselect" batch-size="20">
-             <key column="preorder_id"/>
-             <one-to-many class="CustPreOrderProduct"/>
-        </set>
     </class>  
     <class name="CustPreOrderProduct" table="cust_preorder_product">
          <composite-id>
-         	 <key-many-to-one name="custPreOrder" column="preorder_id" class="CustPreOrder" lazy="false"/>  
+         	 <key-property name="preorderId" column="preorder_id" type="integer"/>  
              <key-property name="pbId" column="product_barcode_id" type="integer"></key-property>      
         </composite-id>
         

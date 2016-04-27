@@ -11,22 +11,31 @@ import java.util.Set;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.VO.CustOrderProductVO;
 import qdh.dao.entity.order.CurrentBrands;
 import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.product.Product;
 import qdh.dao.entity.product.ProductBarcode;
+import qdh.dao.entity.qxMIS.CustPreOrder;
+import qdh.dao.entity.qxMIS.CustPreOrderProduct;
 import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CurrentBrandsDaoImpl;
 import qdh.dao.impl.order.CustOrderProdDaoImpl;
 import qdh.dao.impl.order.CustomerDaoImpl;
 import qdh.dao.impl.product.ProductBarcodeDaoImpl;
+import qdh.dao.impl.qxMIS.CustPreOrderDaoImpl;
+import qdh.dao.impl.qxMIS.CustPreOrderProductDaoImpl;
+import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 import qdh.pageModel.SessionInfo;
+import qdh.utility.loggerLocal;
 
 
 @Service
@@ -39,11 +48,17 @@ public class OrderService {
 	private ProductBarcodeDaoImpl productBarcodeDaoImpl;
 	
 	@Autowired
-	private CustomerDaoImpl customerDaoImpl;
+	private SystemConfigDaoImpl systemConfigDaoImpl;
 	
 	@Autowired
 	private CurrentBrandsDaoImpl currentBrandsDaoImpl;
 
+	@Autowired
+	private CustPreOrderDaoImpl custPreOrderDaoImpl;
+	
+	@Autowired
+	private CustPreOrderProductDaoImpl custPreOrderProductDaoImpl;
+	
 	/**
 	 * 在品牌排名中点击 加订
 	 * @param loginUser
@@ -67,7 +82,7 @@ public class OrderService {
 		
 		CustOrderProduct custOrderProduct = custOrderProdDaoImpl.getByPk(userId, pbId);
 		if (custOrderProduct == null){
-			custOrderProduct = new CustOrderProduct(userId, pBarcode, quantity);
+			custOrderProduct = new CustOrderProduct(userId, pBarcode, quantity, systemConfigDaoImpl.getOrderIdentity());
 			custOrderProdDaoImpl.save(custOrderProduct, true);
 		} else {
 			custOrderProduct.addQ(quantity);
@@ -105,7 +120,7 @@ public class OrderService {
 		CustOrderProduct custOrderProduct = custOrderProdDaoImpl.getByPk(userId, pbId);
 		if (custOrderProduct == null){
 			if (quantity > 0){
-				custOrderProduct = new CustOrderProduct(userId, pBarcode, quantity);
+				custOrderProduct = new CustOrderProduct(userId, pBarcode, quantity, systemConfigDaoImpl.getOrderIdentity());
 				custOrderProdDaoImpl.save(custOrderProduct, true);
 			} else {
 				response.setFail("还没有此货品定单,无法减订");
@@ -189,7 +204,7 @@ public class OrderService {
 		Map<Integer, CustOrderProductVO> copMap = new HashMap<>();
 		List<Integer> pbIds = new ArrayList<>();
 		for (ProductBarcode pb : productBarcodes){
-			CustOrderProduct newCOP = new CustOrderProduct(custId, pb, 0);
+			CustOrderProduct newCOP = new CustOrderProduct(custId, pb, 0, "");
 			copMap.put(pb.getId(), new CustOrderProductVO(newCOP));
 			pbIds.add(pb.getId());
 		}
@@ -240,7 +255,7 @@ public class OrderService {
 		CustOrderProduct custOrderProduct = custOrderProdDaoImpl.getByPk(userId, pbId);
 		if (custOrderProduct == null){
 			if (quantity > 0){
-				custOrderProduct = new CustOrderProduct(userId, pBarcode, quantity);
+				custOrderProduct = new CustOrderProduct(userId, pBarcode, quantity, systemConfigDaoImpl.getOrderIdentity());
 				custOrderProdDaoImpl.save(custOrderProduct, true);
 			} else {
 				response.setFail("还没有此货品定单,无法减订");
@@ -272,6 +287,58 @@ public class OrderService {
 		
 		response.setReturnValue(qMap);
 		
+		return response;
+	}
+
+	/**
+	 * 导出订单，如果订货会还不是完成的状态不能导出
+	 * @param userId
+	 * @return
+	 */
+	@Transactional
+	public Response exportOrders(int userId) {
+		Response response = new Response();
+		
+		String orderIdentity = systemConfigDaoImpl.getOrderIdentity();
+		
+		//1. 获取多少个customer
+		DetachedCriteria criteriaCount = DetachedCriteria.forClass(CustOrderProduct.class);
+		criteriaCount.add(Restrictions.eq("orderIdentity", orderIdentity));
+		criteriaCount.setProjection(Projections.distinct(Projections.property("custId")));
+		List<Object> custObj = custOrderProdDaoImpl.getByCriteriaProjection(criteriaCount, false);
+		if (custObj == null || custObj.size() == 0){
+			loggerLocal.info("没有找到当前订货会数据 " + orderIdentity);
+			response.setFail("没有找到当前订货会的订单数据");
+		} else {
+			for (Object custIdObj :  custObj){
+				Integer custId = (Integer)custIdObj;
+				loggerLocal.info("导出客户数据 : " + orderIdentity + "," + custId);
+				
+				//2. 删除原始数据
+				CustPreOrder preOrder = custPreOrderDaoImpl.getByCustIdOrderIdentity(custId, orderIdentity);
+				if (preOrder != null){
+					custPreOrderDaoImpl.delete(preOrder, false);
+					
+					int custPreOrderId = preOrder.getId();
+					custPreOrderProductDaoImpl.deleteByOrderId(custPreOrderId);
+				}
+				
+				//3. 保存custPreOrder 数据
+				
+				
+				//3. 获取客户数据
+				DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+				criteria.add(Restrictions.eq("custId", custId));
+				criteria.add(Restrictions.eq("orderIdentity", orderIdentity));
+				criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
+				List<CustOrderProduct> custOrderProducts = custOrderProdDaoImpl.getByCritera(criteria, false);
+				
+				int indexNum = 1;
+				for (CustOrderProduct cop : custOrderProducts){
+					CustPreOrderProduct cpop = new CustPreOrderProduct(cop, indexNum++, orderIdentity);
+				}
+			}
+		}
 		return response;
 	}
 

@@ -17,6 +17,14 @@ public class SystemConfigDaoImpl extends BaseDAO<SystemConfig>{
 		}
 		return systemConfig;
 	}
+	
+	public String getOrderIdentity(){
+		SystemConfig sConfig = this.getSystemConfig();
+		if (sConfig == null)
+			return "";
+		else 
+			return sConfig.getOrderIdentity();
+	}
 
 	public boolean canUpdateCust() {
 		SystemConfig systemConfig = this.getSystemConfig();

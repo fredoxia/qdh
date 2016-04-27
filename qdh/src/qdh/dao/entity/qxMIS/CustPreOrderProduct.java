@@ -2,12 +2,16 @@ package qdh.dao.entity.qxMIS;
 
 import java.io.Serializable;
 
+import qdh.dao.entity.order.CustOrderProduct;
+import qdh.dao.entity.product.Product;
+import qdh.dao.entity.product.ProductBarcode;
+
 public class CustPreOrderProduct implements Serializable {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 6385842852094944665L;
-	private CustPreOrder custPreOrder = null;    
+	private int preorderId;    
     private int pbId;   
     private int indexNum;
     private int totalQuantity;
@@ -15,12 +19,25 @@ public class CustPreOrderProduct implements Serializable {
     private double sumWholePrice;
     private double sumRetailPrice;
     
+    public CustPreOrderProduct(CustOrderProduct cop, int indexNum, int preorderId){
+    	ProductBarcode pb = cop.getProductBarcode();
+    	Product p = pb.getProduct();
+    	
+    	this.preorderId = preorderId;
+    	this.indexNum = indexNum;
+    	this.pbId = pb.getId();
+    	this.totalQuantity = cop.getQuantity();
+    	this.sumCost = totalQuantity * p.getRecCost();
+    	this.sumWholePrice = totalQuantity * p.getWholePrice();
+    	this.sumRetailPrice = totalQuantity * p.getSalesPrice();
+    }
     
-	public CustPreOrder getCustPreOrder() {
-		return custPreOrder;
+	
+	public int getPreorderId() {
+		return preorderId;
 	}
-	public void setCustPreOrder(CustPreOrder custPreOrder) {
-		this.custPreOrder = custPreOrder;
+	public void setPreorderId(int preorderId) {
+		this.preorderId = preorderId;
 	}
 	public int getIndexNum() {
 		return indexNum;

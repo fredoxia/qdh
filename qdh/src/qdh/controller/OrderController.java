@@ -116,4 +116,26 @@ public class OrderController {
 		
 		return json;
 	}
+	
+	/**
+	 * 导出订货会单据
+	 * @param productCode
+	 * @param session
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/ExportOrders")
+	public Json ExportOrders(HttpSession session){
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		Response response = new Response();
+		try {
+			response = orderService.exportOrders(loginUser.getUserId());
+		} catch (Exception e){
+			response.setFail(e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
+	}
 }
