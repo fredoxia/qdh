@@ -32,7 +32,7 @@ $(function() {
 			width : 80
 		}, {
 			field : 'numOfOrders',
-			title : '导出数据量',
+			title : '导出单据量',
 			width : 50
 		}, {			
 			field : 'operator',
@@ -51,6 +51,7 @@ $(function() {
 function exportOrders(){
 	var params = "";
 	$.post('<%=request.getContextPath()%>/orderController/ExportOrders', params,  function(result) {
+		refresh();
 		if (result.success) {
 			$.messager.alert('消息', result.msg, 'info');	
 
@@ -59,7 +60,9 @@ function exportOrders(){
 		}
 	}, 'JSON');
 }
-
+function refresh(){
+	dataGrid.datagrid('load', '');
+}
 </script>
 </head>
 <body>
@@ -70,6 +73,7 @@ function exportOrders(){
 	</div>
 	<div id="toolbar" style="display: none;">
 			<a onclick="exportOrders();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-syn_data',plain:true">导出当前订货会订单到条码系统</a>
+			<a onclick="refresh();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-reload',plain:true">刷新</a>
 	</div>
 
 

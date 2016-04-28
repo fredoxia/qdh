@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.catalina.User;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -27,6 +28,8 @@ import qdh.dao.entity.product.Product;
 import qdh.dao.entity.product.ProductBarcode;
 import qdh.dao.entity.qxMIS.CustPreOrder;
 import qdh.dao.entity.qxMIS.CustPreOrderProduct;
+import qdh.dao.entity.qxMIS.UserInfor2;
+import qdh.dao.entity.systemConfig.OrderExportLog;
 import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CurrentBrandsDaoImpl;
 import qdh.dao.impl.order.CustOrderProdDaoImpl;
@@ -34,6 +37,8 @@ import qdh.dao.impl.order.CustomerDaoImpl;
 import qdh.dao.impl.product.ProductBarcodeDaoImpl;
 import qdh.dao.impl.qxMIS.CustPreOrderDaoImpl;
 import qdh.dao.impl.qxMIS.CustPreOrderProductDaoImpl;
+import qdh.dao.impl.qxMIS.UserInfor2DaoImpl;
+import qdh.dao.impl.systemConfig.OrderExportLogDaoImpl;
 import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 import qdh.pageModel.SessionInfo;
 import qdh.utility.DateUtility;
@@ -63,6 +68,12 @@ public class OrderService {
 	
 	@Autowired
 	private CustomerDaoImpl customerDaoImpl;
+	
+	@Autowired
+	private UserInfor2DaoImpl userInfor2DaoImpl;
+	
+	@Autowired
+	private OrderExportLogDaoImpl orderExportLogDaoImpl;
 	
 	/**
 	 * 在品牌排名中点击 加订
@@ -302,6 +313,8 @@ public class OrderService {
 	 */
 	@Transactional
 	public Response exportOrders(int userId) {
+		UserInfor2 userInfor2 = userInfor2DaoImpl.get(userId, true);
+		
 		int totalExportedRecords = 0;
 		int totalErrorCust = 0;
 		int totalExportedCust = 0;
@@ -395,9 +408,17 @@ public class OrderService {
 					loggerLocal.error(e);
 				}
 			}
+			
+			OrderExportLog exportLog = new OrderExportLog();
+			exportLog.setImportTime(DateUtility.getToday());
+			exportLog.setNumOfOrders(totalExportedCust);
+			exportLog.setOrderIdentity(orderIdentity);
+			exportLog.setOperator(userInfor2.getName());
+			
+			orderExportLogDaoImpl.save(exportLog, true);
 		}
 		
-		String msg = "成功导出的客户订单数量 : " + totalExportedCust + "\n"
+		String msg = "成功导出的客户订单数量 : " + totalExportedCust + "<br/>"
 				   + "导出失败的客户订单数量 : " + totalErrorCust;
 		
 		response.setMessage(msg);

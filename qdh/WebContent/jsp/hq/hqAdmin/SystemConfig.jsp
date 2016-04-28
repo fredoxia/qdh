@@ -59,7 +59,7 @@ function updateConfig() {
 						</td>
 					</tr>	
 					<tr>
-					<th height="35">订货会序号</th>
+					<th height="35">订货会代码</th>
 						<td>
 							<form:input id="orderIdentity" path="orderIdentity" maxlength="15"/> 例如: 201604
 						</td>

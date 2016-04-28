@@ -40,6 +40,7 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 	private int QUARTER_COLUMN =2;
 	private int BRAND_COLUMN =3;
 	private int PRODUCT_CODE_COLUMN =4;
+	private int ORDER_IDENTITY_COLUMN =4;
 	private int COLOR_COLUMN =5;
 	private int CATEGORY_COLUMN =6;
 	private int NUM_PER_HAND_COLUMN =7;
@@ -97,13 +98,14 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 		HSSFSheet sheet = wb.getSheetAt(0);
 		HSSFRow dateRow = sheet.getRow(DATE_ROW);
 		dateRow.createCell(1).setCellValue(DateUtility.getToday().toString());
-		
+
 		HSSFRow custRow = sheet.getRow(CUST_ROW);
 		custRow.createCell(1).setCellValue(cust.getCustName() + "-" + cust.getChainStoreName());
 
 		int sumQ = 0;
 		int sumS = 0;
 		double sumWholePrice = 0;
+		String orderIdentity = "";
 		
 		//2. process elements
 		for (int i =0; i < orderProducts.size(); i++){
@@ -132,7 +134,12 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 			sumQ += qSum;
 			sumS += cop.getQuantity();
 			sumWholePrice += wpSum;
+			
+			if (orderIdentity.equals(""))
+				orderIdentity = cop.getOrderIdentity();
 		}
+		
+		dateRow.createCell(ORDER_IDENTITY_COLUMN).setCellValue(orderIdentity);
 		
 		HSSFRow dataRow = sheet.createRow(DATA_ROW + orderProducts.size());
 		dataRow.createCell(BARCODE_COLUMN).setCellValue("总计:");

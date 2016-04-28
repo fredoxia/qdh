@@ -28,6 +28,7 @@ public class FactoryOrderExcelVO extends AbstractExcelView {
 	private int DATE_ROW = 1;
 	private int BRAND_ROW = 2;
 	private int FACTORY_ROW = 3;
+	private int ORDER_IDENTITY_COLUMN = 3;
 	private int PRODUCT_CODE_COLUMN = 0;
 	private int COLOR_COLUMN = 1;
 	private int QUANTITY_COLUMN =2;
@@ -90,6 +91,8 @@ public class FactoryOrderExcelVO extends AbstractExcelView {
 		factoryRow.createCell(1).setCellValue(b.getSupplier());
 		
 		int sum = 0;
+		String orderIdentity = "";
+		
 		//2. process elements
 		for (int i =0; i < orderProducts.size(); i++){
 			CustOrderProduct cop = orderProducts.get(i);
@@ -106,7 +109,12 @@ public class FactoryOrderExcelVO extends AbstractExcelView {
 			dataRow.createCell(QUANTITY_COLUMN).setCellValue(cop.getQuantity());
 			
 			sum += cop.getQuantity();
+			
+			if (orderIdentity.equals(""))
+				orderIdentity = cop.getOrderIdentity();
 		}
+		
+		dateRow.createCell(ORDER_IDENTITY_COLUMN).setCellValue(orderIdentity);
 		
 		HSSFRow dataRow = sheet.createRow(DATA_ROW + orderProducts.size());
 		dataRow.createCell(COLOR_COLUMN).setCellValue("总计:");
