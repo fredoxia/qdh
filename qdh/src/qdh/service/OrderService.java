@@ -302,8 +302,10 @@ public class OrderService {
 	 */
 	@Transactional
 	public Response exportOrders(int userId) {
-		String errorMsg = "";
-		String successMsg = "";
+		int totalExportedRecords = 0;
+		int totalErrorCust = 0;
+		int totalExportedCust = 0;
+		
 		Response response = new Response();
 		
 		String orderIdentity = systemConfigDaoImpl.getOrderIdentity();
@@ -321,70 +323,85 @@ public class OrderService {
 				Integer custId = (Integer)custIdObj;
 				loggerLocal.info("导出客户数据 : " + orderIdentity + "," + custId);
 				
-				//2. 删除原始数据
-				CustPreOrder preOrder = custPreOrderDaoImpl.getByCustIdOrderIdentity(custId, orderIdentity);
-				if (preOrder != null){
-					int custPreOrderId = preOrder.getId();
-					custPreOrderProductDaoImpl.deleteByOrderId(custPreOrderId);
-				} else {
-				    //3. 保存custPreOrder 数据
-				    preOrder = new CustPreOrder();
-				    
-				    Customer cust = customerDaoImpl.get(custId, true);
-				    if (cust == null){
-				    	errorMsg += "客户Id为 " + custId + " 无法找到信息\n";
-				    	continue;
-				    } else {
-				    	preOrder.setOrderIdentity(orderIdentity);
-				    	preOrder.setChainId(cust.getChainId());
-				    	preOrder.setChainStoreName(cust.getChainStoreName());
-				    	preOrder.setCustId(custId);
-				    	preOrder.setCustName(cust.getCustName());
-				    	custPreOrderDaoImpl.save(preOrder, false);
-				    }
-				}
-				
-				//4. 获取客户数据
-				DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
-				criteria.add(Restrictions.eq("custId", custId));
-				criteria.add(Restrictions.eq("orderIdentity", orderIdentity));
-				criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
-				List<CustOrderProduct> custOrderProducts = custOrderProdDaoImpl.getByCritera(criteria, false);
-				
-				if (custOrderProducts == null || custOrderProducts.size() == 0){
-					custPreOrderDaoImpl.delete(preOrder, false);
-					continue;
-				}
-				
-				int indexNum = 1;
-				int totalQ = 0;
-				double sumCost = 0;
-				double sumWholePrice = 0;
-				double sumRetailPrice = 0;
-				for (CustOrderProduct cop : custOrderProducts){
-					Product product = cop.getProductBarcode().getProduct();
+				try {
+					//2. 删除原始数据
+					CustPreOrder preOrder = custPreOrderDaoImpl.getByCustIdOrderIdentity(custId, orderIdentity);
+					if (preOrder != null){
+						int custPreOrderId = preOrder.getId();
+						custPreOrderProductDaoImpl.deleteByOrderId(custPreOrderId);
+					} else {
+					    //3. 保存custPreOrder 数据
+					    preOrder = new CustPreOrder();
+					    
+					    Customer cust = customerDaoImpl.get(custId, true);
+					    if (cust == null){
+					    	loggerLocal.error("客户Id为 " + custId + " 无法找到信息");
+					    	continue;
+					    } else {
+					    	preOrder.setOrderIdentity(orderIdentity);
+					    	preOrder.setChainId(cust.getChainId());
+					    	preOrder.setChainStoreName(cust.getChainStoreName());
+					    	preOrder.setCustId(custId);
+					    	preOrder.setCustName(cust.getCustName());
+					    	custPreOrderDaoImpl.save(preOrder, false);
+					    }
+					}
 					
-					totalQ += cop.getQuantity();
-					sumCost += product.getRecCost();
-					sumWholePrice += product.getWholePrice();
-					sumRetailPrice += product.getSalesPrice();
+					//4. 获取客户数据
+					DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+					criteria.add(Restrictions.eq("custId", custId));
+					criteria.add(Restrictions.eq("orderIdentity", orderIdentity));
+					criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
+					List<CustOrderProduct> custOrderProducts = custOrderProdDaoImpl.getByCritera(criteria, false);
 					
-					CustPreOrderProduct cpop = new CustPreOrderProduct(cop, indexNum++, preOrder.getId());
-					custPreOrderProductDaoImpl.save(cpop, false);
+					if (custOrderProducts == null || custOrderProducts.size() == 0){
+						custPreOrderDaoImpl.delete(preOrder, false);
+						continue;
+					}
+					
+					int indexNum = 1;
+					int totalQ = 0;
+					double sumCost = 0;
+					double sumWholePrice = 0;
+					double sumRetailPrice = 0;
+					for (CustOrderProduct cop : custOrderProducts){
+						Product product = cop.getProductBarcode().getProduct();
+						
+						totalQ += cop.getQuantity();
+						sumCost += product.getRecCost();
+						sumWholePrice += product.getWholePrice();
+						sumRetailPrice += product.getSalesPrice();
+						
+						CustPreOrderProduct cpop = new CustPreOrderProduct(cop, indexNum++, preOrder.getId());
+						custPreOrderProductDaoImpl.save(cpop, false);
+						totalExportedRecords++;
+					}
+					
+					//5. 更新order 信息
+					if (preOrder.getCreateDate() == null)
+						preOrder.setCreateDate(DateUtility.getToday());
+					preOrder.setExportDate(DateUtility.getToday());
+					preOrder.setSumCost(sumCost);
+					preOrder.setSumRetailPrice(sumRetailPrice);
+					preOrder.setSumWholePrice(sumWholePrice);
+					preOrder.setTotalQuantity(totalQ);
+					
+					custPreOrderDaoImpl.update(preOrder, false);
+					
+					totalExportedCust++;
+				} catch (Exception e) {
+					totalErrorCust++;
+					loggerLocal.error("导出订单发生错误 : " + custId);
+					loggerLocal.error(e);
 				}
-				
-				//5. 更新order 信息
-				if (preOrder.getCreateDate() == null)
-					preOrder.setCreateDate(DateUtility.getToday());
-				preOrder.setExportDate(DateUtility.getToday());
-				preOrder.setSumCost(sumCost);
-				preOrder.setSumRetailPrice(sumRetailPrice);
-				preOrder.setSumWholePrice(sumWholePrice);
-				preOrder.setTotalQuantity(totalQ);
-				
-				custPreOrderDaoImpl.update(preOrder, false);
 			}
 		}
+		
+		String msg = "成功导出的客户订单数量 : " + totalExportedCust + "\n"
+				   + "导出失败的客户订单数量 : " + totalErrorCust;
+		
+		response.setMessage(msg);
+		
 		return response;
 	}
 
