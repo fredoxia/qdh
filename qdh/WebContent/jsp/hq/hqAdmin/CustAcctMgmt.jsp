@@ -38,6 +38,10 @@ $(function() {
 			order:'desc',
 			title : '客户名字',
 			width : 80
+		}, {			
+			field : 'custRegion',
+			title : '客户地区',
+			width : 60
 		}, {
 			field : 'chainStoreName',
 			sortable:true,
@@ -137,15 +141,16 @@ function activeFun() {
 }
 function addFun() {
 	parent.$.modalDialog({
+		id:"addForm",
 		title : '精算导入客户',
 		width : 500,
-		height : 200,
+		height : 400,
 		href : '<%=request.getContextPath()%>/custAcctController/PreAddUpdateCustAcct',
 		buttons : [ {
 			text : '提交信息',
 			handler : function() {
 				parent.$.modalDialog.openner_dataGrid = dataGrid;
-				var f = parent.$.modalDialog.handler.find('#form');
+				var f = parent.$.modalDialog.handler.find('#form2');
 				f.submit();
 			}
 		} ]

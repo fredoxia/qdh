@@ -171,4 +171,32 @@ public class CustAcctController {
 		return mav;
 	}
 	
+	@ResponseBody
+	@RequestMapping("/AddCust")
+	public Json AddCust(String clientIds, HttpSession session){
+		Response response = new Response();
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		try {
+			response = custAcctService.addCust(clientIds,loginUser.getUserName());
+		} catch (Exception e){
+			e.printStackTrace();
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("/SearchJinSuanClients")
+	public DataGrid SearchJinSuanClients(String custName){
+		DataGrid dataGrid = new DataGrid();
+
+		dataGrid = custAcctService.searchJinSuanClients(custName);
+
+		return dataGrid;
+	}
+	
 }
