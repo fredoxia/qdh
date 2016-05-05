@@ -3,6 +3,7 @@ package qdh.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.qxMIS.UserInfor2;
 import qdh.dao.impl.Response;
@@ -34,7 +35,9 @@ public class UserService {
 				response.setFail("用户名不存在");
 			else if (!cust.getPassword().equals(cust2.getPassword()))
 				response.setFail("登录密码错误");
-			else 
+			else if (cust2.getStatus() != EntityConfig.ACTIVE)
+				response.setFail("账户状态 锁定。请通知总部员工");
+			else
 				response.setReturnValue(cust2);
 		}
 		return response;

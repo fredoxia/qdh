@@ -53,12 +53,10 @@
 						if (result.success) {
 							$("#password").attr("value","");
 							$("#id").attr("value","");
-							$.mobile.changePage('<%=request.getContextPath()%>/orderController/StartOrder/mobile', { 
-							    transition: "fade",
-							    type:"post",
-							    dataUrl:"<%=request.getContextPath()%>/orderController/StartOrder/mobile"
-							});
+							window.location.href = "<%=request.getContextPath()%>/orderController/StartOrder/mobile"
+
 						} else {
+							$("#password").attr("value","");
 							renderPopup("登录错误",result.msg)
 						}
 					}, 'JSON');

@@ -16,8 +16,10 @@ function login(){
 function loginBackProcess(data){
 	if (data.success)
 		window.location.href = "<%=request.getContextPath()%>/userController/HQMain";
-	else 
-		alert(data.msg);	
+	else {
+
+		alert(data.msg);
+	}
 }
 </script>
 </head>

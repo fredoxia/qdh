@@ -22,6 +22,7 @@ function clearProductCode(){
 
 }
 function checkSearch(){
+
 	if ($.trim($("#productCode").val()).length >= 3)
 		searchProduct();
 }
@@ -74,6 +75,7 @@ function searchProduct(){
 	}
 }
 function validateSearch(){
+
 	if ($.trim($("#productCode").val()).length < 1){
 		renderPopup("查询错误","请输入至少一位货号作为查询条件");
 		$("#productCode").focus();
