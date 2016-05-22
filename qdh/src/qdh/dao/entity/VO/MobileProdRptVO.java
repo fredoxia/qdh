@@ -15,7 +15,7 @@ public class MobileProdRptVO extends HQProdRptVO {
 		super(pb, quantity);
 		this.rank = rank;
 		this.myQuantity = myQuantity;
-		setWholePrice(pb.getProduct().getWholePrice());
+		setRetailPrice(pb.getProduct().getSalesPrice());
 	}
 
 

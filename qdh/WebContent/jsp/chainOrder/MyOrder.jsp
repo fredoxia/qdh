@@ -83,7 +83,7 @@
 							<th></th>
 							<th>合计</th>
 						    <th id="myQ1">${copsFooter.quantity}</th>
-							<th id="mySum1">${copsFooter.sumWholePrice}</th>
+							<th id="mySum1">${copsFooter.sumRetailPrice}</th>
 							<th width="27%"></th>
 						</tr>
 					</c:if>
@@ -92,7 +92,7 @@
 							<td style="vertical-align:middle;">${cop.brand}</td>
 						    <td style="vertical-align:middle;">${cop.productCode} ${cop.color}</td>
 						    <td style="vertical-align:middle;" id="pQ${cop.pbId}">${cop.quantity}</td>
-							<td style="vertical-align:middle;" id="pSum${cop.pbId}">${cop.sumWholePrice}</td>
+							<td style="vertical-align:middle;" id="pSum${cop.pbId}">${cop.sumRetailPrice}</td>
 							<td style="vertical-align:middle;">
 								<div data-role="controlgroup" data-type="horizontal">
 									<input type="button" value="加订" data-mini="true" data-inline="true" onclick="addOrder(${cop.pbId});"/>
@@ -106,7 +106,7 @@
 							<th></th>
 							<th>合计</th>
 						    <th id="myQ2">${copsFooter.quantity}</th>
-							<th id="mySum2">${copsFooter.sumWholePrice}</th>
+							<th id="mySum2">${copsFooter.sumRetailPrice}</th>
 							<th></th>
 						</tr>
 					</c:if>
@@ -115,7 +115,7 @@
 		</div>
 
 
-		<div data-role="footer" data-theme="b" data-position="fixed">
+		<div data-role="footer" data-theme="b" data-position="fixed" data-tap-toggle="false">
 			<div data-role="navbar">
 		      <ul>
 		      	<li><a href="<%=request.getContextPath()%>/orderController/StartOrder/mobile" data-icon="edit" data-ajax="false">我要订货</a></li>

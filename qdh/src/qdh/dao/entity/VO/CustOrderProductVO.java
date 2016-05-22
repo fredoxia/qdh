@@ -26,7 +26,8 @@ public class CustOrderProductVO implements Serializable {
     private int numPerHand;
     private String unit;
 	private int quantity;
-	private double sumWholePrice;
+//	private double sumWholePrice;
+	private int sumRetailPrice;
 	private Timestamp lastUpdateTime = DateUtility.getToday();
 	
 	public CustOrderProductVO(){
@@ -55,8 +56,17 @@ public class CustOrderProductVO implements Serializable {
     	category = p.getCategory().getCategory_Name();
     	
     	quantity = crp.getQuantity();
-    	sumWholePrice = crp.getSumWholePrice();
+//    	sumWholePrice = crp.getSumWholePrice();
+    	sumRetailPrice = (int)crp.getSumRetailPrice();
     	lastUpdateTime = crp.getLastUpdateTime();
+	}
+
+	public int getSumRetailPrice() {
+		return sumRetailPrice;
+	}
+
+	public void setSumRetailPrice(double sumRetailPrice) {
+		this.sumRetailPrice = (int)sumRetailPrice;
 	}
 
 	public Integer getPbId() {
@@ -159,13 +169,13 @@ public class CustOrderProductVO implements Serializable {
 		this.quantity = quantity;
 	}
 
-	public double getSumWholePrice() {
-		return sumWholePrice;
-	}
-
-	public void setSumWholePrice(double sumWholePrice) {
-		this.sumWholePrice = sumWholePrice;
-	}
+//	public double getSumWholePrice() {
+//		return sumWholePrice;
+//	}
+//
+//	public void setSumWholePrice(double sumWholePrice) {
+//		this.sumWholePrice = sumWholePrice;
+//	}
 
 	public Timestamp getLastUpdateTime() {
 		return lastUpdateTime;

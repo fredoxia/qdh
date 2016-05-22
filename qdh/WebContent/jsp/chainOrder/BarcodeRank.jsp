@@ -48,9 +48,9 @@
 			         <th width="5%" data-priority="1">排名</th>
 			         <th>货号</th>
 			         <th>品牌</th>
-			         <th data-priority="2">发价</th>
+			         <th data-priority="2">零售价</th>
 			         <th>总订(手)</th>
-			         <th>我的数量</th>
+			         <th>我订(手)</th>
 			         <th width="6%"></th>
 			       </tr>
 			     </thead>
@@ -63,7 +63,7 @@
 						    <th style="vertical-align:middle; height:20px">${barcodeB.rank}</th>
 						    <td style="vertical-align:middle;">${barcodeB.productCode} ${barcodeB.color}</td>
 							<td style="vertical-align:middle;">${barcodeB.brand}</td>
-							<td style="vertical-align:middle;">${barcodeB.wholePrice}</td>
+							<td style="vertical-align:middle;">${barcodeB.retailPrice}</td>
 							<td style="vertical-align:middle;" id="totalQ${barcodeB.pbId}">${barcodeB.quantity}</td>
 							<td style="vertical-align:middle;" id="myQ${barcodeB.pbId}">${barcodeB.myQuantity}</td>
 							<td style="vertical-align:middle;"><input type="button" value="加订" data-mini="true" onclick="addOrder(${barcodeB.pbId});"/></td>
@@ -73,7 +73,7 @@
 			  </table>				
 		</div>
 
-		<div data-role="footer" data-theme="b" data-position="fixed">
+		<div data-role="footer" data-theme="b" data-position="fixed" data-tap-toggle="false">
 			<div data-role="navbar">
 		      <ul>
 		      	<li><a href="<%=request.getContextPath()%>/orderController/StartOrder/mobile" data-icon="edit" data-ajax="false">我要订货</a></li>

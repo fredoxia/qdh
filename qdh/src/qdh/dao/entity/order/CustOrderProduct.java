@@ -15,7 +15,8 @@ public class CustOrderProduct implements Serializable{
 	private ProductBarcode productBarcode = new ProductBarcode();
     private int custId ;
 	private int quantity;
-	private double sumWholePrice;
+//	private double sumWholePrice = 0;
+	private double sumRetailPrice;
 	private Timestamp lastUpdateTime = DateUtility.getToday();
 	private int status;
 	private String orderIdentity = "";
@@ -28,22 +29,32 @@ public class CustOrderProduct implements Serializable{
 		this.custId = custId;
 		this.productBarcode = pb;
 		this.quantity = quantity;
-		this.sumWholePrice = quantity * pb.getProduct().getWholePrice();
+		//this.sumWholePrice = quantity * pb.getProduct().getWholePrice();
+		this.sumRetailPrice = quantity * pb.getProduct().getSalesPrice() * pb.getProduct().getNumPerHand();
 		this.orderIdentity = orderIdentity;
 	}
 	
+	
+	public double getSumRetailPrice() {
+		return sumRetailPrice;
+	}
+
+	public void setSumRetailPrice(double sumRetailPrice) {
+		this.sumRetailPrice = sumRetailPrice;
+	}
+
 	public String getOrderIdentity() {
 		return orderIdentity;
 	}
 	public void setOrderIdentity(String orderIdentity) {
 		this.orderIdentity = orderIdentity;
 	}
-	public double getSumWholePrice() {
-		return sumWholePrice;
-	}
-	public void setSumWholePrice(double sumWholePrice) {
-		this.sumWholePrice = sumWholePrice;
-	}
+//	public double getSumWholePrice() {
+//		return sumWholePrice;
+//	}
+//	public void setSumWholePrice(double sumWholePrice) {
+//		this.sumWholePrice = sumWholePrice;
+//	}
 	public int getStatus() {
 		return status;
 	}
@@ -78,7 +89,7 @@ public class CustOrderProduct implements Serializable{
 
 	public void addQ(Integer q) {
 		quantity += q;
-		sumWholePrice = productBarcode.getProduct().getWholePrice() * quantity;
+		sumRetailPrice = productBarcode.getProduct().getSalesPrice() * quantity * this.getProductBarcode().getProduct().getNumPerHand();
 		lastUpdateTime = DateUtility.getToday();
 	}
 	
@@ -90,7 +101,7 @@ public class CustOrderProduct implements Serializable{
 				q = quantity;
 			
 			quantity -= q;
-			sumWholePrice = productBarcode.getProduct().getWholePrice() * quantity;
+			sumRetailPrice = productBarcode.getProduct().getSalesPrice() * quantity  * this.getProductBarcode().getProduct().getNumPerHand();
 			lastUpdateTime = DateUtility.getToday();
 		}
 	}

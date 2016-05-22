@@ -184,7 +184,7 @@ public class OrderService {
 		
 		if (coProduct != null){
 			qMap.put("pQ", coProduct.getQuantity());
-			qMap.put("pSum", coProduct.getSumWholePrice());
+			qMap.put("pSum", coProduct.getSumRetailPrice());
 		}
 		
 		response.setReturnValue(qMap);
@@ -235,12 +235,12 @@ public class OrderService {
 		int pbId = 0;
 		for (CustOrderProduct custOrderProduct : custOrderProducts){
 			quantity = custOrderProduct.getQuantity();
-			sumWhole = custOrderProduct.getSumWholePrice();
+			sumWhole = custOrderProduct.getSumRetailPrice();
 			pbId = custOrderProduct.getProductBarcode().getId();
 			
 			CustOrderProductVO custOrderProduct2 = copMap.get(pbId);
 			custOrderProduct2.setQuantity(quantity);
-			custOrderProduct2.setSumWholePrice(sumWhole);
+			custOrderProduct2.setSumRetailPrice(sumWhole);
 		}
 		
 		//3. 生成response的
@@ -298,7 +298,7 @@ public class OrderService {
 
 		if (coProduct != null){
 			qMap.put("pQ", coProduct.getQuantity());
-			qMap.put("pSum", coProduct.getSumWholePrice());
+			qMap.put("pSum", coProduct.getSumRetailPrice());
 		}
 		
 		response.setReturnValue(qMap);

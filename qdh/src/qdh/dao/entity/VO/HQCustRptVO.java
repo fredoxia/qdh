@@ -14,15 +14,16 @@ public class HQCustRptVO extends Customer implements Serializable {
 	private static final long serialVersionUID = 8494586214121087738L;
 
 	private int quantity;
-	private double sumWholeSalePrice;
+	private double sumRetailPrice;
 
+	
 
-	public double getSumWholeSalePrice() {
-		return sumWholeSalePrice;
+	public double getSumRetailPrice() {
+		return sumRetailPrice;
 	}
 
-	public void setSumWholeSalePrice(double sumWholeSalePrice) {
-		this.sumWholeSalePrice = sumWholeSalePrice;
+	public void setSumRetailPrice(double sumRetailPrice) {
+		this.sumRetailPrice = sumRetailPrice;
 	}
 
 	public int getQuantity() {
@@ -33,10 +34,10 @@ public class HQCustRptVO extends Customer implements Serializable {
 		this.quantity = quantity;
 	}
 
-	public HQCustRptVO(Customer cust, int quantity, double sumWholePrice) throws IllegalAccessException, InvocationTargetException{
+	public HQCustRptVO(Customer cust, int quantity, double sumRetailPrice) throws IllegalAccessException, InvocationTargetException{
 		BeanUtils.copyProperties(this, cust);
 		this.quantity = quantity;
-		this.sumWholeSalePrice = sumWholePrice;
+		this.sumRetailPrice = sumRetailPrice;
 	}
 	
 }

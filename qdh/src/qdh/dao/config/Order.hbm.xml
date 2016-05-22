@@ -34,7 +34,8 @@
              <key-property name="custId" column="cust_id" type="integer"></key-property>       
         </composite-id>
         <property name="quantity" column="quantity" type="integer"/>
-        <property name="sumWholePrice" column="sum_whole_price" type="double"/>
+        <!--  <property name="sumWholePrice" column="sum_whole_price" type="double"/>-->
+        <property name="sumRetailPrice" column="sum_retail_price" type="double"/>
         <property name="lastUpdateTime" column="last_update_time" type="timestamp"/>
         <property name="status" column="status" type="integer"/>
         <property name="orderIdentity" column="order_identity" type="string"/>

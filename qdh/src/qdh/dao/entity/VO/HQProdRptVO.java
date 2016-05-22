@@ -21,7 +21,7 @@ public class HQProdRptVO implements Serializable {
 	private String color ;
 	private String size ;
 	private Integer quantity;
-	private double wholePrice;
+	private Integer retailPrice;
 	
 
 	public HQProdRptVO(ProductBarcode pb, Integer quantity){
@@ -117,13 +117,12 @@ public class HQProdRptVO implements Serializable {
 		this.numPerHand = numPerHand;
 	}
 
-	public double getWholePrice() {
-		return wholePrice;
+	public Integer getRetailPrice() {
+		return retailPrice;
 	}
 
-	public void setWholePrice(double wholePrice) {
-		this.wholePrice = wholePrice;
+	public void setRetailPrice(double retailPrice) {
+		this.retailPrice = (int)retailPrice;
 	}
-	
 	
 }

@@ -46,8 +46,8 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 	private int NUM_PER_HAND_COLUMN =7;
 	private int QUANTITY_COLUMN =8;
 	private int QUANTITY_SUM_COLUMN =9;
-	private int WHOLE_PRICE_COLUMN =10;
-	private int WHOLE_PRICE_SUM_COLUMN =11;
+	private int RETAIL_PRICE_COLUMN =10;
+	private int RETAIL_PRICE_SUM_COLUMN =11;
 	private String defaulFileName ="KeHuBaoBiao.xls";
 	
 	@Override
@@ -104,7 +104,7 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 
 		int sumQ = 0;
 		int sumS = 0;
-		double sumWholePrice = 0;
+		double sumRetailPrice = 0;
 		String orderIdentity = "";
 		
 		//2. process elements
@@ -127,13 +127,13 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 			dataRow.createCell(QUANTITY_COLUMN).setCellValue(cop.getQuantity());
 			int qSum = p.getNumPerHand() * cop.getQuantity();
 			dataRow.createCell(QUANTITY_SUM_COLUMN).setCellValue(qSum);
-			dataRow.createCell(WHOLE_PRICE_COLUMN).setCellValue(p.getWholePrice());
-			double wpSum = qSum * p.getWholePrice();
-			dataRow.createCell(WHOLE_PRICE_SUM_COLUMN).setCellValue(wpSum);
+			dataRow.createCell(RETAIL_PRICE_COLUMN).setCellValue(p.getSalesPrice());
+
+			dataRow.createCell(RETAIL_PRICE_COLUMN).setCellValue(cop.getSumRetailPrice());
 			
 			sumQ += qSum;
 			sumS += cop.getQuantity();
-			sumWholePrice += wpSum;
+			sumRetailPrice += cop.getSumRetailPrice();
 			
 			if (orderIdentity.equals(""))
 				orderIdentity = cop.getOrderIdentity();
@@ -145,7 +145,7 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 		dataRow.createCell(BARCODE_COLUMN).setCellValue("总计:");
 		dataRow.createCell(QUANTITY_COLUMN).setCellValue(sumS);
 		dataRow.createCell(QUANTITY_SUM_COLUMN).setCellValue(sumQ);
-		dataRow.createCell(WHOLE_PRICE_SUM_COLUMN).setCellValue(sumWholePrice);
+		dataRow.createCell(RETAIL_PRICE_COLUMN).setCellValue(sumRetailPrice);
 		
 		return wb;
 	}

@@ -44,8 +44,8 @@ $(function() {
 			title : '数量(手)',
 			width : 35
 		}, {
-			field : 'sumWholePrice',
-			title : '金额',
+			field : 'sumRetailPrice',
+			title : '零售金额',
 			width : 35
 		}, {
 			field : 'lastUpdateTime',

@@ -9,6 +9,7 @@
 <script>
 $(document).ready(function(){
 	$("#productCode").focus();
+
 })
 function clearProductCode(){
 	$("#productCode").focus();
@@ -50,7 +51,7 @@ function searchProduct(){
 					        		  cops[i].brand +"</td><td style='vertical-align:middle;'>"+
 					        		  cops[i].productCode +" " + cops[i].color+"</td><td style='vertical-align:middle;' id='pQ"+cops[i].pbId+"'>"+
 					        		  cops[i].quantity+"</td><td style='vertical-align:middle;' id='pSum"+cops[i].pbId+"'>"+
-					        		  cops[i].sumWholePrice+"</td><td>"+
+					        		  cops[i].sumRetailPrice+"</td><td>"+
 										"<div name='btnGroup' data-role='controlgroup' data-type='horizontal'>"+
 											"<input name='addBtn' type='button' value='加订' data-mini='true'  data-inline='true' onclick='addOrder("+cops[i].pbId+");'/>"+
 											"<input name='addBtn' type='button' value='减订' data-mini='true'  data-inline='true' onclick='deductOrder("+cops[i].pbId+");'/>"+
@@ -146,7 +147,7 @@ function addOrder(pbId){
 				</div>
 				
 		</div>
-		<div data-role="footer" data-theme="b" data-position="fixed">
+		<div data-role="footer" data-theme="b" data-position="fixed" data-tap-toggle="false">
 			<div data-role="navbar">
 		      <ul>
 		      	<li><a href="<%=request.getContextPath()%>/orderController/StartOrder/mobile" data-icon="edit" data-ajax="false" class="ui-btn-active ui-state-persist">我要订货</a></li>

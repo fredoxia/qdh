@@ -244,14 +244,14 @@ public class CustAcctService {
 				vos.add(vo);
 				//System.out.println(vo.getBrand() + "," + vo.getProductCode() + "," + vo.getQuantity() + "," + vo.getSumWholePrice());
 				totalQ += vo.getQuantity();
-				totalSum += vo.getSumWholePrice();
+				totalSum += vo.getSumRetailPrice();
 			}
 		}
 		
 		if (footer != null){
 			CustOrderProductVO footerVo = new CustOrderProductVO();
 			footerVo.setQuantity(totalQ);
-			footerVo.setSumWholePrice(totalSum);
+			footerVo.setSumRetailPrice(totalSum);
 			footerVo.setLastUpdateTime(null);
 			footerVo.setProductCode("总计");
 			footer.add(footerVo);
