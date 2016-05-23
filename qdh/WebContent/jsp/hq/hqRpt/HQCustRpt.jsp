@@ -44,8 +44,8 @@ $(function() {
 				return 'font-weight:bold;color:red;font-size:large';
 			}
 		}, {
-			field : 'sumWholeSalePrice',
-			title : '成交金额',
+			field : 'sumRetailPrice',
+			title : '零售总金额',
 			width : 30,
 			styler: function(value,row,index){
 				return 'font-weight:bold;color:red;font-size:large';

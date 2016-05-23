@@ -129,7 +129,7 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 			dataRow.createCell(QUANTITY_SUM_COLUMN).setCellValue(qSum);
 			dataRow.createCell(RETAIL_PRICE_COLUMN).setCellValue(p.getSalesPrice());
 
-			dataRow.createCell(RETAIL_PRICE_COLUMN).setCellValue(cop.getSumRetailPrice());
+			dataRow.createCell(RETAIL_PRICE_SUM_COLUMN).setCellValue(cop.getSumRetailPrice());
 			
 			sumQ += qSum;
 			sumS += cop.getQuantity();
@@ -145,7 +145,7 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 		dataRow.createCell(BARCODE_COLUMN).setCellValue("总计:");
 		dataRow.createCell(QUANTITY_COLUMN).setCellValue(sumS);
 		dataRow.createCell(QUANTITY_SUM_COLUMN).setCellValue(sumQ);
-		dataRow.createCell(RETAIL_PRICE_COLUMN).setCellValue(sumRetailPrice);
+		dataRow.createCell(RETAIL_PRICE_SUM_COLUMN).setCellValue(sumRetailPrice);
 		
 		return wb;
 	}

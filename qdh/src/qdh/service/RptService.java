@@ -122,7 +122,7 @@ public class RptService {
 		
 		Object[] values = new Object[]{EntityConfig.INACTIVE};
 		String countCriteria = "SELECT COUNT(DISTINCT custId) FROM CustOrderProduct WHERE status != ?";
-		String rptCriteria = "SELECT custId, SUM(quantity), SUM(sumWholePrice) FROM CustOrderProduct WHERE status != ? GROUP BY custId ORDER BY SUM(quantity) DESC";
+		String rptCriteria = "SELECT custId, SUM(quantity), SUM(sumRetailPrice) FROM CustOrderProduct WHERE status != ? GROUP BY custId ORDER BY SUM(quantity) DESC";
 		
 		int totalRow = custOrderProdDaoImpl.executeHQLCount(countCriteria, values, false);
 		PageHelper pHelper = new PageHelper(rows, page, totalRow);
@@ -139,12 +139,12 @@ public class RptService {
 					continue;
 				Integer custId = (Integer)recordResult[0];
 				Long quantity =  (Long)recordResult[1];
-				Double sumWholePrice =  (Double)recordResult[2];
+				Double sumRetailPrice =  (Double)recordResult[2];
 				
 				Customer customer = customerDaoImpl.get(custId, true);
 				HQCustRptVO rpt = null;
 				 try {
-					 rpt = new HQCustRptVO(customer, quantity.intValue(), sumWholePrice);
+					 rpt = new HQCustRptVO(customer, quantity.intValue(), sumRetailPrice);
 				 } catch (Exception e){
 					 loggerLocal.error(e);
 					 continue;
