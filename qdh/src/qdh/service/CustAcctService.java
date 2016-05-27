@@ -63,7 +63,7 @@ public class CustAcctService {
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(Customer.class);
 		
-		System.out.println(sort + "," + order);
+//		System.out.println(sort + "," + order);
 		
 		if (isChain!= null && isChain != EntityConfig.ALL_RECORD){
 			if (isChain == CUST_TYPE_CHAIN){
@@ -429,6 +429,35 @@ public class CustAcctService {
 		}
 		
 		response.setSuccess("成功 添加/更新 " + total + " 客户");
+		return response;
+	}
+
+	public Response exportCust(Integer isChain, Integer status) {
+		Map<String, Object> dataMap= new HashMap<>();
+		Response response = new Response();
+		
+		DetachedCriteria criteria = DetachedCriteria.forClass(Customer.class);
+		
+//		System.out.println(sort + "," + order);
+		
+		if (isChain!= null && isChain != EntityConfig.ALL_RECORD){
+			if (isChain == CUST_TYPE_CHAIN){
+				criteria.add(Restrictions.isNotNull("chainId"));
+			} else {
+				criteria.add(Restrictions.isNull("chainId"));
+			}
+		}
+		
+		if (status == null)
+			status = EntityConfig.ACTIVE;
+		if (status != null && status != EntityConfig.ALL_RECORD)
+			criteria.add(Restrictions.eq("status", status));
+		
+		List<Customer> custs = customerDaoImpl.getByCritera(criteria, true);
+		
+		dataMap.put("customer", custs);
+		response.setReturnValue(dataMap);
+		
 		return response;
 	}
 }

@@ -46,7 +46,7 @@ $(function() {
 			field : 'chainStoreName',
 			sortable:true,
 			order:'desc',
-			title : '连锁店名字',
+			title : '连锁店系统名字',
 			width : 80
 		}, {
 			field : 'id',
@@ -194,12 +194,16 @@ function checkOrder(){
 		}
 	}, 'JSON');
 }
+function downloadCustInfor(){
+    document.searchForm.action="<%=request.getContextPath()%>/custAcctController/HQExportCust";
+    document.searchForm.submit();
+}
 </script>
 </head>
 <body>
 	<div class="easyui-layout" data-options="fit : true,border : false">
 		<div data-options="region:'north',border:false" style="height: 55px; overflow: hidden;">
-			<form id="searchForm">
+			<form id="searchForm" name="searchForm" method="post">
 				<table border="0" class="table table-hover table-condensed" style="display: block;">
 					<tr>
 						<th>客户名字</th>
@@ -237,8 +241,10 @@ function checkOrder(){
 			<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">添加客户</a>
 			<a onclick="activeFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">激活客户</a>
 			<a onclick="inactiveFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-no'">冻结客户</a>
-
-			<a onclick="checkOrder();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true">打开订单</a>
+			<a onclick="checkOrder();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true">打开客户订单</a>
+			<a onclick="downloadCustInfor();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-dbsave',plain:true">下载客户信息</a>
+			
+			
 	</div>
 
 

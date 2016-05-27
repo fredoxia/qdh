@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.sun.xml.internal.ws.policy.sourcemodel.ModelNode;
 
+import qdh.dao.entity.VO.CustInforExcelVO;
 import qdh.dao.entity.VO.CustomerOrderExcelVO;
 import qdh.dao.entity.VO.FactoryOrderExcelVO;
 import qdh.dao.entity.order.Customer;
@@ -167,6 +168,21 @@ public class CustAcctController {
 		}
 		
 		ModelAndView mav = new ModelAndView(new CustomerOrderExcelVO(), (Map<String, ?>)response.getReturnValue()); 
+		
+		return mav;
+	}
+	
+	@RequestMapping("/HQExportCust")
+	public ModelAndView HQExportCust(Integer custType, Integer status){
+		
+		Response response = new Response();
+		try {
+			response = custAcctService.exportCust(custType, status);
+		} catch (Exception e){
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		ModelAndView mav = new ModelAndView(new CustInforExcelVO(), (Map<String, ?>)response.getReturnValue()); 
 		
 		return mav;
 	}
