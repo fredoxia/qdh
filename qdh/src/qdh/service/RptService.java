@@ -25,6 +25,7 @@ import qdh.dao.entity.VO.MobileProdRptVO;
 import qdh.dao.entity.order.CurrentBrands;
 import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.order.Customer;
+import qdh.dao.entity.product.Brand;
 import qdh.dao.entity.product.ProductBarcode;
 import qdh.dao.entity.systemConfig.OrderExportLog;
 import qdh.dao.impl.Response;
@@ -336,13 +337,78 @@ public class RptService {
 //		if (countObj != null && countObj.size() > 0){
 //			totalRow = (Integer)countObj.get(0);
 //		}
-
-		
-		DetachedCriteria resultCriteria = buildMobileCustRptCriteria(cb,userId);
-		List<CustOrderProduct> products = custOrderProdDaoImpl.getByCritera(resultCriteria, true);
-
 		List<CustOrderProductVO> footer = new ArrayList<>();
-		List<CustOrderProductVO> corpVos = CustAcctService.transferCustOrderProductVOs(products, footer);
+		List<CustOrderProductVO> corpVos  = new ArrayList<CustOrderProductVO>();
+		if (cb.getId() == 0){
+			
+			List<CurrentBrands> allBrands = currentBrandsDaoImpl.getAll(true);
+			int totalQ = 0;
+			int totalSumRetail = 0;
+			
+			for (CurrentBrands currentBrand: allBrands){
+				int quantity = 0;
+				int sumRetail = 0;
+				
+				int yearId = currentBrand.getYear().getYear_ID();
+				int quarterId = currentBrand.getQuarter().getQuarter_ID();
+				int brandId = currentBrand.getBrand().getBrand_ID();
+				
+				//1. find all products barcode
+				StringBuffer pbConstraints = new StringBuffer("");
+				String pbConstraintsString = "";
+				Set<Integer> barcodeIds = productBarcodeDaoImpl.getIds(yearId, quarterId, brandId);
+				if (barcodeIds.size() > 0){
+					Iterator<Integer> barIterator = barcodeIds.iterator();
+					while (barIterator.hasNext()){
+						pbConstraints.append(barIterator.next() + ",");
+					}
+					
+					pbConstraintsString = (pbConstraints.toString()).substring(0, pbConstraints.lastIndexOf(","));
+					
+					pbConstraintsString = " AND productBarcode.id IN (" + pbConstraintsString + ") ";
+				}
+
+				Object[] values = new Object[]{userId, EntityConfig.INACTIVE};
+				String rptCriteria = "SELECT SUM(quantity), SUM(sumRetailPrice) FROM CustOrderProduct WHERE custId =? AND status != ?" + pbConstraintsString;
+				
+				List<Object> data = custOrderProdDaoImpl.executeHQLSelect(rptCriteria, values, null, false);
+			    if (data != null && data.size() > 0){	
+			    	 for (int i = 0; i < data.size(); i++){
+						  Object object = data.get(i);
+						  if (object != null){
+								Object[] recordResult = (Object[])object;
+								if (recordResult[0] == null || recordResult[1] == null)
+									continue;
+								quantity = ((Long)recordResult[0]).intValue();
+								sumRetail =  ((Double)recordResult[1]).intValue();
+						  }
+			    	 }
+			    }
+			    
+			    CustOrderProductVO custVo = new CustOrderProductVO();
+			    custVo.setBrand(currentBrand.getBrand().getBrand_Name());
+			    custVo.setCopId(currentBrand.getId());
+			    custVo.setProductCode(currentBrand.getYear().getYear() + currentBrand.getQuarter().getQuarter_Name());
+			    custVo.setQuantity(quantity);
+			    custVo.setSumRetailPrice(sumRetail);
+			    corpVos.add(custVo);
+			    
+			    totalQ += quantity;
+			    totalSumRetail += sumRetail;
+			}
+			
+			CustOrderProductVO footerVo = new CustOrderProductVO();
+			footerVo.setQuantity(totalQ);
+			footerVo.setSumRetailPrice(totalSumRetail);
+			footerVo.setLastUpdateTime(null);
+			footerVo.setProductCode("总计");
+			footer.add(footerVo);
+		} else {
+			DetachedCriteria resultCriteria = buildMobileCustRptCriteria(cb,userId);
+			List<CustOrderProduct> products = custOrderProdDaoImpl.getByCritera(resultCriteria, true);
+
+			corpVos = CustAcctService.transferCustOrderProductVOs(products, footer);
+		}
 
 		dataMap.put("cops", corpVos);
 		dataMap.put("copsFooter", footer.get(0));
@@ -354,19 +420,18 @@ public class RptService {
 	private DetachedCriteria buildMobileCustRptCriteria(CurrentBrands cb, Integer custId){
 		//1. 限制产品信息
 		Set<Integer> barcodeIds = null;
-		if (cb != null && cb.getId() != 0){
-			int currentBrandId = cb.getId();
-			CurrentBrands currentBrands = currentBrandsDaoImpl.get(currentBrandId, true);
+		int currentBrandId = cb.getId();
+		CurrentBrands currentBrands = currentBrandsDaoImpl.get(currentBrandId, true);
+		
+		if (currentBrands != null){
+			int yearId = currentBrands.getYear().getYear_ID();
+			int quarterId = currentBrands.getQuarter().getQuarter_ID();
+			int brandId = currentBrands.getBrand().getBrand_ID();
 			
-			if (currentBrands != null){
-				int yearId = currentBrands.getYear().getYear_ID();
-				int quarterId = currentBrands.getQuarter().getQuarter_ID();
-				int brandId = currentBrands.getBrand().getBrand_ID();
-				
-				//1. find all products barcode
-				barcodeIds = productBarcodeDaoImpl.getIds(yearId, quarterId, brandId);
-			}
+			//1. find all products barcode
+			barcodeIds = productBarcodeDaoImpl.getIds(yearId, quarterId, brandId);
 		}
+
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
 		criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));

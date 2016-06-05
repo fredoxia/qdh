@@ -70,7 +70,7 @@
 			         <th data-priority="1">品牌</th>
 			         <th>货号</th>
 			         <th>数量(手)</th>
-			         <th data-priority="2">总价</th>
+			         <th data-priority="2">总售价</th>
 			         <th></th>
 			       </tr>
 			     </thead>
@@ -94,10 +94,16 @@
 						    <td style="vertical-align:middle;" id="pQ${cop.pbId}">${cop.quantity}</td>
 							<td style="vertical-align:middle;" id="pSum${cop.pbId}">${cop.sumRetailPrice}</td>
 							<td style="vertical-align:middle;">
-								<div data-role="controlgroup" data-type="horizontal">
-									<input type="button" value="加订" data-mini="true" data-inline="true" onclick="addOrder(${cop.pbId});"/>
-									<input type="button" value="减订" data-mini="true" data-inline="true" onclick="deductOrder(${cop.pbId});"/>
-								</div>
+								<c:if test="${cop.pbId > 0 && cop.copId == null}">
+									<div data-role="controlgroup" data-type="horizontal">
+										<input type="button" value="加订" data-mini="true" data-inline="true" onclick="addOrder(${cop.pbId});"/>
+										<input type="button" value="减订" data-mini="true" data-inline="true" onclick="deductOrder(${cop.pbId});"/>
+									</div>
+								</c:if>
+								<c:if test="${cop.copId > 0 && cop.pbId==null && cop.quantity>0}">
+										<input type="button" value="详细" data-mini="true" onclick="changeCb(${cop.copId});"/>
+								
+								</c:if>
 							</td>
 						</tr>
 					</c:forEach>

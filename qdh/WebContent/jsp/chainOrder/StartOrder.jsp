@@ -50,8 +50,8 @@ function searchProduct(){
 					          $("<tr id='pRow"+cops[i].pbId+"'><td style='vertical-align:middle;'>"+
 					        		  cops[i].brand +"</td><td style='vertical-align:middle;'>"+
 					        		  cops[i].productCode +" " + cops[i].color+"</td><td style='vertical-align:middle;' id='pQ"+cops[i].pbId+"'>"+
-					        		  cops[i].quantity+"</td><td style='vertical-align:middle;' id='pSum"+cops[i].pbId+"'>"+
-					        		  cops[i].sumRetailPrice+"</td><td>"+
+					        		  cops[i].quantity+"</td><td style='vertical-align:middle;'>"+
+					        		  cops[i].retailPrice+"</td><td>"+
 										"<div name='btnGroup' data-role='controlgroup' data-type='horizontal'>"+
 											"<input name='addBtn' type='button' value='加订' data-mini='true'  data-inline='true' onclick='addOrder("+cops[i].pbId+");'/>"+
 											"<input name='addBtn' type='button' value='减订' data-mini='true'  data-inline='true' onclick='deductOrder("+cops[i].pbId+");'/>"+
@@ -94,12 +94,12 @@ function myOrder(pbId, quantity){
 		if (result.success) {
 			var resultData = result.obj;
 			var pQ = resultData.pQ;
-			var pSum = resultData.pSum;
+			var pSum = resultData.pSaleP;
 			$("#pQ" + pbId).html(pQ);
-			$("#pSum" + pbId).html(pSum);
+
 		} else if (result.returnCode == WARNING){
 			$("#pQ" + pbId).html(0);
-			$("#pSum" + pbId).html(0);
+
 		} else {
 			renderPopup("系统错误",result.msg)
 		}
@@ -137,7 +137,7 @@ function addOrder(pbId){
 					         <th data-priority="1">品牌</th>
 					         <th width="20%">货号</th>
 					         <th width="15%">已定(手)</th>
-					         <th width="12%" data-priority="2">总价</th>
+					         <th width="12%" data-priority="2">零售价</th>
 					         <th width="27%"></th>
 					       </tr>
 					     </thead>

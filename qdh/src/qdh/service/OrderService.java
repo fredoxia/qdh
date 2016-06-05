@@ -199,9 +199,9 @@ public class OrderService {
 	 * @return
 	 */
 	public Response searchProduct(Integer custId, String productCode) {
-		System.out.println("-----------" + productCode);
+		//System.out.println("-----------" + productCode);
 		productCode = productCode.replaceAll("\\.", "_");
-		System.out.println("-----------" + productCode);
+		//System.out.println("-----------" + productCode);
 		Response response = new Response();
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(ProductBarcode.class);
@@ -231,16 +231,15 @@ public class OrderService {
 		criteria2.add(Restrictions.in("productBarcode.id", pbIds));
 		List<CustOrderProduct> custOrderProducts = custOrderProdDaoImpl.getByCritera(criteria2, true);
 		int quantity = 0;
-		double sumWhole = 0;
+		//double sumWhole = 0;
 		int pbId = 0;
 		for (CustOrderProduct custOrderProduct : custOrderProducts){
 			quantity = custOrderProduct.getQuantity();
-			sumWhole = custOrderProduct.getSumRetailPrice();
+			//sumWhole = custOrderProduct.getSumRetailPrice();
 			pbId = custOrderProduct.getProductBarcode().getId();
 			
 			CustOrderProductVO custOrderProduct2 = copMap.get(pbId);
 			custOrderProduct2.setQuantity(quantity);
-			custOrderProduct2.setSumRetailPrice(sumWhole);
 		}
 		
 		//3. 生成response的
@@ -298,7 +297,7 @@ public class OrderService {
 
 		if (coProduct != null){
 			qMap.put("pQ", coProduct.getQuantity());
-			qMap.put("pSum", coProduct.getSumRetailPrice());
+//			qMap.put("pSaleP", pBarcode.getProduct().getSalesPrice());
 		}
 		
 		response.setReturnValue(qMap);

@@ -57,15 +57,15 @@
 		<property name="password" value="${mysql.jdbc.password}"/> 
          <property name="testOnBorrow" value="true"/> 
          <property name="testWhileIdle" value="false"/> 
-        <property name="validationInterval" value="30000"/>  
+        <property name="validationInterval" value="3000"/>  
         <property name="validationQuery" value="SELECT 1"/>   
         <property name="timeBetweenEvictionRunsMillis" value="5000"/>   
-        <property name="maxActive" value="100"/>   
-        <property name="initialSize" value="25"/>    
-        <property name="minIdle" value="10"/>     
+        <property name="maxActive" value="200"/>   
+        <property name="initialSize" value="50"/>    
+        <property name="minIdle" value="20"/>     
         <property name="logAbandoned" value="false"/>   
         <property name="removeAbandoned" value="true"/>   
-        <property name="removeAbandonedTimeout" value="3600"/> 
+        <property name="removeAbandonedTimeout" value="600"/> 
         <property name="jdbcInterceptors" value="org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer"/>   
     </bean>    
  

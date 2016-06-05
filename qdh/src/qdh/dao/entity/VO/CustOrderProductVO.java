@@ -14,6 +14,7 @@ public class CustOrderProductVO implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -8713286109297381876L;
+	private Integer copId = null;
 	private Integer pbId = null;
 	private String year = "";
 	private String quarter = "";
@@ -27,6 +28,7 @@ public class CustOrderProductVO implements Serializable {
     private String unit;
 	private int quantity;
 //	private double sumWholePrice;
+	private int retailPrice;
 	private int sumRetailPrice;
 	private Timestamp lastUpdateTime = DateUtility.getToday();
 	
@@ -59,6 +61,23 @@ public class CustOrderProductVO implements Serializable {
 //    	sumWholePrice = crp.getSumWholePrice();
     	sumRetailPrice = (int)crp.getSumRetailPrice();
     	lastUpdateTime = crp.getLastUpdateTime();
+    	retailPrice = (int)p.getSalesPrice();
+	}
+
+	public Integer getCopId() {
+		return copId;
+	}
+
+	public void setCopId(Integer copId) {
+		this.copId = copId;
+	}
+
+	public int getRetailPrice() {
+		return retailPrice;
+	}
+
+	public void setRetailPrice(int retailPrice) {
+		this.retailPrice = retailPrice;
 	}
 
 	public int getSumRetailPrice() {
