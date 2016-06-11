@@ -38,9 +38,8 @@ public class FactoryOrderExcelVO extends AbstractExcelView {
 	protected void buildExcelDocument(Map<String, Object> dataMap,
 			HSSFWorkbook wb, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		List<CustOrderProduct> orderProducts = (List<CustOrderProduct>)dataMap.get("data");
-		Collections.sort(orderProducts, new CustOrderProductComparatorByBrandProductCode());
-		
+		List<HQProdRptVO> orderProducts = (List<HQProdRptVO>)dataMap.get("data");
+
 		CurrentBrands cBrands = (CurrentBrands)dataMap.get("brand");
 		
 		String fileName = getFileName(cBrands, request);
@@ -60,7 +59,7 @@ public class FactoryOrderExcelVO extends AbstractExcelView {
 		return  ExcelUtility.encodeExcelDownloadName(fileName,defaulFileName);
 	}
 
-	private HSSFWorkbook process(List<CustOrderProduct> orderProducts,CurrentBrands cBrands){
+	private HSSFWorkbook process(List<HQProdRptVO> orderProducts,CurrentBrands cBrands){
 		HSSFWorkbook wb = null;
 		InputStream is = null;
 		try {
@@ -95,23 +94,19 @@ public class FactoryOrderExcelVO extends AbstractExcelView {
 		
 		//2. process elements
 		for (int i =0; i < orderProducts.size(); i++){
-			CustOrderProduct cop = orderProducts.get(i);
-			ProductBarcode pb = cop.getProductBarcode();
-			Product p = pb.getProduct();
-			Color color = pb.getColor();
+			HQProdRptVO cop = orderProducts.get(i);
 			
 			HSSFRow dataRow = sheet.createRow(DATA_ROW + i);
-			dataRow.createCell(PRODUCT_CODE_COLUMN).setCellValue(p.getProductCode());
+			dataRow.createCell(PRODUCT_CODE_COLUMN).setCellValue(cop.getProductCode());
 			
-			if (color != null)
-				dataRow.createCell(COLOR_COLUMN).setCellValue(color.getName());
+			dataRow.createCell(COLOR_COLUMN).setCellValue(cop.getColor());
 			
 			dataRow.createCell(QUANTITY_COLUMN).setCellValue(cop.getQuantity());
 			
 			sum += cop.getQuantity();
 			
-			if (orderIdentity.equals(""))
-				orderIdentity = cop.getOrderIdentity();
+//			if (orderIdentity.equals(""))
+//				orderIdentity = cop.get;
 		}
 		
 		dateRow.createCell(ORDER_IDENTITY_COLUMN).setCellValue(orderIdentity);

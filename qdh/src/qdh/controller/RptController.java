@@ -92,7 +92,7 @@ public class RptController {
 		
 		Response response = new Response();
 		try {
-			response = rptService.getCustOrderProducts(cbId);
+			response = rptService.getFactoryOrder(cbId);
 		} catch (Exception e){
 			response.setFail("系统错误 : " + e.getMessage());
 		}

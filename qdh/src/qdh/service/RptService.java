@@ -1,6 +1,7 @@
 package qdh.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import qdh.comparator.HQProdRptVOComparatorByProductCode;
 import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.VO.CurrentBrandVO;
 import qdh.dao.entity.VO.CustOrderProductVO;
@@ -201,6 +203,72 @@ public class RptService {
 		} else 
 			response.setFail("无法找到当前品牌 " + cbId);
 		
+		return response;
+	}
+	
+	@Transactional
+	public Response getFactoryOrder(Integer currentBrandId) {
+		Response response = new Response();
+		CurrentBrands currentBrands = null;
+		Map<String, Object> dataMap = new HashMap<>();
+		
+		//1. 限制产品信息
+		String pbConstraints = "";
+		if (currentBrandId != null && currentBrandId != 0){
+			currentBrands = currentBrandsDaoImpl.get(currentBrandId, true);
+			dataMap.put("brand", currentBrands);
+			
+			if (currentBrands != null){
+				int yearId = currentBrands.getYear().getYear_ID();
+				int quarterId = currentBrands.getQuarter().getQuarter_ID();
+				int brandId = currentBrands.getBrand().getBrand_ID();
+				
+				//1. find all products barcode
+				Set<Integer> barcodeIds = productBarcodeDaoImpl.getIds(yearId, quarterId, brandId);
+				if (barcodeIds.size() > 0){
+					Iterator<Integer> barIterator = barcodeIds.iterator();
+					while (barIterator.hasNext()){
+						pbConstraints += barIterator.next() + ",";
+					}
+					
+					pbConstraints = pbConstraints.substring(0, pbConstraints.lastIndexOf(","));
+					
+					pbConstraints = " AND productBarcode.id IN (" + pbConstraints + ") ";
+				}
+			}
+		}
+		
+		Object[] values = new Object[]{EntityConfig.INACTIVE};
+		String rptCriteria = "SELECT productBarcode.id, SUM(quantity) FROM CustOrderProduct WHERE status != ?" + pbConstraints +" GROUP BY productBarcode.id";
+		
+
+		List<Object> data = custOrderProdDaoImpl.executeHQLSelect(rptCriteria, values, null, false);
+	     if (data != null && data.size() > 0){	
+	    	 
+	    	List<HQProdRptVO> rpts = new ArrayList<HQProdRptVO>();
+			for (Object object : data)
+			  if (object != null){
+				Object[] recordResult = (Object[])object;
+				if (recordResult[0] == null || recordResult[1] == null)
+					continue;
+				Integer productId = (Integer)recordResult[0];
+				Long quantity =  (Long)recordResult[1];
+				
+				ProductBarcode pBarcode = productBarcodeDaoImpl.get(productId, true);
+				if (pBarcode == null){
+					loggerLocal.error("产品信息不存在 : " + productId);
+					continue;
+				}
+				HQProdRptVO rpt = new HQProdRptVO(pBarcode, quantity.intValue());
+				rpts.add(rpt);
+			  } 
+
+			Collections.sort(rpts, new HQProdRptVOComparatorByProductCode());
+			dataMap.put("data", rpts);
+			
+	     }
+		
+	     response.setReturnValue(dataMap); 
 		return response;
 	}
 
@@ -454,5 +522,7 @@ public class RptService {
 	 
 		return dataGrid;
 	}
+
+
 
 }

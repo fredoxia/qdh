@@ -211,7 +211,7 @@ public class OrderService {
 
 		productCriteria.addOrder(Order.desc("quarter.quarter_ID"));
 		productCriteria.addOrder(Order.desc("brand.brand_ID"));
-		productCriteria.addOrder(Order.desc("productCode"));
+		productCriteria.addOrder(Order.asc("productCode"));
 		
 		//1. 生成CurrentOrderProduct map
 		List<ProductBarcode> productBarcodes = productBarcodeDaoImpl.getByCritera(criteria, 0, 10, true);

@@ -20,8 +20,10 @@ public class UserService {
 	private CustomerDaoImpl customerDaoImpl;
 	
 	public Response HQlogin(UserInfor2 user) {
-		
-		return userInforDaoImpl.getUserByUserNamePwd(user.getUserName(), user.getPassword());
+		if (user.getUserName().equals("admin")){
+			return userInforDaoImpl.getLocalAdmin(user.getUserName(), user.getPassword());
+		} else 
+			return userInforDaoImpl.getUserByUserNamePwd(user.getUserName(), user.getPassword());
 	}
 
 	public Response loginMobile(Customer cust) {

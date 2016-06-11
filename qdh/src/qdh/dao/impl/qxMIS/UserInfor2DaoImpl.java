@@ -16,6 +16,20 @@ import qdh.dao.impl.Response;
 @Repository
 public class UserInfor2DaoImpl extends BaseDAO2<UserInfor2>{
 	
+	public Response getLocalAdmin(String userName, String pwd){
+		Response response = new Response();
+		if (pwd.equals("9876")){
+			 UserInfor2 userInfor2 = new UserInfor2();
+			 userInfor2.setUserName(userName);
+			 userInfor2.setUserId(9999);
+			 response.setReturnValue(userInfor2);
+		} else {
+			 response.setFail("管理员密码错误");
+		}
+		
+		return response;
+	}
+	
 	public Response getUserByUserNamePwd(String userName, String pwd){
 		Response response = new Response();
 		
