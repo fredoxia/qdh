@@ -2,6 +2,7 @@ package qdh.service;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import qdh.comparator.CustOrderProductComparatorByBrandProductCode;
 import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.VO.CustOrderProductVO;
 import qdh.dao.entity.VO.CustomerOrderExcelVO;
@@ -379,6 +381,9 @@ public class OrderService {
 					double sumCost = 0;
 					double sumWholePrice = 0;
 					double sumRetailPrice = 0;
+					
+					Collections.sort(custOrderProducts, new CustOrderProductComparatorByBrandProductCode());
+					
 					for (CustOrderProduct cop : custOrderProducts){
 						Product product = cop.getProductBarcode().getProduct();
 						
@@ -461,6 +466,8 @@ public class OrderService {
 				criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
 				
 				List<CustOrderProduct> products = custOrderProdDaoImpl.getByCritera(criteria, true);
+				
+				Collections.sort(products, new CustOrderProductComparatorByBrandProductCode());
 				
 				dataMap.put("customer", cust);
 				dataMap.put("data", products);

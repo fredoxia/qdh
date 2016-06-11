@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import qdh.comparator.CustOrderProductComparatorByBrandProductCode;
 import qdh.comparator.CustOrderProductComparatorByYQBrandProductCode;
 import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.SQLServer.ClientsMS;
@@ -273,6 +274,8 @@ public class CustAcctService {
 		
 		List<CustOrderProduct> products = custOrderProductDaoImpl.getByCritera(criteria, true);
 		
+		Collections.sort(products, new CustOrderProductComparatorByBrandProductCode());
+
 		dataMap.put("customer", cust);
 		dataMap.put("data", products);
 		
