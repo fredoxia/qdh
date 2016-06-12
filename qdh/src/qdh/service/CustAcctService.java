@@ -432,7 +432,7 @@ public class CustAcctService {
 		return response;
 	}
 
-	public Response exportCust(Integer isChain, Integer status) {
+	public Response downloadCust(Integer isChain, Integer status) {
 		Map<String, Object> dataMap= new HashMap<>();
 		Response response = new Response();
 		

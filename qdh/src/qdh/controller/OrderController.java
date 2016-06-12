@@ -1,12 +1,18 @@
 package qdh.controller;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
+import qdh.dao.entity.VO.AllCustOrderDownloadView;
+import qdh.dao.entity.VO.CustomerOrderExcelVO;
 import qdh.dao.impl.Response;
 import qdh.pageModel.Json;
 import qdh.pageModel.SessionInfo;
@@ -138,5 +144,24 @@ public class OrderController {
 		Json json = new Json(response);
 		
 		return json;
+	}
+	
+	/**
+	 * 总部导出所有当前订货会客户订单，分客户
+	 * 打成一个zip文件
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/HQDownloadAllCustOrder")
+	public View HQDownloadAllCustOrder(HttpSession session){
+		
+		Response response = new Response();
+		try {
+			response = orderService.downalodAllCustOrder();
+		} catch (Exception e){
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+	    return new AllCustOrderDownloadView((String)response.getReturnValue());
 	}
 }

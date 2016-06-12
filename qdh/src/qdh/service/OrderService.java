@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.catalina.User;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.VO.CustOrderProductVO;
+import qdh.dao.entity.VO.CustomerOrderExcelVO;
 import qdh.dao.entity.order.CurrentBrands;
 import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.order.Customer;
@@ -42,6 +44,7 @@ import qdh.dao.impl.systemConfig.OrderExportLogDaoImpl;
 import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 import qdh.pageModel.SessionInfo;
 import qdh.utility.DateUtility;
+import qdh.utility.FileUtility;
 import qdh.utility.loggerLocal;
 
 
@@ -422,6 +425,59 @@ public class OrderService {
 		
 		response.setMessage(msg);
 		
+		return response;
+	}
+
+	/**
+	 * 下载所有客户订单zip打包
+	 * @return
+	 * @throws Exception 
+	 */
+	public Response downalodAllCustOrder() throws Exception {
+		String orderIdentity = systemConfigDaoImpl.getOrderIdentity();
+		Response response = new Response();
+		String filePath = null;
+		
+		//1. 获取多少个customer
+		DetachedCriteria criteriaCount = DetachedCriteria.forClass(CustOrderProduct.class);
+		criteriaCount.add(Restrictions.eq("orderIdentity", orderIdentity));
+		criteriaCount.setProjection(Projections.distinct(Projections.property("custId")));
+		List<Object> custObj = custOrderProdDaoImpl.getByCriteriaProjection(criteriaCount, false);
+		if (custObj == null || custObj.size() == 0){
+			loggerLocal.info("没有找到当前订货会数据 " + orderIdentity);
+			response.setFail("没有找到当前订货会的订单数据");
+		} else {
+			Map<String, HSSFWorkbook> zipMap = new HashMap<>();
+			Map<String, Object> dataMap = new HashMap<>();
+			
+			for (Object custIdObj :  custObj){
+				Integer custId = (Integer)custIdObj;
+				loggerLocal.info("导出客户数据 : " + orderIdentity + "," + custId);
+				
+				Customer cust = customerDaoImpl.get(custId, true);
+				
+				DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+				criteria.add(Restrictions.eq("custId", custId));
+				criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
+				
+				List<CustOrderProduct> products = custOrderProdDaoImpl.getByCritera(criteria, true);
+				
+				dataMap.put("customer", cust);
+				dataMap.put("data", products);
+				
+				CustomerOrderExcelVO custOrderVo = new CustomerOrderExcelVO();
+				HSSFWorkbook custOrderWB = custOrderVo.process(products, cust);
+
+				String fileName = cust.getCustName();
+				if (cust.getChainStoreName() != null && !cust.getChainStoreName().equals(""))
+					fileName += "-" + cust.getChainStoreName();
+				zipMap.put(fileName + ".xls", custOrderWB);
+			}
+			
+			filePath = FileUtility.zipWorkbooks(zipMap);
+		}
+		
+		response.setReturnValue(filePath);
 		return response;
 	}
 

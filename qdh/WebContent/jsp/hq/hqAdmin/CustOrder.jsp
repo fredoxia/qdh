@@ -57,7 +57,7 @@ $(function() {
 });
 
 function downloadOrder(){
-    document.form.action="<%=request.getContextPath()%>/custAcctController/HQExportCustOrder";
+    document.form.action="<%=request.getContextPath()%>/custAcctController/HQDownloadCustOrder";
     document.form.submit();
 }
 </script>

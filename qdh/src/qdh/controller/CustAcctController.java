@@ -157,8 +157,8 @@ public class CustAcctController {
 		return dataGrid;
 	}
 	
-	@RequestMapping("/HQExportCustOrder")
-	public ModelAndView HQExportCustOrder(Integer id){
+	@RequestMapping("/HQDownloadCustOrder")
+	public ModelAndView HQDownloadCustOrder(Integer id){
 		
 		Response response = new Response();
 		try {
@@ -172,12 +172,12 @@ public class CustAcctController {
 		return mav;
 	}
 	
-	@RequestMapping("/HQExportCust")
-	public ModelAndView HQExportCust(Integer custType, Integer status){
+	@RequestMapping("/HQDownloadCust")
+	public ModelAndView HQDownloadCust(Integer custType, Integer status){
 		
 		Response response = new Response();
 		try {
-			response = custAcctService.exportCust(custType, status);
+			response = custAcctService.downloadCust(custType, status);
 		} catch (Exception e){
 			response.setFail("系统错误 : " + e.getMessage());
 		}

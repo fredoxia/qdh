@@ -35,19 +35,18 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 	private int DATE_ROW = 1;
 	private int CUST_ROW = 2;
 
-	private int BARCODE_COLUMN = 0;
-	private int YEAR_COLUMN = 1;
-	private int QUARTER_COLUMN =2;
-	private int BRAND_COLUMN =3;
-	private int PRODUCT_CODE_COLUMN =4;
+	private int YEAR_COLUMN = 0;
+	private int QUARTER_COLUMN =1;
+	private int BRAND_COLUMN =2;
+	private int PRODUCT_CODE_COLUMN =3;
 	private int ORDER_IDENTITY_COLUMN =4;
-	private int COLOR_COLUMN =5;
-	private int CATEGORY_COLUMN =6;
-	private int NUM_PER_HAND_COLUMN =7;
-	private int QUANTITY_COLUMN =8;
-	private int QUANTITY_SUM_COLUMN =9;
-	private int RETAIL_PRICE_COLUMN =10;
-	private int RETAIL_PRICE_SUM_COLUMN =11;
+	private int COLOR_COLUMN =4;
+	private int CATEGORY_COLUMN =5;
+	private int NUM_PER_HAND_COLUMN =6;
+	private int QUANTITY_COLUMN =7;
+	private int QUANTITY_SUM_COLUMN =8;
+	private int RETAIL_PRICE_COLUMN =9;
+	private int RETAIL_PRICE_SUM_COLUMN =10;
 	private String defaulFileName ="KeHuBaoBiao.xls";
 	
 	@Override
@@ -76,7 +75,7 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 		return  ExcelUtility.encodeExcelDownloadName(fileName,defaulFileName);
 	}
 
-	private HSSFWorkbook process(List<CustOrderProduct> orderProducts,Customer cust){
+	public HSSFWorkbook process(List<CustOrderProduct> orderProducts,Customer cust){
 		HSSFWorkbook wb = null;
 		InputStream is = null;
 		try {
@@ -115,7 +114,7 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 			Color color = pb.getColor();
 			
 			HSSFRow dataRow = sheet.createRow(DATA_ROW + i);
-			dataRow.createCell(BARCODE_COLUMN).setCellValue(pb.getBarcode());
+			//dataRow.createCell(BARCODE_COLUMN).setCellValue(pb.getBarcode());
 			dataRow.createCell(YEAR_COLUMN).setCellValue(p.getYear().getYear());
 			dataRow.createCell(QUARTER_COLUMN).setCellValue(p.getQuarter().getQuarter_Name());
 			dataRow.createCell(BRAND_COLUMN).setCellValue(p.getBrand().getBrand_Name());
@@ -142,7 +141,7 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 		dateRow.createCell(ORDER_IDENTITY_COLUMN).setCellValue(orderIdentity);
 		
 		HSSFRow dataRow = sheet.createRow(DATA_ROW + orderProducts.size());
-		dataRow.createCell(BARCODE_COLUMN).setCellValue("总计:");
+		dataRow.createCell(YEAR_COLUMN).setCellValue("总计:");
 		dataRow.createCell(QUANTITY_COLUMN).setCellValue(sumS);
 		dataRow.createCell(QUANTITY_SUM_COLUMN).setCellValue(sumQ);
 		dataRow.createCell(RETAIL_PRICE_SUM_COLUMN).setCellValue(sumRetailPrice);
