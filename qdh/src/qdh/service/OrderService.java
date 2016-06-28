@@ -410,6 +410,7 @@ public class OrderService {
 					
 					totalExportedCust++;
 				} catch (Exception e) {
+					e.printStackTrace();
 					totalErrorCust++;
 					loggerLocal.error("导出订单发生错误 : " + custId);
 					loggerLocal.error(e);

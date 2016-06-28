@@ -101,19 +101,41 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 		HSSFRow custRow = sheet.getRow(CUST_ROW);
 		custRow.createCell(1).setCellValue(cust.getCustName() + "-" + cust.getChainStoreName());
 
-		int sumQ = 0;
-		int sumS = 0;
+		int subTotalHands = 0;
+		int subTotalQuantity = 0;
+		double subTotalRetailPrice = 0;
+		
+		int sumQuantity = 0;
+		int sumHands = 0;
 		double sumRetailPrice = 0;
 		String orderIdentity = "";
 		
 		//2. process elements
+		int brandId = 0;
+		int countSubTotal = 0;
 		for (int i =0; i < orderProducts.size(); i++){
 			CustOrderProduct cop = orderProducts.get(i);
 			ProductBarcode pb = cop.getProductBarcode();
 			Product p = pb.getProduct();
 			Color color = pb.getColor();
 			
-			HSSFRow dataRow = sheet.createRow(DATA_ROW + i);
+			if (i != 0 && p.getBrand().getBrand_ID() != brandId){
+				//1. 写subtotal
+				HSSFRow dataRow = sheet.createRow(DATA_ROW + i + countSubTotal);
+				
+				dataRow.createCell(BRAND_COLUMN).setCellValue("小计:");
+				dataRow.createCell(QUANTITY_COLUMN).setCellValue(subTotalHands);
+				dataRow.createCell(QUANTITY_SUM_COLUMN).setCellValue(subTotalQuantity);
+				dataRow.createCell(RETAIL_PRICE_SUM_COLUMN).setCellValue(subTotalRetailPrice);
+				
+				subTotalHands = 0;
+				subTotalQuantity = 0;
+				subTotalRetailPrice = 0;
+				countSubTotal++;
+			}
+			brandId = p.getBrand().getBrand_ID();
+			
+			HSSFRow dataRow = sheet.createRow(DATA_ROW + i + countSubTotal);
 			//dataRow.createCell(BARCODE_COLUMN).setCellValue(pb.getBarcode());
 			dataRow.createCell(YEAR_COLUMN).setCellValue(p.getYear().getYear());
 			dataRow.createCell(QUARTER_COLUMN).setCellValue(p.getQuarter().getQuarter_Name());
@@ -130,20 +152,39 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 
 			dataRow.createCell(RETAIL_PRICE_SUM_COLUMN).setCellValue(cop.getSumRetailPrice());
 			
-			sumQ += qSum;
-			sumS += cop.getQuantity();
-			sumRetailPrice += cop.getSumRetailPrice();
+			sumQuantity += qSum;
+			sumHands += cop.getQuantity();
+			sumRetailPrice += cop.getSumRetailPrice(); 
+			
+			subTotalHands += cop.getQuantity();
+			subTotalQuantity += qSum;
+			subTotalRetailPrice += cop.getSumRetailPrice(); 
 			
 			if (orderIdentity.equals(""))
 				orderIdentity = cop.getOrderIdentity();
 		}
 		
+		if (subTotalHands != 0 && subTotalRetailPrice != 0){
+			//1. 写subtotal
+			HSSFRow dataRow = sheet.createRow(DATA_ROW + orderProducts.size() + countSubTotal);
+			
+			dataRow.createCell(BRAND_COLUMN).setCellValue("小计:");
+			dataRow.createCell(QUANTITY_COLUMN).setCellValue(subTotalHands);
+			dataRow.createCell(QUANTITY_SUM_COLUMN).setCellValue(subTotalQuantity);
+			dataRow.createCell(RETAIL_PRICE_SUM_COLUMN).setCellValue(subTotalRetailPrice);
+			
+			subTotalHands = 0;
+			subTotalQuantity = 0;
+			subTotalRetailPrice = 0;
+			countSubTotal++;
+		}
+		
 		dateRow.createCell(ORDER_IDENTITY_COLUMN).setCellValue(orderIdentity);
 		
-		HSSFRow dataRow = sheet.createRow(DATA_ROW + orderProducts.size());
+		HSSFRow dataRow = sheet.createRow(DATA_ROW + orderProducts.size() + countSubTotal);
 		dataRow.createCell(YEAR_COLUMN).setCellValue("总计:");
-		dataRow.createCell(QUANTITY_COLUMN).setCellValue(sumS);
-		dataRow.createCell(QUANTITY_SUM_COLUMN).setCellValue(sumQ);
+		dataRow.createCell(QUANTITY_COLUMN).setCellValue(sumHands);
+		dataRow.createCell(QUANTITY_SUM_COLUMN).setCellValue(sumQuantity);
 		dataRow.createCell(RETAIL_PRICE_SUM_COLUMN).setCellValue(sumRetailPrice);
 		
 		return wb;
