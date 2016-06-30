@@ -19,6 +19,7 @@ public class OrderExportLog implements Serializable {
 	private String orderIdentity;
     private Timestamp importTime;
     private int numOfOrders;
+    private int numOfError;
     private String operator;
 	public int getId() {
 		return id;
@@ -49,6 +50,12 @@ public class OrderExportLog implements Serializable {
 	}
 	public void setOperator(String operator) {
 		this.operator = operator;
+	}
+	public int getNumOfError() {
+		return numOfError;
+	}
+	public void setNumOfError(int numOfError) {
+		this.numOfError = numOfError;
 	}
 
 	

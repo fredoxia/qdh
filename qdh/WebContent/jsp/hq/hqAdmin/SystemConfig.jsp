@@ -61,7 +61,7 @@ function updateConfig() {
 					<tr>
 					<th height="35">订货会代码</th>
 						<td>
-							<form:input id="orderIdentity" path="orderIdentity" maxlength="15"  class="easyui-numberbox" data-options="min:201607,precision:0"/> 例如: 201604
+							<form:input id="orderIdentity" path="orderIdentity" maxlength="15"  class="easyui-numberbox" data-options="min:201606,precision:0"/> 例如: 201604
 						</td>
 					</tr>						
 					<tr>

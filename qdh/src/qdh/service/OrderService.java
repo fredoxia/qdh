@@ -32,6 +32,7 @@ import qdh.dao.entity.product.Product;
 import qdh.dao.entity.product.ProductBarcode;
 import qdh.dao.entity.qxMIS.CustPreOrder;
 import qdh.dao.entity.qxMIS.CustPreOrderProduct;
+import qdh.dao.entity.qxMIS.CustPreorderIdentity;
 import qdh.dao.entity.qxMIS.UserInfor2;
 import qdh.dao.entity.systemConfig.OrderExportLog;
 import qdh.dao.impl.Response;
@@ -41,6 +42,7 @@ import qdh.dao.impl.order.CustomerDaoImpl;
 import qdh.dao.impl.product.ProductBarcodeDaoImpl;
 import qdh.dao.impl.qxMIS.CustPreOrderDaoImpl;
 import qdh.dao.impl.qxMIS.CustPreOrderProductDaoImpl;
+import qdh.dao.impl.qxMIS.PreOrderIdentityDaoImpl;
 import qdh.dao.impl.qxMIS.UserInfor2DaoImpl;
 import qdh.dao.impl.systemConfig.OrderExportLogDaoImpl;
 import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
@@ -79,6 +81,9 @@ public class OrderService {
 	
 	@Autowired
 	private OrderExportLogDaoImpl orderExportLogDaoImpl;
+	
+	@Autowired
+	private PreOrderIdentityDaoImpl preOrderIdentityDaoImpl;
 	
 	/**
 	 * 在品牌排名中点击 加订
@@ -327,6 +332,10 @@ public class OrderService {
 		
 		String orderIdentity = systemConfigDaoImpl.getOrderIdentity();
 		
+		CustPreorderIdentity custPreorderIdentity = new CustPreorderIdentity();
+		custPreorderIdentity.setOrderIdentity(orderIdentity);
+		preOrderIdentityDaoImpl.saveOrUpdate(custPreorderIdentity, true);
+		
 		//1. 获取多少个customer
 		DetachedCriteria criteriaCount = DetachedCriteria.forClass(CustOrderProduct.class);
 		criteriaCount.add(Restrictions.eq("orderIdentity", orderIdentity));
@@ -422,6 +431,7 @@ public class OrderService {
 			exportLog.setNumOfOrders(totalExportedCust);
 			exportLog.setOrderIdentity(orderIdentity);
 			exportLog.setOperator(userInfor2.getName());
+			exportLog.setNumOfError(totalErrorCust);
 			
 			orderExportLogDaoImpl.save(exportLog, true);
 		}

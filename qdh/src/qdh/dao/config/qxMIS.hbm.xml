@@ -159,5 +159,10 @@
         <property name="sumCost" column="sum_cost" type="double"/>
         <property name="sumWholePrice" column="sum_whole_price" type="double"/>
         <property name="sumRetailPrice" column="sum_retail_price" type="double"/>
-    </class>   
+    </class>  
+        <class name="CustPreorderIdentity" table="cust_preorder_identity">
+        <id name="orderIdentity" column="order_identity">
+            <generator class="assigned" />
+        </id>
+     </class>   
 </hibernate-mapping>

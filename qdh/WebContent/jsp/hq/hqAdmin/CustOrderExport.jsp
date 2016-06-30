@@ -50,8 +50,13 @@ $(function() {
 
 function exportOrders(){
 	var params = "";
+	$.messager.progress({
+		title : '提示',
+		text : '正在执行数据导出，请稍后....'
+	});
 	$.post('<%=request.getContextPath()%>/orderController/ExportOrders', params,  function(result) {
 		refresh();
+		$.messager.progress('close'); 
 		if (result.success) {
 			$.messager.alert('消息', result.msg, 'info');	
 

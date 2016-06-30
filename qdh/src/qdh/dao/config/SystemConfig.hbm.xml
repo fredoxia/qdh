@@ -20,6 +20,7 @@
         <property name="orderIdentity" column="order_identity" type="string"/>
         <property name="importTime" column="import_time" type="timestamp"/>
         <property name="numOfOrders" column="num_of_orders" type="integer"/>
+        <property name="numOfError" column="num_of_error" type="integer"/>
         <property name="operator" column="operator" type="string"/>
          
     </class>     
