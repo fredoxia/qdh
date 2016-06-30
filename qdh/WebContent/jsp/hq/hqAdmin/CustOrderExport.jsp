@@ -32,9 +32,13 @@ $(function() {
 			width : 80
 		}, {
 			field : 'numOfOrders',
-			title : '导出单据量',
+			title : '导出成功单据',
 			width : 50
-		}, {			
+		}, {	
+			field : 'numOfError',
+			title : '导出错误',
+			width : 50
+		}, {	
 			field : 'operator',
 			title : '操作人员',
 			width : 50
