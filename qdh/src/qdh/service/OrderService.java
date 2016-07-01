@@ -1,8 +1,10 @@
 package qdh.service;
 
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -330,10 +332,16 @@ public class OrderService {
 		
 		Response response = new Response();
 		
-		String orderIdentity = systemConfigDaoImpl.getOrderIdentity();
+		String brandString = "";
+		List<CurrentBrands> brands = currentBrandsDaoImpl.getAll(true);
+		for (CurrentBrands brand : brands){
+			brandString += brand.getBrand().getBrand_ID() + ",";
+		}
 		
+		String orderIdentity = systemConfigDaoImpl.getOrderIdentity();
 		CustPreorderIdentity custPreorderIdentity = new CustPreorderIdentity();
 		custPreorderIdentity.setOrderIdentity(orderIdentity);
+		custPreorderIdentity.setBrands(brandString);
 		preOrderIdentityDaoImpl.saveOrUpdate(custPreorderIdentity, true);
 		
 		//1. 获取多少个customer
@@ -390,10 +398,14 @@ public class OrderService {
 					double sumCost = 0;
 					double sumWholePrice = 0;
 					double sumRetailPrice = 0;
+					Timestamp orderCreateDate = null;
 					
 					Collections.sort(custOrderProducts, new CustOrderProductComparatorByBrandProductCode());
 					
 					for (CustOrderProduct cop : custOrderProducts){
+						if (orderCreateDate == null)
+							orderCreateDate = cop.getLastUpdateTime();
+
 						Product product = cop.getProductBarcode().getProduct();
 						
 						totalQ += cop.getQuantity();
@@ -407,8 +419,11 @@ public class OrderService {
 					}
 					
 					//5. 更新order 信息
-					if (preOrder.getCreateDate() == null)
+					if (orderCreateDate == null)
 						preOrder.setCreateDate(DateUtility.getToday());
+					else 
+						preOrder.setCreateDate(orderCreateDate);
+					
 					preOrder.setExportDate(DateUtility.getToday());
 					preOrder.setSumCost(sumCost);
 					preOrder.setSumRetailPrice(sumRetailPrice);

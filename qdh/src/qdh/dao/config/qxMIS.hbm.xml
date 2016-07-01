@@ -164,5 +164,6 @@
         <id name="orderIdentity" column="order_identity">
             <generator class="assigned" />
         </id>
+        <property name="brands" column="brands" type="string"/>
      </class>   
 </hibernate-mapping>
