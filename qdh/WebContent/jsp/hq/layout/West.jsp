@@ -43,6 +43,7 @@ $(function() {
 	        		<ul>
 	        			 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQProdRpt'}">产品排名统计</li>
 						 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQCustRpt'}">客户排名统计</li>
+						 <li data-options="iconCls:'icon-chart_bar',attributes:{url:'<%=request.getContextPath()%>/rptController/HQCustSummaryRpt'}">订货汇总统计</li>
 					</ul> 
 		       </li>
 		       <li data-options="iconCls:'icon-package',state:'open',border:false">  

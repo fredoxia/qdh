@@ -116,6 +116,30 @@ public class RptController {
 	}
 	
 	/**
+	 * 连锁店客户自己的订货情况
+	 * @param cb
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/HQCustSummaryRpt")
+	public ModelAndView HQCustSummaryRpt(HttpSession session){
+		ModelAndView mav = new ModelAndView();
+		
+		Response response = new Response();
+		try {
+	
+			response = rptService.prepareHQCustSummaryRpt();
+		} catch (Exception e){
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		mav.setViewName("/jsp/hq/hqRpt/HQOrderSummaryRpt.jsp");
+		mav.addAllObjects((Map<String, ?>)response.getReturnValue());
+		
+		return mav;
+	}
+	
+	/**
 	 * 所有连锁店订货排名情况
 	 * @param cb
 	 * @param session
@@ -165,6 +189,8 @@ public class RptController {
 		
 		return mav;
 	}
+	
+	
 	
 //	@ResponseBody
 //	@RequestMapping("/GenerateProdRptData/mobile")

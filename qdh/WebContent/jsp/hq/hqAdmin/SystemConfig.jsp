@@ -55,7 +55,7 @@ function updateConfig() {
 							<form:select id="systemAdminMode" path="systemAdminMode">
 							   <form:option value="0">非管理员模式</form:option> 
 							   <form:option value="1">管理员模式</form:option> 
-							</form:select> 
+							</form:select> * 管理员模式下才能导出单据到条码系统
 						</td>
 					</tr>	
 					<tr>

@@ -28,7 +28,7 @@ public class SystemConfig implements Serializable {
 	 */
 	private int lockUpdateProduct = 0;
 	/**
-	 * 暂时未用
+	 * systemAdminMode下才能export订单到条码系统
 	 */
 	private int systemAdminMode = 0;
 	private String orderIdentity = "";

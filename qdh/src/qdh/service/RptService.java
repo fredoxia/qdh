@@ -3,6 +3,7 @@ package qdh.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -17,10 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import qdh.comparator.CustSummaryDataVOComparatorBySum;
 import qdh.comparator.HQProdRptVOComparatorByProductCode;
 import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.VO.CurrentBrandVO;
 import qdh.dao.entity.VO.CustOrderProductVO;
+import qdh.dao.entity.VO.CustSummaryDataVO;
 import qdh.dao.entity.VO.HQCustRptVO;
 import qdh.dao.entity.VO.HQProdRptVO;
 import qdh.dao.entity.VO.MobileProdRptVO;
@@ -36,6 +39,7 @@ import qdh.dao.impl.order.CustOrderProdDaoImpl;
 import qdh.dao.impl.order.CustomerDaoImpl;
 import qdh.dao.impl.product.ProductBarcodeDaoImpl;
 import qdh.dao.impl.systemConfig.OrderExportLogDaoImpl;
+import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 import qdh.pageModel.DataGrid;
 import qdh.pageModel.PageHelper;
 import qdh.utility.loggerLocal;
@@ -57,6 +61,9 @@ public class RptService {
 	
 	@Autowired
 	private OrderExportLogDaoImpl orderExportLogDaoImpl;
+	
+	@Autowired
+	private SystemConfigDaoImpl systemConfigDaoImpl;
 	
 	public DataGrid generateHQProdRpt(Integer currentBrandId, Integer page, Integer rowsPerPage, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
@@ -521,6 +528,121 @@ public class RptService {
 		dataGrid.setRows(logs);
 	 
 		return dataGrid;
+	}
+
+	/**
+	 * 为summary report提供Header
+	 * @return
+	 */
+	@Transactional
+	public Response prepareHQCustSummaryRpt() {
+		Response response = new Response();
+		Map<String, Object> objects = new HashMap<>();
+		
+		/**
+		 * 1. 牌子名字
+		 */
+		DetachedCriteria cbCriteria = DetachedCriteria.forClass(CurrentBrands.class);
+		cbCriteria.addOrder(Order.asc("brand.brand_ID"));
+		
+		List<CurrentBrands> currentBrands = currentBrandsDaoImpl.getByCritera(cbCriteria, true);
+		List<Brand> brands = new ArrayList<>();
+		List<Integer> brandIds = new ArrayList<>();
+		for (CurrentBrands brands2 : currentBrands){
+			brands.add(brands2.getBrand());
+			brandIds.add(brands2.getBrand().getBrand_ID());
+		}
+		objects.put("brands", brands);
+		
+		/**
+		 * 2. 数据信息
+		 */
+		String orderIdentity = systemConfigDaoImpl.getOrderIdentity();
+		DetachedCriteria copCriteria = DetachedCriteria.forClass(CustOrderProduct.class);
+		cbCriteria.add(Restrictions.eq("orderIdentity", orderIdentity));
+		List<CustOrderProduct> allRecords = custOrderProdDaoImpl.getByCritera(copCriteria, false);
+		
+		/**
+		 * 处理 map数据 
+		 * key : custId#brandId
+		 * Value: quantity
+		 */
+		Map<String, Integer> dataMap = new HashMap<>();
+		Set<Integer> custIds = new HashSet<>();
+		
+		/**
+		 * 单项汇总数据
+		 * key : brandId
+		 * value :sumQ
+		 */
+		Map<Integer, Integer> brandSumMap = new HashMap<>();
+		
+		for (CustOrderProduct cop : allRecords){
+			int custId = cop.getCustId();
+			custIds.add(custId);
+			
+			int brandId = cop.getProductBarcode().getProduct().getBrand().getBrand_ID();
+			int q = cop.getQuantity();
+			String key = custId + "#" + brandId;
+			
+			Integer qSum = dataMap.get(key);
+			if (qSum == null)
+				qSum = 0;
+			dataMap.put(key, qSum + q);
+			
+			Integer brandSum = brandSumMap.get(brandId);
+			if (brandSum == null)
+				brandSum = 0;
+			brandSumMap.put(brandId, brandSum + q);
+		}
+		
+		List<CustSummaryDataVO> summaryDataVOs = new ArrayList<>();
+		for (Integer custId : custIds){
+			int subTotal = 0;
+			CustSummaryDataVO summaryDataVO = new CustSummaryDataVO();
+			summaryDataVO.setCustName(customerDaoImpl.get(custId, true).getCustName());
+			
+			List<Integer> qList = new ArrayList<>();
+			for (Integer brandId : brandIds){
+				String key = custId + "#" + brandId;
+				
+				Integer qSum = dataMap.get(key);
+				if (qSum == null)
+					qSum = 0;
+				
+				subTotal += qSum;
+				qList.add(qSum);
+				
+
+			}
+			
+			summaryDataVO.setOrderQ(qList);
+			summaryDataVO.setSumQ(subTotal);
+			summaryDataVOs.add(summaryDataVO);
+		}
+		
+		//制造sum 数据行
+		CustSummaryDataVO subTotalVO = new CustSummaryDataVO();
+		subTotalVO.setCustName("** 所有客户 **");
+		List<Integer> qList = new ArrayList<>();
+		int total = 0 ;
+		for (Integer brandId : brandIds){
+			Integer qSum = brandSumMap.get(brandId);
+			if (qSum == null)
+				qSum = 0;
+			
+			total += qSum;
+			qList.add(qSum);
+		}
+		subTotalVO.setOrderQ(qList);
+		subTotalVO.setSumQ(total);
+		summaryDataVOs.add(subTotalVO);
+		
+		Collections.sort(summaryDataVOs, new CustSummaryDataVOComparatorBySum());
+		objects.put("records", summaryDataVOs);
+		
+		response.setReturnValue(objects);
+		return response;
 	}
 
 

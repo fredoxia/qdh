@@ -54,7 +54,7 @@ $(function() {
 			field : 'action',
 			title : '',
 			width : 150
-		} ] ],
+		}, ] ],
 		toolbar : '#toolbar'
 	});
 });

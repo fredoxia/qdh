@@ -37,6 +37,7 @@ import qdh.dao.entity.qxMIS.CustPreOrderProduct;
 import qdh.dao.entity.qxMIS.CustPreorderIdentity;
 import qdh.dao.entity.qxMIS.UserInfor2;
 import qdh.dao.entity.systemConfig.OrderExportLog;
+import qdh.dao.entity.systemConfig.SystemConfig;
 import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CurrentBrandsDaoImpl;
 import qdh.dao.impl.order.CustOrderProdDaoImpl;
@@ -325,12 +326,16 @@ public class OrderService {
 	@Transactional
 	public Response exportOrders(int userId) {
 		UserInfor2 userInfor2 = userInfor2DaoImpl.get(userId, true);
+		Response response = new Response();
+		
+		if (systemConfigDaoImpl.getSystemConfig().getSystemAdminMode() == SystemConfig.NOT_SYSTEM_ADMIN_MODE){
+			response.setFail("导出单据只能在管理员模式下进行");
+			return response;
+		}
 		
 		int totalExportedRecords = 0;
 		int totalErrorCust = 0;
-		int totalExportedCust = 0;
-		
-		Response response = new Response();
+		int totalExportedCust = 0;		
 		
 		String brandString = "";
 		List<CurrentBrands> brands = currentBrandsDaoImpl.getAll(true);
