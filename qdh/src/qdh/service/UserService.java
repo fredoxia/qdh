@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.qxMIS.UserInfor2;
+import qdh.dao.entity.systemConfig.SystemConfig;
 import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CustomerDaoImpl;
 import qdh.dao.impl.qxMIS.UserInfor2DaoImpl;
+import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 
 @Service
 public class UserService {
@@ -18,6 +20,9 @@ public class UserService {
 	
 	@Autowired
 	private CustomerDaoImpl customerDaoImpl;
+	
+	@Autowired
+	private SystemConfigDaoImpl systemConfigDaoImpl;
 	
 	public Response HQlogin(UserInfor2 user) {
 		if (user.getUserName().equals("admin")){
@@ -31,6 +36,15 @@ public class UserService {
 		if (cust.getId() == 0)
 			response.setFail("用户名不存在");
 		else {
+			/**
+			 * 1. 如果还没有SystemConfi数据或者订货会代码是空，提示错误
+			 */
+			SystemConfig systemConfig = systemConfigDaoImpl.getSystemConfig();
+			if (systemConfig == null || systemConfig.getOrderIdentity().trim().equals("")){
+				response.setFail("订货会信息尚未配置好，请联系管理员");
+				return response;
+			}
+			
 			Customer cust2 = customerDaoImpl.get(cust.getId(), false);
 			
 			if (cust2 == null)

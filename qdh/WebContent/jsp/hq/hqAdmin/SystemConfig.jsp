@@ -17,12 +17,31 @@ function updateConfig() {
 	function(result) {
 		if (result.success) {
 			$.messager.alert('信息', result.msg, 'info');
+		} else if (result.warning){
+			$.messager.alert('注意', result.msg, 'warning');
 		} else {
 			$.messager.alert('失败警告', result.msg, 'error');
 		}
 	}, 'JSON');
 }
+function deleteOrderData(){
+	$.messager.prompt("密码验证","一旦确认删除,当前系统中客户订货会的数据就将全部清空.输入密码:", function(password){
+		if (password == "vj7683c688"){
+			var param = "";
+			$.post('<%=request.getContextPath()%>/systemConfigController/DeleteCurrentOrderData', param, 
+					function(result) {
+						if (result.success) {
+							$.messager.alert('信息', result.msg, 'info');
+						} else {
+							$.messager.alert('失败警告', result.msg, 'error');
+						}
+					}, 'JSON');
+		} else {
+			alert("密码错误");
+		}	   
+	});
 
+}
 </script>
 </head>
 <body>
@@ -30,9 +49,9 @@ function updateConfig() {
 
 		<div data-options="region:'center',border:false">
 		       <form:form id="systemConfForm">  
-			    <table class="table table-hover table-condensed" style="display: block;">
+			    <table class="table table-hover table-condensed" style="display: block; width: 100%; align:left">
 					<tr>
-						<th height="35">能否删除客户</th>
+						<th height="35" width="10%">能否删除客户</th>
 						<td>
 							<form:select id="lockUpdateCust" path="lockUpdateCust">
 							   <form:option value="0">允许更新客户信息</form:option> 
@@ -69,7 +88,16 @@ function updateConfig() {
 						<td>
 							<a onclick="updateConfig();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-edit'">更新系统配置</a>									
 						</td>
-					</tr>						
+					</tr>	
+					<tr>
+						<th colspan="2"><hr/></th>
+					</tr>
+					<tr>
+						<th height="35">系统功能</th>
+						<td>
+							<a onclick="deleteOrderData();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">清空当前客户订单数据</a>									
+						</td>
+					</tr>					
 				</table>
 			</form:form>
 		</div>

@@ -64,4 +64,20 @@ public class SystemConfigController {
 		return json;
 	}
 	
+	@ResponseBody
+	@RequestMapping("/DeleteCurrentOrderData")
+	public Json DeleteCurrentOrderData(){
+		Response response = new Response();
+		try {
+			response = systemConfigService.deleteCurrentOrderData();
+		} catch (Exception e){
+			e.printStackTrace();
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
+	}
+	
 }

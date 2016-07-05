@@ -20,6 +20,8 @@ public class Json implements java.io.Serializable {
 
 	private boolean success = false;
 	
+	private boolean warning = false;
+	
 	private int returnCode = 0;
 
 	private String msg = "";
@@ -35,8 +37,9 @@ public class Json implements java.io.Serializable {
 		obj = response.getReturnValue();
 		if (response.isSuccess())
 			success = true;
-		else 
-			success = false;
+		else if (response.getReturnCode() == Response.WARNING){
+			warning = true;
+		}
 		
 		returnCode = response.getReturnCode();
 	}
@@ -55,6 +58,14 @@ public class Json implements java.io.Serializable {
 
 	public void setSuccess(boolean success) {
 		this.success = success;
+	}
+
+	public boolean isWarning() {
+		return warning;
+	}
+
+	public void setWarning(boolean warning) {
+		this.warning = warning;
 	}
 
 	public String getMsg() {

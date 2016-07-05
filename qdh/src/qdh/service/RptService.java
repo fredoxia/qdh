@@ -248,11 +248,9 @@ public class RptService {
 		Object[] values = new Object[]{EntityConfig.INACTIVE};
 		String rptCriteria = "SELECT productBarcode.id, SUM(quantity) FROM CustOrderProduct WHERE status != ?" + pbConstraints +" GROUP BY productBarcode.id";
 		
-
+		List<HQProdRptVO> rpts = new ArrayList<HQProdRptVO>();
 		List<Object> data = custOrderProdDaoImpl.executeHQLSelect(rptCriteria, values, null, false);
 	     if (data != null && data.size() > 0){	
-	    	 
-	    	List<HQProdRptVO> rpts = new ArrayList<HQProdRptVO>();
 			for (Object object : data)
 			  if (object != null){
 				Object[] recordResult = (Object[])object;
@@ -270,10 +268,10 @@ public class RptService {
 				rpts.add(rpt);
 			  } 
 
-			Collections.sort(rpts, new HQProdRptVOComparatorByProductCode());
-			dataMap.put("data", rpts);
-			
+			Collections.sort(rpts, new HQProdRptVOComparatorByProductCode());	
 	     }
+	     
+	     dataMap.put("data", rpts);
 		
 	     response.setReturnValue(dataMap); 
 		return response;
