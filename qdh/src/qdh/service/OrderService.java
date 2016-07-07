@@ -414,9 +414,9 @@ public class OrderService {
 						Product product = cop.getProductBarcode().getProduct();
 						
 						totalQ += cop.getQuantity();
-						sumCost += product.getRecCost();
-						sumWholePrice += product.getWholePrice();
-						sumRetailPrice += product.getSalesPrice();
+						sumCost += product.getRecCost() * cop.getQuantity() * product.getNumPerHand();
+						sumWholePrice += product.getWholePrice() * cop.getQuantity() * product.getNumPerHand();
+						sumRetailPrice += cop.getSumRetailPrice();
 						
 						CustPreOrderProduct cpop = new CustPreOrderProduct(cop, indexNum++, preOrder.getId());
 						custPreOrderProductDaoImpl.save(cpop, false);
