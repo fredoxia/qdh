@@ -227,7 +227,7 @@ public class OrderService {
 		productCriteria.addOrder(Order.asc("productCode"));
 		
 		//1. 生成CurrentOrderProduct map
-		List<ProductBarcode> productBarcodes = productBarcodeDaoImpl.getByCritera(criteria, 0, 10, true);
+		List<ProductBarcode> productBarcodes = productBarcodeDaoImpl.getByCritera(criteria, 0, 15, true);
 		if (productBarcodes == null || productBarcodes.size() == 0)
 			return response;
 		Map<Integer, CustOrderProductVO> copMap = new HashMap<>();

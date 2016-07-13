@@ -34,16 +34,18 @@ function refresh() {
 				<table id="dg" class="easyui-datagrid"  data-options="singleSelect:true,border : false">
 					<thead>
 					    <tr>
+					      <th data-options="field:'99998',width:60">序号</th>
 					      <th data-options="field:'0',width:120">客户名字</th>
 					      <c:forEach items="${brands}" var="brand">
 					         <th data-options="field:'${brand.cbId}',width:100">${brand.brandHeader}</th>
 					      </c:forEach>
-					      <th data-options="field:'9999',width:120">** 汇总 **</th>
+					      <th data-options="field:'99999',width:120">** 汇总 **</th>
 					    </tr>
 					</thead>
 					<tbody>
-					    <c:forEach items="${records}" var="record">
+					    <c:forEach items="${records}" var="record" varStatus="s">
 						    <tr>
+						      <td><c:out value="${s.index}"/></td>
 						      <td>${record.custName}</td>
 						      <c:forEach items="${record.orderQ}" var="orderQ">
 						        <td>${orderQ}</td>
