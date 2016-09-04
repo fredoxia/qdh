@@ -14,13 +14,18 @@ import org.springframework.web.servlet.View;
 import qdh.utility.ExcelUtility;
 
 public class AllCustOrderDownloadView  implements View {
-	private String fileName = "所有客户订单.zip";
+	private String fileName = "所有客户订单";
     private final File dfile;
     private final String contentType = "application/octet-stream";
  
     public AllCustOrderDownloadView(String filePath) {
         this.dfile = new File(filePath);
     }
+    
+    public AllCustOrderDownloadView(String filePath, String fileName) {
+        this.dfile = new File(filePath);
+        this.fileName = fileName;
+    }    
  
     @Override
     public String getContentType() {
@@ -32,7 +37,7 @@ public class AllCustOrderDownloadView  implements View {
             throws Exception {
 
         // 避免下载时文件名乱码
-        fileName = ExcelUtility.encodeExcelDownloadName(fileName,"KeHuBaoBiao.zip");
+        fileName = ExcelUtility.encodeExcelDownloadName(fileName + ".zip","KeHuBaoBiao.zip");
         response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
         response.setContentType("application/octet-stream");
         response.setContentLength((int) dfile.length());

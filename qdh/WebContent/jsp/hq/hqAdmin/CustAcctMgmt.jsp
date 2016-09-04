@@ -207,6 +207,15 @@ function downloadAllCustOrder(){
 		}
 	});
 }
+
+function downloadAllCustOrderForHQ(){
+	$.messager.confirm('功能确认', '你确认需要导出 所有 客户订单?', function(r){
+		if (r){
+		    document.searchForm.action="<%=request.getContextPath()%>/orderController/HQDownloadAllCustOrderForHQOrdering";
+		    document.searchForm.submit();;
+		}
+	});	
+}
 </script>
 </head>
 <body>
@@ -252,7 +261,8 @@ function downloadAllCustOrder(){
 			<a onclick="inactiveFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-no'">冻结客户</a>
 			<a onclick="checkOrder();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true">打开选中客户订单</a>
 			<a onclick="downloadCustInfor();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-dbsave',plain:true">下载客户信息</a>
-			<a onclick="downloadAllCustOrder();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-dbsave',plain:true">下载所有客户订单</a>
+			<a onclick="downloadAllCustOrder();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-dbsave',plain:true">下载所有客户详细订单</a>
+			<a onclick="downloadAllCustOrderForHQ();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-dbsave',plain:true">下载所有客户数量订单</a>
 			
 			
 	</div>

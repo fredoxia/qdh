@@ -164,4 +164,25 @@ public class OrderController {
 		
 	    return new AllCustOrderDownloadView((String)response.getReturnValue());
 	}
+	
+	
+	/**
+	 * 总部导出所有当前订货会客户订单，分客户
+	 * 打成一个zip文件
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/HQDownloadAllCustOrderForHQOrdering")
+	public View HQDownloadAllCustOrderForHQOrdering(HttpSession session){
+		
+		Response response = new Response();
+		try {
+			response = orderService.downalodAllCustOrderForHQ();
+		} catch (Exception e){
+			e.printStackTrace();
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+	    return new AllCustOrderDownloadView((String)response.getReturnValue(), "所有客户打印数量订单");
+	}
 }
