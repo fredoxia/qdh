@@ -32,6 +32,7 @@ import qdh.dao.entity.order.CurrentBrands;
 import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.product.Brand;
+import qdh.dao.entity.product.Category;
 import qdh.dao.entity.product.Product;
 import qdh.dao.entity.product.ProductBarcode;
 import qdh.dao.entity.systemConfig.OrderExportLog;
@@ -39,6 +40,7 @@ import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CurrentBrandsDaoImpl;
 import qdh.dao.impl.order.CustOrderProdDaoImpl;
 import qdh.dao.impl.order.CustomerDaoImpl;
+import qdh.dao.impl.product.CategoryDaoImpl;
 import qdh.dao.impl.product.ProductBarcodeDaoImpl;
 import qdh.dao.impl.systemConfig.OrderExportLogDaoImpl;
 import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
@@ -66,6 +68,9 @@ public class RptService {
 	
 	@Autowired
 	private SystemConfigDaoImpl systemConfigDaoImpl;
+	
+	@Autowired
+	private CategoryDaoImpl categoryDaoImpl;
 	
 	public DataGrid generateHQProdRpt(Integer currentBrandId, Integer page, Integer rowsPerPage, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
@@ -653,6 +658,150 @@ public class RptService {
 		objects.put("records", summaryDataVOs);
 		
 		response.setReturnValue(objects);
+		return response;
+	}
+
+	/**
+	 * 获取 客户订单种类报表 的第一页
+	 * @param userId
+	 * @return
+	 */
+	public Response generateMobileCustRptByCategorySum(int userId) {
+		Response response = new Response();
+
+		Map dataMap = new HashMap();
+		
+		//1. 页面下拉菜单
+		List<Category> allCategories = categoryDaoImpl.getAll(true);
+		Category allCategory = new Category();
+		allCategory.setCategory_Name("所有类别");
+		allCategories.add(0, allCategory);
+		
+		dataMap.put("categories", allCategories);
+		dataMap.put("category", allCategory);
+
+		List<CustOrderProductVO> footer = new ArrayList<>();
+		List<CustOrderProductVO> corpVos  = new ArrayList<CustOrderProductVO>();
+		
+		int totalQ = 0;
+		int totalSumRetail = 0;
+			
+		for (Category category: allCategories){
+			int quantity = 0;
+			int sumRetail = 0;
+			
+			int categoryId = category.getCategory_ID();
+			
+			//1. find all products barcode
+			StringBuffer pbConstraints = new StringBuffer("");
+			String pbConstraintsString = "";
+			Set<Integer> barcodeIds = productBarcodeDaoImpl.getIdsByCategoryId(categoryId);
+			if (barcodeIds.size() > 0){
+				Iterator<Integer> barIterator = barcodeIds.iterator();
+				while (barIterator.hasNext()){
+					pbConstraints.append(barIterator.next() + ",");
+				}
+				
+				pbConstraintsString = (pbConstraints.toString()).substring(0, pbConstraints.lastIndexOf(","));
+				
+				pbConstraintsString = " AND productBarcode.id IN (" + pbConstraintsString + ") ";
+				
+				Object[] values = new Object[]{userId, EntityConfig.INACTIVE};
+				String rptCriteria = "SELECT SUM(quantity), SUM(sumRetailPrice) FROM CustOrderProduct WHERE custId =? AND status != ?" + pbConstraintsString;
+				
+				List<Object> data = custOrderProdDaoImpl.executeHQLSelect(rptCriteria, values, null, false);
+			    if (data != null && data.size() > 0){	
+			    	 for (int i = 0; i < data.size(); i++){
+						  Object object = data.get(i);
+						  if (object != null){
+								Object[] recordResult = (Object[])object;
+								if (recordResult[0] == null || recordResult[1] == null)
+									continue;
+								quantity = ((Long)recordResult[0]).intValue();
+								sumRetail =  ((Double)recordResult[1]).intValue();
+						  }
+			    	 }
+			    }
+			}
+			
+			//如果没有定就省略
+			if (quantity == 0)
+				continue;
+		    
+		    CustOrderProductVO custVo = new CustOrderProductVO();
+		    custVo.setCopId(categoryId);
+		    custVo.setCategory(category.getCategory_Name());
+		    custVo.setQuantity(quantity);
+		    custVo.setSumRetailPrice(sumRetail);
+		    corpVos.add(custVo);
+		    
+		    totalQ += quantity;
+		    totalSumRetail += sumRetail;
+		}
+		
+		CustOrderProductVO footerVo = new CustOrderProductVO();
+		footerVo.setQuantity(totalQ);
+		footerVo.setSumRetailPrice(totalSumRetail);
+		footerVo.setLastUpdateTime(null);
+		footerVo.setCategory("总计");
+		footer.add(footerVo);
+
+		dataMap.put("orderByCategory", corpVos);
+		dataMap.put("orderByCategoryFooter", footer.get(0));
+	    response.setReturnValue(dataMap);
+
+		return response;
+	}
+
+	/**
+	 * 获取客户某个category 货品的订单明细
+	 * @param userId
+	 * @param categoryId
+	 * @return
+	 */
+	public Response generateMobileCustRptByCategoryDetail(int custId,
+			Category category) {
+		Response response = new Response();
+
+		Map dataMap = new HashMap();
+		
+		//1. 页面下拉菜单
+		List<Category> allCategories = categoryDaoImpl.getAll(true);
+		Category allCategory = new Category();
+		allCategory.setCategory_Name("所有类别");
+		allCategories.add(0, allCategory);
+		
+		dataMap.put("categories", allCategories);
+		dataMap.put("category", category);
+
+		List<CustOrderProductVO> footer = new ArrayList<>();
+		List<CustOrderProductVO> corpVos  = new ArrayList<CustOrderProductVO>();
+		
+		Category category2 = categoryDaoImpl.get(category.getCategory_ID(), true);
+		
+		//1. 限制产品信息
+		Set<Integer> barcodeIds = null;
+
+		if (category2 != null){
+			barcodeIds = productBarcodeDaoImpl.getIdsByCategoryId(category2.getCategory_ID());
+			
+			DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+			criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
+			criteria.add(Restrictions.eq("custId", custId));
+			if (barcodeIds != null)
+				criteria.add(Restrictions.in("productBarcode.id", barcodeIds));
+
+			List<CustOrderProduct> products = custOrderProdDaoImpl.getByCritera(criteria, true);
+
+			corpVos = CustAcctService.transferCustOrderProductVOs(products, footer);
+			
+			dataMap.put("categoryName", category.getCategory_Name());
+		}
+
+		dataMap.put("orderByCategory", corpVos);
+		dataMap.put("orderByCategoryFooter", footer.get(0));
+	    response.setReturnValue(dataMap);
+
 		return response;
 	}
 

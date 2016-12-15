@@ -32,6 +32,8 @@ public class FactoryOrderExcelVO extends AbstractExcelView {
 	private int PRODUCT_CODE_COLUMN = 0;
 	private int COLOR_COLUMN = 1;
 	private int QUANTITY_COLUMN =2;
+	private int CATEGORY_COLUMN =3;
+	private int NUM_PER_HAND_COLUMN =4;
 	private String defaulFileName ="ChangJiaBaoBiao.xls";
 	
 	@Override
@@ -102,6 +104,10 @@ public class FactoryOrderExcelVO extends AbstractExcelView {
 			dataRow.createCell(COLOR_COLUMN).setCellValue(cop.getColor());
 			
 			dataRow.createCell(QUANTITY_COLUMN).setCellValue(cop.getQuantity());
+			
+			dataRow.createCell(CATEGORY_COLUMN).setCellValue(cop.getCategory());
+			
+			dataRow.createCell(NUM_PER_HAND_COLUMN).setCellValue(cop.getNumPerHand());
 			
 			sum += cop.getQuantity();
 			

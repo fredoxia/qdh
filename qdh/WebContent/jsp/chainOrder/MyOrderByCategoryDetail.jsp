@@ -18,12 +18,12 @@
 <!-- 按照品牌汇总的 MyOrder 汇总 -->
 	<div id="myOrder" data-role="page">
 		<script>
-		    function myOrder(pbId, quantity){
-		
+		    function myOrderByCategory(pbId, quantity){
+				
 				$.mobile.loading("show",{ theme: "b", text: "正在加载数据", textonly: false});
-				var params="pbId=" + pbId + "&quantity=" + quantity +"&cbId="+$("#cbId").val();
-
-				$.post('<%=request.getContextPath()%>/orderController/MyOrderMore/mobile', params, 
+				var params="pbId=" + pbId + "&quantity=" + quantity +"&categoryId="+$("#categoryId").val();
+	
+				$.post('<%=request.getContextPath()%>/orderController/MyOrderMoreByCategory/mobile', params, 
 				function(result) {
 					$.mobile.loading("hide");
 					if (result.success) {
@@ -54,21 +54,23 @@
 				}, 'JSON');
 		    }
 		    function deductOrder(pbId){
-		    	myOrder(pbId, -1);
+		    	myOrderByCategory(pbId, -1);
 		    }
 			function addOrder(pbId){
-				myOrder(pbId, 1);
+				myOrderByCategory(pbId, 1);
 			}
-			function changeCb(changeVal){
-				var params = "id=" +changeVal;
-				window.location.href = '<%=request.getContextPath()%>/rptController/CustRpt/mobile?' + params;
+			
+			function changeCategory(categoryId){
+				var params = "category_ID=" +categoryId;
+				window.location.href = '<%=request.getContextPath()%>/rptController/CustRptByCategory/mobile?' + params;
 			}
+
 		</script>
 		<jsp:include  page="../common/MobileHeader.jsp"/>
 
 		<div  data-role="content" class="content">
 			<form id="form1" name="form1">
-		    	<form:select id="cbId"  path="currentBrand.id" items="${cb}" itemLabel="fullName" itemValue="id" onchange="changeCb(this.value);"></form:select> 
+		    	<form:select id="categoryId"  path="category.category_ID" items="${categories}" itemLabel="category_Name" itemValue="category_ID" onchange="changeCategory(this.value);"></form:select> 
 			</form>
 			<table data-role="table" id="table-column-toggle" class="ui-responsive table-stroke">
 			     <thead>
@@ -81,44 +83,38 @@
 			       </tr>
 			     </thead>
 			     <tbody>
-					<c:if test="${fn:length(cops) == 0}">
+					<c:if test="${fn:length(orderByCategory) == 0}">
 						<td colspan="5">暂时还没有订货数据</td>				
 					</c:if>
-					<c:if test="${fn:length(cops) > 0 && not empty copsFooter}">
+					<c:if test="${fn:length(orderByCategory) > 0 && not empty orderByCategoryFooter}">
 						<tr>
 							<th></th>
 							<th>合计</th>
-						    <th id="myQ1">${copsFooter.quantity}</th>
-							<th id="mySum1">${copsFooter.sumRetailPrice}</th>
+						    <th id="myQ1">${orderByCategoryFooter.quantity}</th>
+							<th id="mySum1">${orderByCategoryFooter.sumRetailPrice}</th>
 							<th width="27%"></th>
 						</tr>
 					</c:if>
-					<c:forEach items="${cops}" var="cop">
+					<c:forEach items="${orderByCategory}" var="cop">
 						<tr id="pRow${cop.pbId}">
 							<td style="vertical-align:middle;">${cop.brand}</td>
 						    <td style="vertical-align:middle;">${cop.productCode} ${cop.color}</td>
 						    <td style="vertical-align:middle;" id="pQ${cop.pbId}">${cop.quantity}</td>
 							<td style="vertical-align:middle;" id="pSum${cop.pbId}">${cop.sumRetailPrice}</td>
 							<td style="vertical-align:middle;">
-								<c:if test="${cop.pbId > 0 && cop.copId == null}">
-									<div data-role="controlgroup" data-type="horizontal">
-										<input type="button" value="加订" data-mini="true" data-inline="true" onclick="addOrder(${cop.pbId});"/>
-										<input type="button" value="减订" data-mini="true" data-inline="true" onclick="deductOrder(${cop.pbId});"/>
-									</div>
-								</c:if>
-								<c:if test="${cop.copId > 0 && cop.pbId==null && cop.quantity>0}">
-										<input type="button" value="详细" data-mini="true" onclick="changeCb(${cop.copId});"/>
-								
-								</c:if>
+								<div data-role="controlgroup" data-type="horizontal">
+									<input type="button" value="加订" data-mini="true" data-inline="true" onclick="addOrder(${cop.pbId});"/>
+									<input type="button" value="减订" data-mini="true" data-inline="true" onclick="deductOrder(${cop.pbId});"/>
+								</div>
 							</td>
 						</tr>
 					</c:forEach>
-					<c:if test="${fn:length(cops) > 0 && not empty copsFooter}">
+					<c:if test="${fn:length(orderByCategory) > 0 && not empty orderByCategoryFooter}">
 						<tr>
 							<th></th>
 							<th>合计</th>
-						    <th id="myQ2">${copsFooter.quantity}</th>
-							<th id="mySum2">${copsFooter.sumRetailPrice}</th>
+						    <th id="myQ2">${orderByCategoryFooter.quantity}</th>
+							<th id="mySum2">${orderByCategoryFooter.sumRetailPrice}</th>
 							<th></th>
 						</tr>
 					</c:if>
@@ -131,8 +127,8 @@
 			<div data-role="navbar">
 		      <ul>
 		      	<li><a href="<%=request.getContextPath()%>/orderController/StartOrder/mobile" data-icon="edit" data-ajax="false">我要订货</a></li>
-		      	<li><a href="<%=request.getContextPath()%>/rptController/CustRpt/mobile" data-icon="bullets" data-ajax="false" class="ui-btn-active ui-state-persist">品牌订单</a></li>
-		      	<li><a href="<%=request.getContextPath()%>/rptController/CustRptByCategory/mobile" data-icon="bars" data-ajax="false">类别订单</a></li>
+		      	<li><a href="<%=request.getContextPath()%>/rptController/CustRpt/mobile" data-icon="bullets" data-ajax="false">品牌订单</a></li>
+		      	<li><a href="<%=request.getContextPath()%>/rptController/CustRptByCategory/mobile" data-icon="bars" data-ajax="false" class="ui-btn-active ui-state-persist">类别订单</a></li>
 		      	<li><a id="brandRankFooter" href="<%=request.getContextPath()%>/rptController/GenerateProdRpt/mobile" data-icon="star"  data-ajax="false">品牌排名</a></li>
 		      </ul>
 		     </div>

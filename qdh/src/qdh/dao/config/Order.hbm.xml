@@ -40,5 +40,9 @@
         <property name="status" column="status" type="integer"/>
         <property name="orderIdentity" column="order_identity" type="string"/>
     </class>   
-       
+    <class name="ProductCategoryInSystem" table="production_category_in_system">
+        <id name="categoryId" column="category_id">
+            <generator class="assigned" />
+        </id>
+    </class>        
 </hibernate-mapping>

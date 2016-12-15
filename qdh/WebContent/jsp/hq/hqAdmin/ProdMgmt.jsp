@@ -106,6 +106,36 @@ function addFun() {
 		} ]
 	});
 }
+
+function reloadFun(){
+	var rows = dataGrid.datagrid('getSelections');
+	if (rows.length == 0){
+		parent.$.messager.alert('错误', '请选中一个品牌再继续操作', 'error');
+		return;
+	}
+	
+	var	id = rows[0].id;
+	
+	parent.$.messager.confirm('询问', '该功能是更正某些修改的标签信息，耗时会比较长,继续？', function(b) {
+		if (b) {
+			parent.$.messager.progress({
+					title : '提示',
+					text : '数据处理中，请稍后....'
+			});
+			$.post('<%=request.getContextPath()%>/prodOptController/UpdateCurrentBrand', {
+				currentBrandId : id
+			}, function(result) {
+				if (result.success) {
+					parent.$.messager.alert('成功提示', result.msg, 'info');
+					dataGrid.datagrid('reload');
+				} else {
+					parent.$.messager.alert('失败警告', result.msg, 'error');
+				}
+				parent.$.messager.progress('close');
+			}, 'JSON');
+		}
+	});
+}
 </script>
 </head>
 <body>
@@ -115,8 +145,9 @@ function addFun() {
 		</div>
 	</div>
 	<div id="toolbar" style="display: none;">
-			<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">导入品牌</a>
+			<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">导入新品牌</a>
 			<a onclick="deleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">删除品牌</a>
+			<a onclick="reloadFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-reload'">更新品牌</a>
 	</div>
 
 

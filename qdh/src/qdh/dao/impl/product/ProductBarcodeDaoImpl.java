@@ -28,5 +28,21 @@ public class ProductBarcodeDaoImpl  extends BaseDAO<ProductBarcode> {
 		return idSet;
 	}
 
+	public Set<Integer> getIdsByCategoryId(int categoryId) {
+		Set<Integer> idSet = new HashSet<Integer>();
+		
+		String ids = "SELECT pb.id FROM ProductBarcode pb JOIN pb.product p WHERE p.category.category_ID=?";
+
+		Object[] values = new Object[]{categoryId};
+		
+		List<Object> idObjects = this.executeHQLSelect(ids, values, null, true);
+		if (idObjects != null){
+			for (Object obj : idObjects){
+				idSet.add((Integer)obj);
+			}
+		}
+		return idSet;
+	}
+
 
 }

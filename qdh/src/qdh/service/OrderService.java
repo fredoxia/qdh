@@ -329,6 +329,11 @@ public class OrderService {
 		UserInfor2 userInfor2 = userInfor2DaoImpl.get(userId, true);
 		Response response = new Response();
 		
+		if (userInfor2 == null){
+			response.setFail("导出单据必须使用条码系统账号");
+			return response;
+		}
+		
 		if (systemConfigDaoImpl.getSystemConfig().getSystemAdminMode() == SystemConfig.NOT_SYSTEM_ADMIN_MODE){
 			response.setFail("导出单据只能在管理员模式下进行");
 			return response;
@@ -567,6 +572,79 @@ public class OrderService {
 		}
 		
 		response.setReturnValue(filePath);
+		return response;
+	}
+
+	/**
+	 * 在 order by category 页面点击Order more
+	 * @param loginUser
+	 * @param pbId
+	 * @param categoryId
+	 * @param quantity
+	 * @return
+	 */
+	public Response myOrderMoreByCategory(SessionInfo loginUser, Integer pbId,
+			Integer categoryId, Integer quantity) {
+		Response response = new Response();
+		ProductBarcode pBarcode = productBarcodeDaoImpl.get(pbId, true);
+		if (pBarcode == null){
+			response.setFail("无法找到当前产品");
+			return response;
+		}
+		
+		if (quantity == null)
+			quantity = 1;
+		
+		int userId = loginUser.getUserId();
+		
+		CustOrderProduct custOrderProduct = custOrderProdDaoImpl.getByPk(userId, pbId);
+		if (custOrderProduct == null){
+			if (quantity > 0){
+				custOrderProduct = new CustOrderProduct(userId, pBarcode, quantity, systemConfigDaoImpl.getOrderIdentity());
+				custOrderProdDaoImpl.save(custOrderProduct, true);
+			} else {
+				response.setFail("还没有此货品定单,无法减订");
+				return response;
+			}
+				
+		} else {
+			int newQ = quantity + custOrderProduct.getQuantity();
+			
+			if (newQ > 0){
+				custOrderProduct.addQ(quantity);
+				custOrderProdDaoImpl.update(custOrderProduct, true);
+			} else {
+				custOrderProdDaoImpl.delete(custOrderProduct, true);
+				response.setReturnCode(Response.WARNING);
+			}
+
+		}
+		
+		//2.获取用户的当前数量
+		//1. 限制产品信息
+		Set<Integer> barcodeIds = null;
+		if (categoryId != null && categoryId != 0){
+			//1. find all products barcode
+			barcodeIds = productBarcodeDaoImpl.getIdsByCategoryId(categoryId);
+		}
+		List<Object> myTotal = custOrderProdDaoImpl.getMyTotal(userId, barcodeIds);
+		
+		//3. 获取这个货品的当前信息
+		CustOrderProduct coProduct = custOrderProdDaoImpl.getByPk(userId, pbId);
+		
+		Map<String, Object> qMap = new HashMap();
+		qMap.put("myQ", myTotal.get(0));
+		qMap.put("mySum", myTotal.get(1));
+		
+		System.out.println(myTotal.get(0) +"," + myTotal.get(1));
+		
+		if (coProduct != null){
+			qMap.put("pQ", coProduct.getQuantity());
+			qMap.put("pSum", coProduct.getSumRetailPrice());
+		}
+		
+		response.setReturnValue(qMap);
+		
 		return response;
 	}
 

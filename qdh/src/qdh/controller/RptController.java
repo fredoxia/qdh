@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import qdh.dao.entity.VO.FactoryOrderExcelVO;
 import qdh.dao.entity.order.CurrentBrands;
+import qdh.dao.entity.product.Category;
 import qdh.dao.impl.Response;
 import qdh.pageModel.DataGrid;
 import qdh.pageModel.SessionInfo;
@@ -189,7 +190,43 @@ public class RptController {
 		
 		return mav;
 	}
+
 	
+	/**
+	 * 连锁店客户自己的某个类别的货品的订货情况 my order by category
+	 * @param cb
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/CustRptByCategory/mobile")
+	public ModelAndView CustRptByCategory(Category category,HttpSession session){
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		ModelAndView mav = new ModelAndView();
+		
+		Response response = new Response();
+		
+		if (category == null || category.getCategory_ID()==0){
+			try {
+				
+				response = rptService.generateMobileCustRptByCategorySum(loginUser.getUserId());
+			} catch (Exception e){
+				response.setFail("系统错误 : " + e.getMessage());
+			}
+			
+			mav.setViewName("/jsp/chainOrder/MyOrderByCategorySum.jsp");
+		} else {
+			try {
+				response = rptService.generateMobileCustRptByCategoryDetail(loginUser.getUserId(),category);
+			} catch (Exception e){
+				response.setFail("系统错误 : " + e.getMessage());
+			}
+			
+			mav.setViewName("/jsp/chainOrder/MyOrderByCategoryDetail.jsp");
+		}
+		mav.addAllObjects((Map<String, ?>)response.getReturnValue());
+		
+		return mav;
+	}
 	
 	
 //	@ResponseBody

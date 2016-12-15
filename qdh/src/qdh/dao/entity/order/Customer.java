@@ -1,5 +1,6 @@
 package qdh.dao.entity.order;
 
+import java.beans.Transient;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -17,6 +18,11 @@ public class Customer implements Serializable{
 	private String updateUser;
 	private Timestamp updateDate;
 	private int status;
+	
+	/**
+	 * custFullName = custName + region
+	 */
+	private String custFullName;
 	
 	public String getCustRegion() {
 		return custRegion;
@@ -74,6 +80,10 @@ public class Customer implements Serializable{
 		this.updateDate = updateDate;
 	}
 	
+	
+	public String getCustFullName() {
+		return custName + " " + custRegion;
+	}
 	public String getCustNameVO(){
 		String name = custName;
 		

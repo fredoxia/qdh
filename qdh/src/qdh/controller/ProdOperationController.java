@@ -56,6 +56,23 @@ public class ProdOperationController {
 		return json;
 	}
 	
+	@ResponseBody
+	@RequestMapping("/UpdateCurrentBrand")
+	public Json UpdateCurrentBrand(int currentBrandId, HttpSession session){
+		Response response = new Response();
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		try {
+			response = prodOperationService.updateCurrentBrand(currentBrandId, loginUser.getUserName());
+		} catch (Exception e){
+			e.printStackTrace();
+			
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
+	}	
 	
 	@RequestMapping("/PreAddCurrentBrand")
 	public ModelAndView PreAddCurrentBrand(){

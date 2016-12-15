@@ -3,8 +3,10 @@ package qdh.service;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -19,6 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import qdh.dao.entity.VO.CurrentBrandVO;
 import qdh.dao.entity.VO.ProductBarcodeVO;
 import qdh.dao.entity.order.CurrentBrands;
+import qdh.dao.entity.order.CustOrderProduct;
+import qdh.dao.entity.order.Customer;
+import qdh.dao.entity.order.ProductCategoryInSystem;
 import qdh.dao.entity.product.Area;
 import qdh.dao.entity.product.Brand;
 import qdh.dao.entity.product.Category;
@@ -35,6 +40,9 @@ import qdh.dao.entity.qxMIS.Quarter2;
 import qdh.dao.entity.qxMIS.Year2;
 import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CurrentBrandsDaoImpl;
+import qdh.dao.impl.order.CustOrderProductDaoImpl;
+import qdh.dao.impl.order.CustomerDaoImpl;
+import qdh.dao.impl.order.ProductCategoryInSystemDaoImpl;
 import qdh.dao.impl.product.AreaDaoImpl;
 import qdh.dao.impl.product.BrandDaoImpl;
 import qdh.dao.impl.product.CategoryDaoImpl;
@@ -51,10 +59,13 @@ import qdh.dao.impl.qxMIS.Year2DaoImpl;
 import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 import qdh.pageModel.DataGrid;
 import qdh.pageModel.PageHelper;
+import qdh.utility.DateUtility;
 import qdh.utility.NumUtility;
 
 @Service
 public class ProdOperationService {
+	@Autowired
+	private ProductCategoryInSystemDaoImpl ProductCategoryInSystemDaoImpl;
 	
 	@Autowired
 	private CurrentBrandsDaoImpl currentBrandsDaoImpl;
@@ -101,6 +112,12 @@ public class ProdOperationService {
 	@Autowired
 	private SystemConfigDaoImpl systemConfigDaoImpl;
 	
+	@Autowired
+	private CustOrderProductDaoImpl custOrderProductDaoImpl;
+	
+	@Autowired
+	private CustomerDaoImpl customerDaoImpl;
+	
 	/**
 	 * 获取所有的current brands然后组成datagrid
 	 * @return
@@ -115,6 +132,12 @@ public class ProdOperationService {
 		}
 		dg.setRows(currentBrandVOs);
 		dg.setTotal(new Long(currentBrandVOs.size()));
+		try {
+		   refreshProductCategoryInSystem();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		
 		return dg;		
 	}
 	
@@ -147,6 +170,9 @@ public class ProdOperationService {
 			productDaoImpl.executeHQLUpdateDelete(deleteProducts, deleteProductArg, true);
 			
 			currentBrandsDaoImpl.delete(currentBrands, true);
+			
+			//刷新production category in system
+			refreshProductCategoryInSystem();
 			
 			response.setSuccess("当前季度的产品已经被删除");
 		} else {
@@ -224,6 +250,8 @@ public class ProdOperationService {
 			CurrentBrands currentBrands2 = new CurrentBrands(yearId, quarterId, brandId, barcodes.size(), updateUser);
 			currentBrandsDaoImpl.saveOrUpdate(currentBrands2, true);
 
+			//刷新production category in system
+			refreshProductCategoryInSystem();
 		}
 		
 		return response;
@@ -339,6 +367,165 @@ public class ProdOperationService {
 				productBarcodeVOs.add(vo);
 			}
 		return productBarcodeVOs;
+	}
+
+	/**
+	 * update某个current brands
+	 * @param id
+	 * @return
+	 */
+	@Transactional
+	public Response updateCurrentBrand(int id,String updateUser) {
+		Response response = new Response();
+		
+		if (!systemConfigDaoImpl.canUpdateProduct()){
+			response.setFail("管理员已经锁定产品资料更新,请联系管理员");
+			return response;
+		}
+		
+		CurrentBrands currentBrands = currentBrandsDaoImpl.get(id, true);
+		if (currentBrands != null){
+			int yearId = currentBrands.getYear().getYear_ID();
+			int quarterId = currentBrands.getQuarter().getQuarter_ID();
+			int brandId = currentBrands.getBrand().getBrand_ID();
+			
+			//1. 获取千禧系统的正常条码
+			Set<Integer> pbIdInQXMIS = new HashSet<>();
+			DetachedCriteria productBarcodeCriteria2 = DetachedCriteria.forClass(ProductBarcode2.class);
+			productBarcodeCriteria2.add(Restrictions.isNull("chainId"));
+			productBarcodeCriteria2.add(Restrictions.eq("status", ProductBarcode2.STATUS_OK));
+			DetachedCriteria productCriteria2 = productBarcodeCriteria2.createCriteria("product");
+			productCriteria2.add(Restrictions.eq("year.year_ID", yearId));
+			productCriteria2.add(Restrictions.eq("quarter.quarter_ID", quarterId));
+			productCriteria2.add(Restrictions.eq("brand.brand_ID", brandId));
+			
+			List<ProductBarcode2> barcodesInQXMIS = ProductBarcode2DaoImpl.getByCritera(productBarcodeCriteria2, true);
+			for (ProductBarcode2 pb : barcodesInQXMIS){
+				pbIdInQXMIS.add(pb.getId());
+			}
+			
+			//2. 获取当前系统的条码
+			Set<Integer> pbIdInQDH = new HashSet<>();
+			DetachedCriteria productBarcodeCriteria = DetachedCriteria.forClass(ProductBarcode.class);
+			DetachedCriteria productCriteria = productBarcodeCriteria.createCriteria("product");
+			productCriteria.add(Restrictions.eq("year.year_ID", yearId));
+			productCriteria.add(Restrictions.eq("quarter.quarter_ID", quarterId));
+			productCriteria.add(Restrictions.eq("brand.brand_ID", brandId));
+			
+			List<ProductBarcode> barcodesInQDH = productBarcodeDaoImpl.getByCritera(productBarcodeCriteria, true);
+			for (ProductBarcode pb : barcodesInQDH){
+				pbIdInQDH.add(pb.getId());
+			}
+			
+			//3. 获取订单内已经使用的条码
+			Set<Integer> pbIdInUse = new HashSet<>();
+			DetachedCriteria custOrderProdCriteria = DetachedCriteria.forClass(CustOrderProduct.class);
+			custOrderProdCriteria.add(Restrictions.in("productBarcode.id", pbIdInQDH));
+			List<CustOrderProduct> custOrderProd = custOrderProductDaoImpl.getByCritera(custOrderProdCriteria, true);
+			
+			for (CustOrderProduct pb : custOrderProd){
+				pbIdInUse.add(pb.getProductBarcode().getId());
+			}
+			
+			//4. 如果有些货品已经订货但是在qxmis端被删除了，需要提醒
+			if (!pbIdInQXMIS.containsAll(pbIdInUse)){
+				Set<Integer> idDeletedInUse = new HashSet<>();
+				for (Integer pbId : pbIdInUse){
+					if (!pbIdInQXMIS.contains(pbId)){
+						idDeletedInUse.add(pbId);
+					}
+				}
+				
+				DetachedCriteria custOrderProdCriteria2 = DetachedCriteria.forClass(CustOrderProduct.class);
+				custOrderProdCriteria2.add(Restrictions.in("productBarcode.id", idDeletedInUse));
+				List<CustOrderProduct> custOrderProd2 = custOrderProductDaoImpl.getByCritera(custOrderProdCriteria2, true);
+				
+				String errorMsg = "";
+				for (CustOrderProduct orderProduct : custOrderProd2){
+					Customer cust = customerDaoImpl.get(orderProduct.getCustId(), true);
+					Product p = orderProduct.getProductBarcode().getProduct();
+					
+					String colorS = "";
+					Color color = orderProduct.getProductBarcode().getColor();
+					if (color != null){
+						colorS = color.getName();
+					}
+					
+					errorMsg += cust.getCustName() + " " + p.getProductCode() + " " + colorS + " " + orderProduct.getQuantity() + "<br/>";
+				}
+				
+				errorMsg = "部分删除的条码已经在客户订单，请客户删除之后再继续更新条码: <br/>" + errorMsg;
+				
+				response.setFail(errorMsg);
+				
+				return response;
+			} else if (!pbIdInQXMIS.containsAll(pbIdInQDH)){
+				for (Integer pbId : pbIdInQDH){
+					if (!pbIdInQXMIS.contains(pbId)){
+						ProductBarcode pb = productBarcodeDaoImpl.get(pbId, true);
+						productBarcodeDaoImpl.delete(pb, true);
+					}
+				}
+			}
+			
+			for (ProductBarcode2 productBarcode : barcodesInQXMIS){
+				ProductBarcode pb = new ProductBarcode(productBarcode);
+				Product p = pb.getProduct();
+			    Area area = p.getArea();
+			    Year year = p.getYear();
+			    Quarter quarter = p.getQuarter();
+			    Brand brand = p.getBrand();
+			    Category category = p.getCategory();
+			    
+			    areaDaoImpl.merge(area);
+			    categoryDaoImpl.merge(category);
+			    brandDaoImpl.merge(brand);
+				quarterDaoImpl.merge(quarter);
+				yearDaoImpl.merge(year);
+				productDaoImpl.merge(p);
+				
+				Color color = pb.getColor();
+				Size size = pb.getSize();
+				
+				if (color != null)
+					colorDaoImpl.merge(color);
+				
+				if (size != null)
+					sizeDaoImpl.merge(size);
+				
+			    productBarcodeDaoImpl.merge(pb);
+			}
+			
+			CurrentBrands cuBrands = currentBrandsDaoImpl.getByKey(yearId, quarterId, brandId);
+			if (cuBrands == null){
+			    CurrentBrands currentBrands2 = new CurrentBrands(yearId, quarterId, brandId, barcodesInQXMIS.size(), updateUser);
+			    currentBrandsDaoImpl.save(currentBrands2, true);
+			} else {
+				cuBrands.setNumOfBarcodes(barcodesInQXMIS.size());
+				cuBrands.setUpdateUser(updateUser);
+				cuBrands.setUpdateDate(DateUtility.getToday());
+				currentBrandsDaoImpl.update(cuBrands, true);
+			}
+			
+			response.setSuccess("当前季度的产品已经成功更新");
+		} else {
+			response.setSuccess("警告 : 当前季度的产品在操作前已经被删除");
+		}
+		
+		return response;
+	}
+	
+	/**
+	 * 刷新所有产品在系统里面的种类
+	 */
+	private void refreshProductCategoryInSystem(){
+		ProductCategoryInSystemDaoImpl.deleteAll();
+		
+		List<Integer> categories = productDaoImpl.getDistinctCategory();
+		for (Integer categoryId : categories){
+			ProductCategoryInSystem productCategoryInSystem = new ProductCategoryInSystem(categoryId);
+			ProductCategoryInSystemDaoImpl.saveOrUpdate(productCategoryInSystem, true);
+		}
 	}
 
 }

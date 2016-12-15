@@ -24,6 +24,7 @@ import qdh.dao.entity.VO.CustOrderProductVO;
 import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.qxMIS.ChainStore2;
+import qdh.dao.entity.systemConfig.SystemConfig;
 import qdh.dao.impl.Response;
 import qdh.dao.impl.SQLServer.ClientDAOImpl;
 import qdh.dao.impl.order.CustomerDaoImpl;
@@ -460,6 +461,112 @@ public class CustAcctService {
 		
 		dataMap.put("customer", custs);
 		response.setReturnValue(dataMap);
+		
+		return response;
+	}
+
+	/**
+	 * 打开cust order 时候准备订单上面表单数据
+	 * @param id
+	 * @return
+	 */
+	public Response getCustOrderJSP(Integer id) {
+		Map<String, Object> dataMap= new HashMap<>();
+		Response response = new Response();
+		
+		DetachedCriteria criteria = DetachedCriteria.forClass(Customer.class);
+		criteria.add(Restrictions.eq("status", EntityConfig.ACTIVE));
+		criteria.add(Restrictions.ne("id", id));
+		
+		List<Customer> custs = customerDaoImpl.getByCritera(criteria, true);
+		Customer emptyCustomer = new Customer();
+		emptyCustomer.setCustName("");
+		emptyCustomer.setCustRegion("");
+		emptyCustomer.setId(0);
+		
+		custs.add(0, emptyCustomer);
+		
+		dataMap.put("customer", custs);
+		dataMap.put("custId", id);
+		dataMap.put("toCustId", id);
+		
+		response.setReturnValue(dataMap);
+		return response;
+	}
+
+	/**
+	 * 从一个客户那里复制单据到另外一个客户
+	 * @param fromCustId
+	 * @param toCustId
+	 * @return
+	 */
+	@Transactional
+	public Response copyCustOrder(Integer fromCustId, Integer toCustId) {
+		Response response = new Response();
+		
+		SystemConfig conf = systemConfigDaoImpl.getSystemConfig();
+		String orderIdentity = conf.getOrderIdentity();	
+		
+		//1. 检查是否是空客户
+		if (fromCustId == 0 || toCustId == 0){
+			response.setFail("请选中一个正确的客户再进行操作");
+			return response;
+		}
+		
+		//1. 检查是否是同一个客户
+		if (fromCustId == toCustId){
+			response.setFail("不能复制同一个客户的单据");
+			return response;
+		}
+		
+		//2. 检查toCustId 是否是合法的客户
+		Customer toCustomer = customerDaoImpl.get(toCustId, true);
+		if (toCustomer == null){
+			response.setFail("客户信息 无法找到，请查找一个准确的客户再继续");
+			return response;
+		} else if (toCustomer.getStatus() != EntityConfig.ACTIVE){
+			response.setFail("当前客户目前未被激活，无法复制单据到当前客户");
+			return response;
+		}
+		
+		//2. 检查是否fromCust有订单了
+		String sql_check = "SELECT COUNT(*) FROM CustOrderProduct WHERE custId=? AND orderIdentity=?";
+		Object[] values = new Object[]{fromCustId, orderIdentity};
+		int count_from = custOrderProductDaoImpl.executeHQLCount(sql_check, values, false);
+		if (count_from ==0){
+			Customer fromCustomer = customerDaoImpl.get(fromCustId, true);
+			response.setFail("当前客户 " + fromCustomer.getCustName() + " 没有订单，无法从他这里复制订单");
+			return response;
+		}
+		
+		//3. 检查是否toCust有订单
+		values = new Object[]{toCustId, orderIdentity};
+		int count_to = custOrderProductDaoImpl.executeHQLCount(sql_check, values, false);
+		if (count_to > 0){
+			
+			response.setFail("当前客户 " + toCustomer.getCustName() + " 已经有订单，无法复制订单");
+			return response;
+		}
+		
+		//4. 复制订单
+		DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+		criteria.add(Restrictions.eq("custId", fromCustId));
+		criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
+		criteria.add(Restrictions.eq("orderIdentity", orderIdentity));
+		List<CustOrderProduct> orderProducts = custOrderProductDaoImpl.getByCritera(criteria, true);
+		
+		int count = 0;
+		for (CustOrderProduct orderProduct : orderProducts){
+			CustOrderProduct cop = new CustOrderProduct();
+			BeanUtils.copyProperties(orderProduct, cop);
+			
+			cop.setLastUpdateTime(DateUtility.getToday());
+			cop.setCustId(toCustId);
+			custOrderProductDaoImpl.save(cop, true);
+			count++;
+		}
+		
+		response.setSuccess("总共复制了 " + count + " 条记录");
 		
 		return response;
 	}

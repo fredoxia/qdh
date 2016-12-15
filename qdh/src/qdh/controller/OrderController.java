@@ -73,6 +73,23 @@ public class OrderController {
 	}
 	
 	
+	@ResponseBody
+	@RequestMapping("/MyOrderMoreByCategory/mobile")
+	public Json MyOrderMoreByCategory(Integer pbId, Integer quantity, Integer categoryId, HttpSession session){
+		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+		Response response = new Response();
+		try {
+			response = orderService.myOrderMoreByCategory(loginUser, pbId, categoryId, quantity);
+		} catch (Exception e){
+			e.printStackTrace();
+			response.setFail(e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
+	}
+	
 	/**
 	 * 在start order页面上 点击 加订 减订
 	 * @param pbId

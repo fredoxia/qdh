@@ -56,6 +56,10 @@ $(function() {
 			title : '条码',
 			width : 40
 		}, {
+			field : 'category',
+			title : '货品类别',
+			width : 40
+		}, {
 			field : 'unit',
 			title : '单位',
 			width : 30

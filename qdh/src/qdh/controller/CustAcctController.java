@@ -138,10 +138,19 @@ public class CustAcctController {
 	}
 	
 	@RequestMapping("/OpenCustOrderJSP")
-	public ModelAndView GetCustOrderJSP(Integer id, HttpSession session){
+	public ModelAndView GetCustOrderJSP(Integer id, Integer toCustId, HttpSession session){
 		ModelAndView maView = new ModelAndView();
+		
+		Response response = new Response();
+		try {
+			response = custAcctService.getCustOrderJSP(id);
+		} catch (Exception e){
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		//maView.addObject("command", response.getReturnValue());
+		maView.addAllObjects((Map<String, ?>)response.getReturnValue());
 		maView.setViewName("/jsp/hq/hqAdmin/CustOrder.jsp");
-		maView.addObject("custId", id);
+		
 		return maView;
 	}
 	
@@ -213,6 +222,22 @@ public class CustAcctController {
 		dataGrid = custAcctService.searchJinSuanClients(custName);
 
 		return dataGrid;
+	}
+	
+	@ResponseBody
+	@RequestMapping("/CopyCustOrder")
+	public Json CopyCustOrder(Integer fromCustId, Integer toCustId){
+		Response response = new Response();
+		try {
+			response = custAcctService.copyCustOrder(fromCustId, toCustId);
+		} catch (Exception e){
+			e.printStackTrace();
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
 	}
 	
 }
