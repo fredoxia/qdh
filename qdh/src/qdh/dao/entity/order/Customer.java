@@ -1,6 +1,6 @@
 package qdh.dao.entity.order;
 
-import java.beans.Transient;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 
