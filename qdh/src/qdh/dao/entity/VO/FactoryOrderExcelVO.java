@@ -34,6 +34,7 @@ public class FactoryOrderExcelVO extends AbstractExcelView {
 	private int QUANTITY_COLUMN =2;
 	private int CATEGORY_COLUMN =3;
 	private int NUM_PER_HAND_COLUMN =4;
+	private int BARCODE_COLUMN =5;
 	private String defaulFileName ="ChangJiaBaoBiao.xls";
 	
 	@Override
@@ -108,6 +109,8 @@ public class FactoryOrderExcelVO extends AbstractExcelView {
 			dataRow.createCell(CATEGORY_COLUMN).setCellValue(cop.getCategory());
 			
 			dataRow.createCell(NUM_PER_HAND_COLUMN).setCellValue(cop.getNumPerHand());
+			
+			dataRow.createCell(BARCODE_COLUMN).setCellValue(cop.getBarcode());
 			
 			sum += cop.getQuantity();
 			

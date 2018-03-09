@@ -164,7 +164,7 @@ public class OrderController {
 	}
 	
 	/**
-	 * 总部导出所有当前订货会客户订单，分客户
+	 * 总部导出所有当前订货会客户订单，分客户 （下载所有客户详细订单）
 	 * 打成一个zip文件
 	 * @param session
 	 * @return
@@ -184,7 +184,7 @@ public class OrderController {
 	
 	
 	/**
-	 * 总部导出所有当前订货会客户订单，分客户
+	 * 总部导出所有当前订货会客户订单，分客户 （下载所有客户数据订单）
 	 * 打成一个zip文件
 	 * @param session
 	 * @return

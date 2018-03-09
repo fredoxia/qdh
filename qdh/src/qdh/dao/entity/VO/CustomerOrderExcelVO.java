@@ -47,6 +47,7 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 	private int QUANTITY_SUM_COLUMN =8;
 	private int RETAIL_PRICE_COLUMN =9;
 	private int RETAIL_PRICE_SUM_COLUMN =10;
+	private int BARCODE_COLUMN =11;
 	private String defaulFileName ="KeHuBaoBiao.xls";
 	
 	@Override
@@ -151,6 +152,7 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 			dataRow.createCell(RETAIL_PRICE_COLUMN).setCellValue(p.getSalesPrice());
 
 			dataRow.createCell(RETAIL_PRICE_SUM_COLUMN).setCellValue(cop.getSumRetailPrice());
+			dataRow.createCell(BARCODE_COLUMN).setCellValue(cop.getProductBarcode().getBarcode());
 			
 			sumQuantity += qSum;
 			sumHands += cop.getQuantity();

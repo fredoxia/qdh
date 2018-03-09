@@ -28,6 +28,7 @@ import qdh.dao.entity.product.Brand;
 import qdh.dao.entity.product.Color;
 import qdh.dao.entity.product.Product;
 import qdh.dao.entity.product.ProductBarcode;
+import qdh.dao.impl.order.CustomerDaoImpl;
 import qdh.utility.DateUtility;
 import qdh.utility.ExcelUtility;
 
@@ -36,14 +37,16 @@ public class CustomerOrderForHQExcelVO extends AbstractExcelView {
 	private int DATE_ROW = 1;
 	private int CUST_ROW = 2;
 
-	private int YEAR_COLUMN = 0;
-	private int QUARTER_COLUMN =1;
-	private int BRAND_COLUMN =2;
-	private int PRODUCT_CODE_COLUMN =3;
-	private int COLOR_COLUMN =4;
-	private int CATEGORY_COLUMN =5;
-	private int NUM_PER_HAND_COLUMN =6;
-	private int QUANTITY_COLUMN =7;
+	private int CHAIN_COLUMN = 0;
+	private int YEAR_COLUMN = 1;
+	private int QUARTER_COLUMN =2;
+	private int BRAND_COLUMN =3;
+	private int PRODUCT_CODE_COLUMN =4;
+	private int COLOR_COLUMN =5;
+	private int CATEGORY_COLUMN =6;
+	private int NUM_PER_HAND_COLUMN =7;
+	private int QUANTITY_COLUMN =8;
+	private int BARCODE_COLUMN =9;
 	private String defaulFileName ="KeHuBaoBiaoDingdan.xls";
 	
 	@Override
@@ -72,7 +75,7 @@ public class CustomerOrderForHQExcelVO extends AbstractExcelView {
 		return  ExcelUtility.encodeExcelDownloadName(fileName,defaulFileName);
 	}
 
-	public HSSFWorkbook process(List<CustOrderProduct> orderProducts,Customer cust, String orderIdentity){
+	public HSSFWorkbook process(List<CustOrderProduct> orderProducts,Customer cust, String orderIdentity, CustomerDaoImpl customerDaoImpl){
 		HSSFWorkbook wb = null;
 		InputStream is = null;
 		try {
@@ -89,8 +92,6 @@ public class CustomerOrderForHQExcelVO extends AbstractExcelView {
 		} catch (IOException e) {
 			qdh.utility.loggerLocal.error(e);
 		}   
-		
-
 
 		int sumHands = 0;
 		
@@ -119,10 +120,10 @@ public class CustomerOrderForHQExcelVO extends AbstractExcelView {
 				sheet = wb.cloneSheet(0);
 				
 				HSSFRow dateRow = sheet.getRow(DATE_ROW);
-				dateRow.createCell(1).setCellValue(orderIdentity);
+				dateRow.createCell(2).setCellValue(orderIdentity);
 
 				HSSFRow custRow = sheet.getRow(CUST_ROW);
-				custRow.createCell(1).setCellValue(cust.getCustName() + "-" + cust.getChainStoreName());
+				custRow.createCell(2).setCellValue(cust.getCustName() + "-" + cust.getChainStoreName());
 				
 				sheetCount++;
 				sumHands = 0;
@@ -144,6 +145,13 @@ public class CustomerOrderForHQExcelVO extends AbstractExcelView {
 				e.printStackTrace();
 			}
 			//dataRow.createCell(BARCODE_COLUMN).setCellValue(pb.getBarcode());
+			if (customerDaoImpl != null){
+				Customer cust2 = customerDaoImpl.get(cop.getCustId(), true);
+				if (cust2 != null){
+					dataRow.createCell(CHAIN_COLUMN).setCellValue(cust2.getCustName() + "-" + cust2.getChainStoreName());
+					
+				}
+			}
 			dataRow.createCell(YEAR_COLUMN).setCellValue(p.getYear().getYear());
 			dataRow.createCell(QUARTER_COLUMN).setCellValue(p.getQuarter().getQuarter_Name());
 			dataRow.createCell(BRAND_COLUMN).setCellValue(p.getBrand().getBrand_Name());
@@ -153,7 +161,7 @@ public class CustomerOrderForHQExcelVO extends AbstractExcelView {
 			dataRow.createCell(CATEGORY_COLUMN).setCellValue(p.getCategory().getCategory_Name());
 			dataRow.createCell(NUM_PER_HAND_COLUMN).setCellValue(p.getNumPerHand());
 			dataRow.createCell(QUANTITY_COLUMN).setCellValue(cop.getQuantity());
-
+			dataRow.createCell(BARCODE_COLUMN).setCellValue(cop.getProductBarcode().getBarcode());
 
 			sumHands += cop.getQuantity();
 			
@@ -162,6 +170,8 @@ public class CustomerOrderForHQExcelVO extends AbstractExcelView {
 				dataRow.createCell(BRAND_COLUMN).setCellValue("小计:");
 				dataRow.createCell(QUANTITY_COLUMN).setCellValue(sumHands);
 			}
+			
+			
 			
 		}
 

@@ -542,6 +542,7 @@ public class OrderService {
 			Map<String, HSSFWorkbook> zipMap = new HashMap<>();
 			Map<String, Object> dataMap = new HashMap<>();
 			
+			//分客户单
 			for (Object custIdObj :  custObj){
 				Integer custId = (Integer)custIdObj;
 				loggerLocal.info("导出客户数据 : " + orderIdentity + "," + custId);
@@ -560,13 +561,33 @@ public class OrderService {
 				dataMap.put("data", products);
 				
 				CustomerOrderForHQExcelVO custOrderVo = new CustomerOrderForHQExcelVO();
-				HSSFWorkbook custOrderWB = custOrderVo.process(products, cust, orderIdentity);
+				HSSFWorkbook custOrderWB = custOrderVo.process(products, cust, orderIdentity, null);
 
 				String fileName = cust.getCustName();
 				if (cust.getChainStoreName() != null && !cust.getChainStoreName().equals(""))
 					fileName += "-" + cust.getChainStoreName();
 				zipMap.put(fileName + ".xls", custOrderWB);
 			}
+			
+			//总计单
+			Customer allCustomer = new Customer();
+			allCustomer.setChainStoreName("全部");
+			allCustomer.setCustName("A所有客户总计单");
+			DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+			criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
+			
+			List<CustOrderProduct> products = custOrderProdDaoImpl.getByCritera(criteria, true);
+			
+			Collections.sort(products, new CustOrderProductComparatorByBrandProductCode());
+			
+			dataMap.put("customer", allCustomer);
+			dataMap.put("data", products);
+			
+			CustomerOrderForHQExcelVO custOrderVo = new CustomerOrderForHQExcelVO();
+			HSSFWorkbook custOrderWB = custOrderVo.process(products, allCustomer, orderIdentity, customerDaoImpl);
+
+			String fileName = allCustomer.getCustName() +  "-" + allCustomer.getChainStoreName();
+			zipMap.put(fileName + ".xls", custOrderWB);
 			
 			filePath = FileUtility.zipWorkbooks(zipMap);
 		}

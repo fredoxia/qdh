@@ -65,7 +65,7 @@
         <property name="minIdle" value="20"/>     
         <property name="logAbandoned" value="false"/>   
         <property name="removeAbandoned" value="true"/>   
-        <property name="removeAbandonedTimeout" value="600"/> 
+        <property name="removeAbandonedTimeout" value="3000"/> 
         <property name="jdbcInterceptors" value="org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer"/>   
     </bean>    
  
