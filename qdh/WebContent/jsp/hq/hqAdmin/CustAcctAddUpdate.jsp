@@ -4,82 +4,46 @@
 <script type="text/javascript">
 	var dataGrid2;
 
-	$(function() {
-		var params= $.serializeObject($('#form2'));
-		dataGrid2 = $('#searchCustGrid').datagrid({
-			url : '<%=request.getContextPath()%>/custAcctController/SearchJinSuanClients',
-			queryParams: params,
-			fit : true,
-			fitColumns : true,
-			border : false,
-			pagination : false,
-			idField : 'clientId',
-			rownumbers:true,
-			sortOrder : 'asc',
-			nowrap : false,
-			singleSelect: false,
-			columns : [ [ {
-				field : 'clientName',
-				title : '客户名字',
-				width : 120
-			}, {
-				field : 'regionName',
-				sortable:true,
-				order:'desc',
-				title : '客户地区',
-				width : 120
-			}, {
-				field : 'action',
-				title : '',
-				width : 100
-			} ] ],
-			toolbar : '#toolbar'
-		});
-	});
-	
-	function searchFun2() {
-		dataGrid2.datagrid('load', $.serializeObject($('#form2')));
-	}
 	function addCust(){
-		var rows = dataGrid2.datagrid('getSelections');
-		var dataSize = rows.length;
-		
-		if (dataSize == 0){
-			parent.$.messager.alert('失败警告', "至少选中一条客户数据操作", 'error');
-			return false;
-		}
-		
-		var requestIds = "";
-		
-		for (var i =0; i < dataSize; i++){
-			requestIds += rows[i].clientId + ","
-		}
-
-		$.post('<%=request.getContextPath()%>/custAcctController/AddCust', {
-			"clientIds" : requestIds
-		}, function(result) {
+	    if (!$('#form2').form('validate'))
+	    	return ;
+	    
+		var params=$("#form2").serialize(); 
+		$.post('<%=request.getContextPath()%>/custAcctController/AddCust', params , function(result) {
 			if (result.success) {
 				parent.$.messager.alert('提示', result.msg, 'infor');
+				$("#addForm").dialog("close");
+				parent.$.modalDialog.openner_dataGrid.datagrid('reload');
 			} else {
 				parent.$.messager.alert('失败警告', result.msg, 'error');
 			}
 			
-			$("#addForm").dialog("close");
-			parent.$.modalDialog.openner_dataGrid.datagrid('reload');
+
 		}, 'JSON');
-		
 
 		return false;
 	}
 </script>
 
-<div class="easyui-layout" data-options="fit:true,border:false">
-	<div data-options="region:'north',border:false" title="" style="height: 25px; overflow: hidden;">
-		<form id="form2" method="post" onsubmit="return addCust();">
-			客户名字 : <input type="text" id="custName" name="custName"/> <input type="button" value="查询" onclick="searchFun2();"/>
-		</form>
-	</div>
-	<div data-options="region:'center',border:false">
-			<table id="searchCustGrid"></table>
-	</div>
-</div>
+    <div class="easyui-panel" style="padding:30px 60px;" data-options="fit:true,border:false">
+        <form  id="form2" method="post"  class="easyui-form" onsubmit="return addCust();">
+            <div style="margin-bottom:20px">
+                <form:input cssClass="easyui-textbox" path="cust.id" style="width:70%" data-options="label:'登录帐号:',editable:false"/>
+            </div>
+            <div style="margin-bottom:20px">
+                <form:input class="easyui-textbox" path="cust.custName" style="width:70%" data-options="label:'客户名字:',required:true,validType:'length[2,20]'"/>
+            </div>
+            <div style="margin-bottom:20px">
+                <form:input class="easyui-textbox" path="cust.custRegion" style="width:70%" data-options="label:'客户备注:',validType:'length[0,20]'"/>
+            </div>
+            <div style="margin-bottom:20px">
+                <form:input class="easyui-textbox" path="cust.password" style="width:40%" data-options="label:'密码:',prompt:'如果留空,系统将自动生成四位数密码',validType:'length[4,4]'"/>
+            </div>
+            <div style="margin-bottom:20px">
+                <form:select class="easyui-combobox" path="cust.status" label="状态" style="width:70%">
+                   <form:option value="0">正常</form:option>
+                   <form:option value="-1">冻结</form:option>
+                </form:select>
+            </div>
+        </form>
+    </div>

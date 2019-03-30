@@ -36,7 +36,7 @@ public class Response implements Serializable {
     /**
      * returned message
      */
-    private String message;
+    private String message = "";
     
     /**
      * returned value

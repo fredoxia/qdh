@@ -34,10 +34,9 @@ public class CustInforExcelVO extends AbstractExcelView {
 	private int CUST_NAME_COLUMN = 0;
 	private int CUST_AREA_COLUMN = 1;
 	private int CUST_CATEGORY_COLUMN = 2;
-	private int CHAIN_NAME_COLUMN =3;
-	private int LOGIN_NAME_COLUMN =4;
-	private int PASSWORD_COLUMN =5;
-	private int STATUS_COLUMN =6;
+	private int LOGIN_NAME_COLUMN =3;
+	private int PASSWORD_COLUMN =4;
+	private int STATUS_COLUMN =5;
 	private String defaulFileName ="KeHuXinXi.xls";
 	
 	@Override
@@ -95,11 +94,11 @@ public class CustInforExcelVO extends AbstractExcelView {
 			
 			dataRow.createCell(CUST_AREA_COLUMN).setCellValue(cust.getCustRegion());
 			
-			Integer chainId = cust.getChainId();
-			if (chainId == null)
-			    dataRow.createCell(CUST_CATEGORY_COLUMN).setCellValue("散客");
+//			Integer chainId = cust.getChainId();
+//			if (chainId == null)
+//			    dataRow.createCell(CUST_CATEGORY_COLUMN).setCellValue("散客");
 			
-			dataRow.createCell(CHAIN_NAME_COLUMN).setCellValue(cust.getChainStoreName());
+			//dataRow.createCell(CHAIN_NAME_COLUMN).setCellValue(cust.getChainStoreName());
 			dataRow.createCell(LOGIN_NAME_COLUMN).setCellValue(cust.getId() + " ");
 			dataRow.createCell(PASSWORD_COLUMN).setCellValue(cust.getPassword() + " ");
 			

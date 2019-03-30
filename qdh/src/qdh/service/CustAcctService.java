@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -18,15 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import qdh.comparator.CustOrderProductComparatorByBrandProductCode;
 import qdh.comparator.CustOrderProductComparatorByYQBrandProductCode;
 import qdh.dao.config.EntityConfig;
-import qdh.dao.entity.SQLServer.ClientsMS;
-import qdh.dao.entity.VO.ClientJinSuanVO;
 import qdh.dao.entity.VO.CustOrderProductVO;
 import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.order.Customer;
 import qdh.dao.entity.qxMIS.ChainStore2;
 import qdh.dao.entity.systemConfig.SystemConfig;
 import qdh.dao.impl.Response;
-import qdh.dao.impl.SQLServer.ClientDAOImpl;
 import qdh.dao.impl.order.CustomerDaoImpl;
 import qdh.dao.impl.order.CustOrderDaoImpl;
 import qdh.dao.impl.order.CustOrderProductDaoImpl;
@@ -56,9 +55,6 @@ public class CustAcctService {
 	@Autowired
 	private SystemConfigDaoImpl systemConfigDaoImpl;
 	
-	@Autowired
-	private ClientDAOImpl clientDAOImpl;
-	
 	
 	public DataGrid getCustAccts(Integer isChain, Integer status, String name, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
@@ -67,21 +63,13 @@ public class CustAcctService {
 		
 //		System.out.println(sort + "," + order);
 		
-		if (isChain!= null && isChain != EntityConfig.ALL_RECORD){
-			if (isChain == CUST_TYPE_CHAIN){
-				criteria.add(Restrictions.isNotNull("chainId"));
-			} else {
-				criteria.add(Restrictions.isNull("chainId"));
-			}
-		}
-		
 		if (status == null)
 			status = EntityConfig.ACTIVE;
 		if (status != null && status != EntityConfig.ALL_RECORD)
 			criteria.add(Restrictions.eq("status", status));
 		
 		if (name != null && !name.trim().equals("")){
-			criteria.add(Restrictions.or(Restrictions.like("chainStoreName", "%" + name + "%"), Restrictions.like("custName", "%" + name + "%")));
+			criteria.add(Restrictions.or(Restrictions.like("custRegion", "%" + name + "%"), Restrictions.like("custName", "%" + name + "%")));
 		}
 		
 		if (sort != null && !sort.trim().equals("")){
@@ -99,21 +87,16 @@ public class CustAcctService {
 		return dataGrid;
 	}
 
-	public Response prepareAddEditCustAcct(Customer cust) {
+	public Response prepareAddEditCustAcct(Integer custId) {
 		Response response = new Response();
+		Customer cust = new Customer();
 		
-		if (cust.getId() != 0)
-		    cust = customerDaoImpl.get(cust.getId(), true);
-		List<ChainStore2> chainStores = chainStore2DaoImpl.getActiveChainStores();
+		if (custId != null && custId != 0)
+		    cust = customerDaoImpl.get(custId, true);
 		
 		Map dataMap = new HashMap();
 		dataMap.put("cust", cust);
-		ChainStore2 heapStore2 = new ChainStore2();
-		heapStore2.setChainId(-1);
-		heapStore2.setChainName("");
-		chainStores.add(0, heapStore2);
-		dataMap.put("chainStores", chainStores);
-		
+
 		response.setReturnValue(dataMap);
 		
 		return response;
@@ -169,7 +152,7 @@ public class CustAcctService {
 				return response;
 			}
 			cust.setStatus(EntityConfig.INACTIVE);
-			customerDaoImpl.update(cust, true);
+			customerDaoImpl.update(cust, userName);
 		}
 		
 		//2。delete the order and order_product
@@ -300,30 +283,9 @@ public class CustAcctService {
 				return response;
 			}
 			
-			//2. 更新精算信息
-			ClientsMS clientMs = clientDAOImpl.getClientsByID(id);
-			if (clientMs == null){
-				cust.setCustName("");
-				cust.setCustRegion("");
-				cust.setStatus(EntityConfig.INACTIVE);
-			} else {
-				cust.setCustName(clientMs.getName());
-				cust.setCustRegion(clientMs.getRegion().getName());
-				cust.setStatus(EntityConfig.ACTIVE);
-			}
-				
-			
-			//3. 更新连锁店信息
-			ChainStore2 chainStore = chainStore2DaoImpl.getByClientId(id);
-			if (chainStore == null){
-				cust.setChainId(null);
-				cust.setChainStoreName("");
-			} else {
-				cust.setChainId(chainStore.getChainId());
-				cust.setChainStoreName(chainStore.getChainName());
-			}
-			
-			customerDaoImpl.update(cust, true);
+			cust.setStatus(EntityConfig.ACTIVE);
+
+			customerDaoImpl.update(cust, userName);
 		}
 		
 		//2。active the order_product
@@ -338,103 +300,7 @@ public class CustAcctService {
 		return response;
 	}
 
-	/**
-	 * 搜索精算的客户数据
-	 * @param custName
-	 * @return
-	 */
-	public DataGrid searchJinSuanClients(String custName) {
-		DataGrid dataGrid = new DataGrid();
-		
-		if (custName != null && !custName.trim().equals("")){
-			DetachedCriteria criteria = DetachedCriteria.forClass(ClientsMS.class,"client");
-			criteria.add(Restrictions.like("client.name", custName,MatchMode.ANYWHERE));
-			criteria.add(Restrictions.eq("client.deleted", false));
-			List<ClientsMS> clients = clientDAOImpl.getClientsByCriteria(criteria);
-			
-			List<ClientJinSuanVO> clientVos = transferClients(clients);
-			
-			dataGrid.setRows(clientVos);
-		}
-		
-		return dataGrid;
-	}
-	
-	private List<ClientJinSuanVO> transferClients(List<ClientsMS> clients){
-		List<ClientJinSuanVO> clientVO = new ArrayList<>();
-		if (clients != null && clients.size() > 0){
-			for (ClientsMS client : clients){
-				ClientJinSuanVO clientJinSuanVO = new ClientJinSuanVO(client);
-				clientVO.add(clientJinSuanVO);
-			}
-		}
-		
-		return clientVO;
-	}
 
-	/**
-	 * 添加精算用户
-	 * @param clientIds
-	 * @param userName
-	 * @return
-	 */
-	public Response addCust(String clientIds, String userName) {
-		Response response = new Response();
-		int total = 0;
-		
-		if (clientIds == null || clientIds.trim().equals("")){
-			response.setFail("没有添加客户到系统");
-		} else {
-			if (!systemConfigDaoImpl.canUpdateCust()){
-				response.setFail("管理员已经锁定客户信息和单据更新,请联系管理员");
-				return response;
-			}
-			
-			String[] ids = clientIds.split(",");
-			for (String idString : ids){
-				int id = Integer.parseInt(idString);
-				
-				Customer custOriginal = customerDaoImpl.get(id, true);
-				ClientsMS client = clientDAOImpl.getClientsByID(id);
-				ChainStore2 chainStore2 = chainStore2DaoImpl.getByClientId(id);
-				
-				Customer customer = null;
-				if (custOriginal != null){
-					customer = custOriginal;
-				}
-				
-				if (client != null){
-					if (customer == null)
-						customer = new Customer();
-					
-					customer.setCustName(client.getName());
-					customer.setCustRegion(client.getRegion().getName());
-					customer.setUpdateUser(userName);
-					customer.setUpdateDate(DateUtility.getToday());
-					if (customer.getPassword() == null ||customer.getPassword().equals(""))
-						customer.setPassword(StringUtility.getRandomPassword());
-					customer.setId(id);
-					customer.setStatus(EntityConfig.ACTIVE);
-				}
-				
-				if (customer != null && chainStore2 != null){
-					customer.setChainId(chainStore2.getChainId());
-					customer.setChainStoreName(chainStore2.getChainName());
-				} else {
-					customer.setChainId(null);
-					customer.setChainStoreName("");
-				}
-					
-				if (customer != null){
-					total++;
-				    customerDaoImpl.saveOrUpdate(customer, true);
-				}
-			}
-		}
-		
-		response.setSuccess("成功 添加/更新 " + total + " 客户");
-		return response;
-	}
 
 	public Response downloadCust(Integer isChain, Integer status) {
 		Map<String, Object> dataMap= new HashMap<>();
@@ -570,4 +436,43 @@ public class CustAcctService {
 		
 		return response;
 	}
+
+	/**
+	 * 添加或者更新客户信息
+	 * @param cust
+	 * @param userName
+	 * @return
+	 */
+	public Response updateCust(Customer cust, String userName) {
+		Response response = new Response();
+		int custId = cust.getId();
+		
+		if (custId != 0){
+			Customer custDB = customerDaoImpl.get(custId, true);
+			if (custDB == null){
+				response.setFail("原始客户资料不存在");
+				return response;
+			} else {
+				if (!systemConfigDaoImpl.canUpdateCust()){
+					response.setFail("管理员已经锁定客户信息和单据更新,请联系管理员");
+					return response;
+				}
+				
+				if (!StringUtils.isEmpty(cust.getPassword()))
+					custDB.setPassword(cust.getPassword());
+				custDB.setCustName(cust.getCustName());
+				custDB.setCustRegion(cust.getCustRegion());
+				customerDaoImpl.update(custDB, userName);
+				
+				response.setSuccess("客户资料已经成功更新");
+			}
+		} else {
+			if (!StringUtils.isEmpty(cust.getPassword()))
+			     cust.setPassword(StringUtility.getRandomPassword());
+			customerDaoImpl.save(cust, userName);
+			response.setSuccess("客户资料已经成功添加");
+		}
+		return response;
+	}
+
 }

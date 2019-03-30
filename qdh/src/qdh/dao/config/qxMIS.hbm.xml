@@ -107,19 +107,7 @@
         <property name="numPerHand" column="numPerHand" type="integer"/>
     </class>
     
-     <class name="UserInfor2" table="userinfor">
-        <id name="userId" column="user_id">
-            <generator class="identity" />
-        </id>
-        <property name="userName" column="user_name" type="string"/>
-        <property name="password" column="password" type="string"/>
-        <property name="name" column="name" type="string"/>
-        <property name="roleType" column="roleType" type="integer"/>
-        <property name="department" column="department" type="string"/>
-        <property name="jobTitle" column="jobTitle" type="string"/>
-        <property name="jinsuanID" column="jinsuanID" type="integer"/>
-        <property name="resign" column="resign" type="integer"/>
-    </class>
+
      <class name="ChainStore2" table="chain_store">
 
         <id name="chainId" column="chain_id">

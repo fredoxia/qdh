@@ -72,7 +72,7 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 	}
 	
 	private String getFileName(Customer cust) {
-		String fileName = cust.getId() + "-" + cust.getCustName() + "-" + cust.getChainStoreName() + ".xls";
+		String fileName = cust.getId() + "-" + cust.getCustFullName() + ".xls";
 		return  ExcelUtility.encodeExcelDownloadName(fileName,defaulFileName);
 	}
 
@@ -100,7 +100,7 @@ public class CustomerOrderExcelVO extends AbstractExcelView {
 		dateRow.createCell(1).setCellValue(DateUtility.getToday().toString());
 
 		HSSFRow custRow = sheet.getRow(CUST_ROW);
-		custRow.createCell(1).setCellValue(cust.getCustName() + "-" + cust.getChainStoreName());
+		custRow.createCell(1).setCellValue(cust.getCustFullName());
 
 		int subTotalHands = 0;
 		int subTotalQuantity = 0;

@@ -10,7 +10,7 @@
 	<div id="sessionInfoDiv" style="position: absolute; right: 3px; top: 3px;" class="alert alert-info">
 	    欢迎 <c:out value="${sessionScope.HQ_SESSION_INFO.userName}" escapeXml="false" default="未登陆"></c:out>
     </div>
-    <div style="position: absolute; right: 0px; bottom: 4px;">
+    <div style="position: absolute; right: 0px; bottom: 1px;">
         <!--  
 	    <a href="javascript:void(0);" class="easyui-menubutton" data-options="menu:'#layout_north_pfMenu',iconCls:'cog'">更换皮肤</a> 
 	    <a href="javascript:void(0);" class="easyui-menubutton" data-options="menu:'#layout_north_kzmbMenu',iconCls:'cog'">控制面板</a>-->

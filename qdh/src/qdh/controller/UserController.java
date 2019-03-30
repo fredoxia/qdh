@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import qdh.dao.entity.order.Customer;
-import qdh.dao.entity.qxMIS.UserInfor2;
+import qdh.dao.entity.order.HeadqUser;
 import qdh.dao.impl.Response;
 import qdh.pageModel.Json;
 import qdh.pageModel.SessionInfo;
@@ -25,7 +25,7 @@ public class UserController {
 	
 	@ResponseBody
 	@RequestMapping("/HQLogin")
-	public Json HQLogin(UserInfor2 user, HttpSession session) {
+	public Json HQLogin(HeadqUser user, HttpSession session) {
 		Json j = new Json();
 		Response response = userService.HQlogin(user);
 		if (response.isSuccess()) {
@@ -33,7 +33,7 @@ public class UserController {
 			j.setMsg("登陆成功！");
 
 			SessionInfo sessionInfo = new SessionInfo();
-			BeanUtils.copyProperties((UserInfor2)response.getReturnValue(), sessionInfo);
+			BeanUtils.copyProperties((HeadqUser)response.getReturnValue(), sessionInfo);
 			//sessionInfo.setIp(IpUtil.getIpAddr(request));
 			//sessionInfo.setResourceList(userService.resourceList(u.getId()));
 			
@@ -59,7 +59,7 @@ public class UserController {
 			cust = (Customer)response.getReturnValue();
 			
 			sessionInfo.setUserId(cust.getId());
-			sessionInfo.setUserName(cust.getCustNameVO());
+			sessionInfo.setUserName(cust.getCustFullName());
 			
 			session.setAttribute(ControllerConfig.HQ_SESSION_INFO, sessionInfo);
 

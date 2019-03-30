@@ -31,14 +31,7 @@ public class CustAcctController {
 		
 		return "/jsp/hq/hqAdmin/CustAcctMgmt.jsp";
 	}
-	
-	@ResponseBody
-	@RequestMapping("/SearchCustFromJinsuan")
-	public DataGrid SearchCustFromJinsuan(String custName){
-		DataGrid dataGrid = null ; //custAcctService.searchCustFromJinsuan(custType,status, custName, sort, order);
 
-		return dataGrid;
-	}
 	
 	@ResponseBody
 	@RequestMapping("/GetCustAccts")
@@ -49,11 +42,11 @@ public class CustAcctController {
 	}
 	
 	@RequestMapping("/PreAddUpdateCustAcct")
-	public ModelAndView PreAddUpdateCustAcct(Customer cust){
+	public ModelAndView PreAddUpdateCustAcct(Integer custId){
 		Response response = new Response();
 		
 		try {
-			    response = custAcctService.prepareAddEditCustAcct(cust);
+			    response = custAcctService.prepareAddEditCustAcct(custId);
 			} catch (Exception e){
 				e.printStackTrace();
 				response.setFail(e.getMessage());
@@ -195,11 +188,11 @@ public class CustAcctController {
 	
 	@ResponseBody
 	@RequestMapping("/AddCust")
-	public Json AddCust(String clientIds, HttpSession session){
+	public Json AddCust(Customer cust, HttpSession session){
 		Response response = new Response();
 		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
 		try {
-			response = custAcctService.addCust(clientIds,loginUser.getUserName());
+			response = custAcctService.updateCust(cust,loginUser.getUserName());
 		} catch (Exception e){
 			e.printStackTrace();
 			response.setFail("系统错误 : " + e.getMessage());
@@ -210,17 +203,7 @@ public class CustAcctController {
 		return json;
 	}
 	
-	
-	@ResponseBody
-	@RequestMapping("/SearchJinSuanClients")
-	public DataGrid SearchJinSuanClients(String custName){
-		DataGrid dataGrid = new DataGrid();
 
-		dataGrid = custAcctService.searchJinSuanClients(custName);
-
-		return dataGrid;
-	}
-	
 	@ResponseBody
 	@RequestMapping("/CopyCustOrder")
 	public Json CopyCustOrder(Integer fromCustId, Integer toCustId){

@@ -146,22 +146,22 @@ public class OrderController {
 	 * @param session
 	 * @return
 	 */
-	@ResponseBody
-	@RequestMapping("/ExportOrders")
-	public Json ExportOrders(HttpSession session){
-		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
-		Response response = new Response();
-		try {
-			response = orderService.exportOrders(loginUser.getUserId());
-		} catch (Exception e){
-			e.printStackTrace();
-			response.setFail(e.getMessage());
-		}
-		
-		Json json = new Json(response);
-		
-		return json;
-	}
+//	@ResponseBody
+//	@RequestMapping("/ExportOrders")
+//	public Json ExportOrders(HttpSession session){
+//		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
+//		Response response = new Response();
+//		try {
+//			response = orderService.exportOrders(loginUser.getUserId());
+//		} catch (Exception e){
+//			e.printStackTrace();
+//			response.setFail(e.getMessage());
+//		}
+//		
+//		Json json = new Json(response);
+//		
+//		return json;
+//	}
 	
 	/**
 	 * 总部导出所有当前订货会客户订单，分客户 （下载所有客户详细订单）

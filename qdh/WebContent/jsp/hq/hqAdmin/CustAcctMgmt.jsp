@@ -22,7 +22,7 @@ $(function() {
 		idField : 'id',
 		sortName : 'updateDate',
 		rownumbers:true,
-		sortOrder : 'asc',
+		sortOrder : 'desc',
 		nowrap : false,
 		singleSelect: true,
 		rowStyler: function(index,row){
@@ -40,14 +40,8 @@ $(function() {
 			width : 80
 		}, {			
 			field : 'custRegion',
-			title : '客户地区',
+			title : '客户备注',
 			width : 60
-		}, {
-			field : 'chainStoreName',
-			sortable:true,
-			order:'desc',
-			title : '连锁店系统名字',
-			width : 80
 		}, {
 			field : 'id',
 			title : '登录账号',
@@ -77,6 +71,7 @@ $(function() {
 		}, {
 			field : 'updateDate',
 			title : '操作日期',
+			sortable:true,
 			width : 80
 		}, {
 			field : 'action',
@@ -142,7 +137,7 @@ function activeFun() {
 function addFun() {
 	parent.$.modalDialog({
 		id:"addForm",
-		title : '精算导入客户',
+		title : '添加客户资料',
 		width : 500,
 		height : 400,
 		href : '<%=request.getContextPath()%>/custAcctController/PreAddUpdateCustAcct',
@@ -156,7 +151,30 @@ function addFun() {
 		} ]
 	});
 }
-
+function editFun() {
+	var rows = dataGrid.datagrid('getSelections');
+	if (rows.length == 0){
+		parent.$.messager.alert('错误', '请选中一个客户信息再继续操作', 'error');
+		return;
+	}
+	
+	var	id = rows[0].id;
+	parent.$.modalDialog({
+		id:"addForm",
+		title : '修改客户资料',
+		width : 500,
+		height : 400,
+		href : '<%=request.getContextPath()%>/custAcctController/PreAddUpdateCustAcct?custId='+id,
+		buttons : [ {
+			text : '提交信息',
+			handler : function() {
+				parent.$.modalDialog.openner_dataGrid = dataGrid;
+				var f = parent.$.modalDialog.handler.find('#form2');
+				f.submit();
+			}
+		} ]
+	});			
+}
 function searchFun() {
 	dataGrid.datagrid('load', $.serializeObject($('#searchForm')));
 }
@@ -181,7 +199,7 @@ function checkOrder(){
 				var param = "id="+ id;
 				var cust = result.obj;
 				parent.$.modalDialog({
-					title : "客户订单 " + cust.custName + " " + cust.chainStoreName,
+					title : "客户订单 " + cust.custFullName,
 					width : 900,
 					height : 550,
 					modal : false,
@@ -229,14 +247,6 @@ function downloadAllCustOrderForHQ(){
 						<th colspan="2"></th>
 					</tr>
 					<tr>
-						<th>客户种类</th>
-						<td>
-							<select name="custType" id="custType">
-								<option value="-99">所有</option>
-								<option value="1">连锁店客户</option>
-								<option value="2">零散客户</option>
-							</select>
-						</td>
 						<th>客户状态</th>
 						<td>
 							<select name="status" id="status">
@@ -244,6 +254,10 @@ function downloadAllCustOrderForHQ(){
 								<option value="0" selected>正常状态</option>
 								<option value="-1">冻结状态</option>
 							</select>
+						</td>
+						<th></th>
+						<td>
+
 						</td>
 					</tr>
 				</table>
@@ -257,6 +271,7 @@ function downloadAllCustOrderForHQ(){
 			<a onclick="searchFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">搜索客户</a>
 			<a onclick="cleanFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true">清空查询</a>
 			<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">添加客户</a>
+			<a onclick="editFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">修改客户</a>
 			<a onclick="activeFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">激活客户</a>
 			<a onclick="inactiveFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-no'">冻结客户</a>
 			<a onclick="checkOrder();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true">打开选中客户订单</a>

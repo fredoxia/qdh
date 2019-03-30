@@ -8,7 +8,7 @@
 <%@ include file="../common/Style.jsp"%>
 </head>
 <body class="easyui-layout">
-    <div data-options="region:'north',title:'North Title',split:false,border:false,noheader:true" style="height:49px;overflow:hidden;">
+    <div data-options="region:'north',title:'North Title',split:false,border:false,noheader:true" style="height:52px;overflow:hidden;">
            <%@ include file="layout/North.jsp"%>
     </div>  
     <div data-options="region:'west',title:'功能导航',split:false,border:false" style="width:180px;overflow:hidden;">

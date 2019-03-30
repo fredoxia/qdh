@@ -1,5 +1,5 @@
 <link href="<%=request.getContextPath()%>/conf_files/web-image/favicon.ico" rel="shortcut icon" type="image/x-icon" />	  
-<script type="text/javascript" src="<%=request.getContextPath()%>/conf_files/js/jquery-1.8.0.min.js?v=12.31"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/conf_files/easyUI/jquery.min.js?v=12.31"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/conf_files/js/json2.js"></script> 
 <script type="text/javascript" src="<%=request.getContextPath()%>/conf_files/js/qxbaby-common.js?v=12.31"></script>

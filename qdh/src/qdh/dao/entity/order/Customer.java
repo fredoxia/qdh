@@ -10,11 +10,11 @@ public class Customer implements Serializable{
 	 */
 	private static final long serialVersionUID = -572552511649843048L;
 	private int id;
-	private String custName;
-	private String custRegion;
-	private String password;
-	private String chainStoreName;
-	private Integer chainId;
+	private String custName = "";
+	private String custRegion = "";
+	private String password = "";
+
+//	private Integer chainId;
 	private String updateUser;
 	private Timestamp updateDate;
 	private int status;
@@ -55,18 +55,7 @@ public class Customer implements Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public String getChainStoreName() {
-		return chainStoreName;
-	}
-	public void setChainStoreName(String chainStoreName) {
-		this.chainStoreName = chainStoreName;
-	}
-	public Integer getChainId() {
-		return chainId;
-	}
-	public void setChainId(Integer chainId) {
-		this.chainId = chainId;
-	}
+
 	public String getUpdateUser() {
 		return updateUser;
 	}
@@ -84,20 +73,6 @@ public class Customer implements Serializable{
 	public String getCustFullName() {
 		return custName + " " + custRegion;
 	}
-	public String getCustNameVO(){
-		String name = custName;
-		
-		if (chainStoreName != null && chainStoreName.trim().length() > 0){
-			String storeNamec = chainStoreName.trim();
-			int length = storeNamec.length();
-			
-			if (length >4)
-				name += " " + storeNamec.substring(0, 4);
-			else 
-				name += " " + storeNamec;
-		}
-		
-		return name;
-	}
+
 	
 }

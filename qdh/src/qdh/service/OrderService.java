@@ -31,23 +31,23 @@ import qdh.dao.entity.VO.CustomerOrderForHQExcelVO;
 import qdh.dao.entity.order.CurrentBrands;
 import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.order.Customer;
+import qdh.dao.entity.order.HeadqUser;
 import qdh.dao.entity.product.Product;
 import qdh.dao.entity.product.ProductBarcode;
 import qdh.dao.entity.qxMIS.CustPreOrder;
 import qdh.dao.entity.qxMIS.CustPreOrderProduct;
 import qdh.dao.entity.qxMIS.CustPreorderIdentity;
-import qdh.dao.entity.qxMIS.UserInfor2;
 import qdh.dao.entity.systemConfig.OrderExportLog;
 import qdh.dao.entity.systemConfig.SystemConfig;
 import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CurrentBrandsDaoImpl;
 import qdh.dao.impl.order.CustOrderProdDaoImpl;
 import qdh.dao.impl.order.CustomerDaoImpl;
+import qdh.dao.impl.order.HeadqUserDaoImpl;
 import qdh.dao.impl.product.ProductBarcodeDaoImpl;
 import qdh.dao.impl.qxMIS.CustPreOrderDaoImpl;
 import qdh.dao.impl.qxMIS.CustPreOrderProductDaoImpl;
 import qdh.dao.impl.qxMIS.PreOrderIdentityDaoImpl;
-import qdh.dao.impl.qxMIS.UserInfor2DaoImpl;
 import qdh.dao.impl.systemConfig.OrderExportLogDaoImpl;
 import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 import qdh.pageModel.SessionInfo;
@@ -81,7 +81,7 @@ public class OrderService {
 	private CustomerDaoImpl customerDaoImpl;
 	
 	@Autowired
-	private UserInfor2DaoImpl userInfor2DaoImpl;
+	private HeadqUserDaoImpl userInfor2DaoImpl;
 	
 	@Autowired
 	private OrderExportLogDaoImpl orderExportLogDaoImpl;
@@ -324,151 +324,151 @@ public class OrderService {
 	 * @param userId
 	 * @return
 	 */
-	@Transactional
-	public Response exportOrders(int userId) {
-		UserInfor2 userInfor2 = userInfor2DaoImpl.get(userId, true);
-		Response response = new Response();
-		
-		if (userInfor2 == null){
-			response.setFail("导出单据必须使用条码系统账号");
-			return response;
-		}
-		
-		if (systemConfigDaoImpl.getSystemConfig().getSystemAdminMode() == SystemConfig.NOT_SYSTEM_ADMIN_MODE){
-			response.setFail("导出单据只能在管理员模式下进行");
-			return response;
-		}
-		
-		int totalExportedRecords = 0;
-		int totalErrorCust = 0;
-		int totalExportedCust = 0;		
-		
-		String brandString = "";
-		List<CurrentBrands> brands = currentBrandsDaoImpl.getAll(true);
-		for (CurrentBrands brand : brands){
-			brandString += brand.getBrand().getBrand_ID() + ",";
-		}
-		
-		String orderIdentity = systemConfigDaoImpl.getOrderIdentity();
-		CustPreorderIdentity custPreorderIdentity = new CustPreorderIdentity();
-		custPreorderIdentity.setOrderIdentity(orderIdentity);
-		custPreorderIdentity.setBrands(brandString);
-		preOrderIdentityDaoImpl.saveOrUpdate(custPreorderIdentity, true);
-		
-		//1. 获取多少个customer
-		DetachedCriteria criteriaCount = DetachedCriteria.forClass(CustOrderProduct.class);
-		criteriaCount.add(Restrictions.eq("orderIdentity", orderIdentity));
-		criteriaCount.setProjection(Projections.distinct(Projections.property("custId")));
-		List<Object> custObj = custOrderProdDaoImpl.getByCriteriaProjection(criteriaCount, false);
-		if (custObj == null || custObj.size() == 0){
-			loggerLocal.info("没有找到当前订货会数据 " + orderIdentity);
-			response.setFail("没有找到当前订货会的订单数据");
-		} else {
-			for (Object custIdObj :  custObj){
-				Integer custId = (Integer)custIdObj;
-				loggerLocal.info("导出客户数据 : " + orderIdentity + "," + custId);
-				
-				try {
-					//2. 删除原始数据
-					CustPreOrder preOrder = custPreOrderDaoImpl.getByCustIdOrderIdentity(custId, orderIdentity);
-					if (preOrder != null){
-						int custPreOrderId = preOrder.getId();
-						custPreOrderProductDaoImpl.deleteByOrderId(custPreOrderId);
-					} else {
-					    //3. 保存custPreOrder 数据
-					    preOrder = new CustPreOrder();
-					    
-					    Customer cust = customerDaoImpl.get(custId, true);
-					    if (cust == null){
-					    	loggerLocal.error("客户Id为 " + custId + " 无法找到信息");
-					    	continue;
-					    } else {
-					    	preOrder.setOrderIdentity(orderIdentity);
-					    	preOrder.setChainId(cust.getChainId());
-					    	preOrder.setChainStoreName(cust.getChainStoreName());
-					    	preOrder.setCustId(custId);
-					    	preOrder.setCustName(cust.getCustName());
-					    	custPreOrderDaoImpl.save(preOrder, false);
-					    }
-					}
-					
-					//4. 获取客户数据
-					DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
-					criteria.add(Restrictions.eq("custId", custId));
-					criteria.add(Restrictions.eq("orderIdentity", orderIdentity));
-					criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
-					List<CustOrderProduct> custOrderProducts = custOrderProdDaoImpl.getByCritera(criteria, false);
-					
-					if (custOrderProducts == null || custOrderProducts.size() == 0){
-						custPreOrderDaoImpl.delete(preOrder, false);
-						continue;
-					}
-					
-					int indexNum = 1;
-					int totalQ = 0;
-					double sumCost = 0;
-					double sumWholePrice = 0;
-					double sumRetailPrice = 0;
-					Timestamp orderCreateDate = null;
-					
-					Collections.sort(custOrderProducts, new CustOrderProductComparatorByBrandProductCode());
-					
-					for (CustOrderProduct cop : custOrderProducts){
-						if (orderCreateDate == null)
-							orderCreateDate = cop.getLastUpdateTime();
-
-						Product product = cop.getProductBarcode().getProduct();
-						
-						totalQ += cop.getQuantity();
-						sumCost += product.getRecCost() * cop.getQuantity() * product.getNumPerHand();
-						sumWholePrice += product.getWholePrice() * cop.getQuantity() * product.getNumPerHand();
-						sumRetailPrice += cop.getSumRetailPrice();
-						
-						CustPreOrderProduct cpop = new CustPreOrderProduct(cop, indexNum++, preOrder.getId());
-						custPreOrderProductDaoImpl.save(cpop, false);
-						totalExportedRecords++;
-					}
-					
-					//5. 更新order 信息
-					if (orderCreateDate == null)
-						preOrder.setCreateDate(DateUtility.getToday());
-					else 
-						preOrder.setCreateDate(orderCreateDate);
-					
-					preOrder.setExportDate(DateUtility.getToday());
-					preOrder.setSumCost(sumCost);
-					preOrder.setSumRetailPrice(sumRetailPrice);
-					preOrder.setSumWholePrice(sumWholePrice);
-					preOrder.setTotalQuantity(totalQ);
-					
-					custPreOrderDaoImpl.update(preOrder, false);
-					
-					totalExportedCust++;
-				} catch (Exception e) {
-					e.printStackTrace();
-					totalErrorCust++;
-					loggerLocal.error("导出订单发生错误 : " + custId);
-					loggerLocal.error(e);
-				}
-			}
-			
-			OrderExportLog exportLog = new OrderExportLog();
-			exportLog.setImportTime(DateUtility.getToday());
-			exportLog.setNumOfOrders(totalExportedCust);
-			exportLog.setOrderIdentity(orderIdentity);
-			exportLog.setOperator(userInfor2.getName());
-			exportLog.setNumOfError(totalErrorCust);
-			
-			orderExportLogDaoImpl.save(exportLog, true);
-		}
-		
-		String msg = "成功导出的客户订单数量 : " + totalExportedCust + "<br/>"
-				   + "导出失败的客户订单数量 : " + totalErrorCust;
-		
-		response.setMessage(msg);
-		
-		return response;
-	}
+//	@Transactional
+//	public Response exportOrders(int userId) {
+//		HeadqUser userInfor2 = userInfor2DaoImpl.get(userId, true);
+//		Response response = new Response();
+//		
+//		if (userInfor2 == null){
+//			response.setFail("导出单据必须使用条码系统账号");
+//			return response;
+//		}
+//		
+//		if (systemConfigDaoImpl.getSystemConfig().getSystemAdminMode() == SystemConfig.NOT_SYSTEM_ADMIN_MODE){
+//			response.setFail("导出单据只能在管理员模式下进行");
+//			return response;
+//		}
+//		
+//		int totalExportedRecords = 0;
+//		int totalErrorCust = 0;
+//		int totalExportedCust = 0;		
+//		
+//		String brandString = "";
+//		List<CurrentBrands> brands = currentBrandsDaoImpl.getAll(true);
+//		for (CurrentBrands brand : brands){
+//			brandString += brand.getBrand().getBrand_ID() + ",";
+//		}
+//		
+//		String orderIdentity = systemConfigDaoImpl.getOrderIdentity();
+//		CustPreorderIdentity custPreorderIdentity = new CustPreorderIdentity();
+//		custPreorderIdentity.setOrderIdentity(orderIdentity);
+//		custPreorderIdentity.setBrands(brandString);
+//		preOrderIdentityDaoImpl.saveOrUpdate(custPreorderIdentity, true);
+//		
+//		//1. 获取多少个customer
+//		DetachedCriteria criteriaCount = DetachedCriteria.forClass(CustOrderProduct.class);
+//		criteriaCount.add(Restrictions.eq("orderIdentity", orderIdentity));
+//		criteriaCount.setProjection(Projections.distinct(Projections.property("custId")));
+//		List<Object> custObj = custOrderProdDaoImpl.getByCriteriaProjection(criteriaCount, false);
+//		if (custObj == null || custObj.size() == 0){
+//			loggerLocal.info("没有找到当前订货会数据 " + orderIdentity);
+//			response.setFail("没有找到当前订货会的订单数据");
+//		} else {
+//			for (Object custIdObj :  custObj){
+//				Integer custId = (Integer)custIdObj;
+//				loggerLocal.info("导出客户数据 : " + orderIdentity + "," + custId);
+//				
+//				try {
+//					//2. 删除原始数据
+//					CustPreOrder preOrder = custPreOrderDaoImpl.getByCustIdOrderIdentity(custId, orderIdentity);
+//					if (preOrder != null){
+//						int custPreOrderId = preOrder.getId();
+//						custPreOrderProductDaoImpl.deleteByOrderId(custPreOrderId);
+//					} else {
+//					    //3. 保存custPreOrder 数据
+//					    preOrder = new CustPreOrder();
+//					    
+//					    Customer cust = customerDaoImpl.get(custId, true);
+//					    if (cust == null){
+//					    	loggerLocal.error("客户Id为 " + custId + " 无法找到信息");
+//					    	continue;
+//					    } else {
+//					    	preOrder.setOrderIdentity(orderIdentity);
+//					    	preOrder.setChainId(cust.getChainId());
+//					    	preOrder.setChainStoreName(cust.getChainStoreName());
+//					    	preOrder.setCustId(custId);
+//					    	preOrder.setCustName(cust.getCustName());
+//					    	custPreOrderDaoImpl.save(preOrder, false);
+//					    }
+//					}
+//					
+//					//4. 获取客户数据
+//					DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
+//					criteria.add(Restrictions.eq("custId", custId));
+//					criteria.add(Restrictions.eq("orderIdentity", orderIdentity));
+//					criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
+//					List<CustOrderProduct> custOrderProducts = custOrderProdDaoImpl.getByCritera(criteria, false);
+//					
+//					if (custOrderProducts == null || custOrderProducts.size() == 0){
+//						custPreOrderDaoImpl.delete(preOrder, false);
+//						continue;
+//					}
+//					
+//					int indexNum = 1;
+//					int totalQ = 0;
+//					double sumCost = 0;
+//					double sumWholePrice = 0;
+//					double sumRetailPrice = 0;
+//					Timestamp orderCreateDate = null;
+//					
+//					Collections.sort(custOrderProducts, new CustOrderProductComparatorByBrandProductCode());
+//					
+//					for (CustOrderProduct cop : custOrderProducts){
+//						if (orderCreateDate == null)
+//							orderCreateDate = cop.getLastUpdateTime();
+//
+//						Product product = cop.getProductBarcode().getProduct();
+//						
+//						totalQ += cop.getQuantity();
+//						sumCost += product.getRecCost() * cop.getQuantity() * product.getNumPerHand();
+//						sumWholePrice += product.getWholePrice() * cop.getQuantity() * product.getNumPerHand();
+//						sumRetailPrice += cop.getSumRetailPrice();
+//						
+//						CustPreOrderProduct cpop = new CustPreOrderProduct(cop, indexNum++, preOrder.getId());
+//						custPreOrderProductDaoImpl.save(cpop, false);
+//						totalExportedRecords++;
+//					}
+//					
+//					//5. 更新order 信息
+//					if (orderCreateDate == null)
+//						preOrder.setCreateDate(DateUtility.getToday());
+//					else 
+//						preOrder.setCreateDate(orderCreateDate);
+//					
+//					preOrder.setExportDate(DateUtility.getToday());
+//					preOrder.setSumCost(sumCost);
+//					preOrder.setSumRetailPrice(sumRetailPrice);
+//					preOrder.setSumWholePrice(sumWholePrice);
+//					preOrder.setTotalQuantity(totalQ);
+//					
+//					custPreOrderDaoImpl.update(preOrder, false);
+//					
+//					totalExportedCust++;
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					totalErrorCust++;
+//					loggerLocal.error("导出订单发生错误 : " + custId);
+//					loggerLocal.error(e);
+//				}
+//			}
+//			
+//			OrderExportLog exportLog = new OrderExportLog();
+//			exportLog.setImportTime(DateUtility.getToday());
+//			exportLog.setNumOfOrders(totalExportedCust);
+//			exportLog.setOrderIdentity(orderIdentity);
+//			exportLog.setOperator(userInfor2.getName());
+//			exportLog.setNumOfError(totalErrorCust);
+//			
+//			orderExportLogDaoImpl.save(exportLog, true);
+//		}
+//		
+//		String msg = "成功导出的客户订单数量 : " + totalExportedCust + "<br/>"
+//				   + "导出失败的客户订单数量 : " + totalErrorCust;
+//		
+//		response.setMessage(msg);
+//		
+//		return response;
+//	}
 
 	/**
 	 * 下载所有客户订单zip打包
@@ -512,9 +512,7 @@ public class OrderService {
 				CustomerOrderExcelVO custOrderVo = new CustomerOrderExcelVO();
 				HSSFWorkbook custOrderWB = custOrderVo.process(products, cust);
 
-				String fileName = cust.getCustName();
-				if (cust.getChainStoreName() != null && !cust.getChainStoreName().equals(""))
-					fileName += "-" + cust.getChainStoreName();
+				String fileName = cust.getCustFullName();
 				zipMap.put(fileName + ".xls", custOrderWB);
 			}
 			
@@ -563,15 +561,13 @@ public class OrderService {
 				CustomerOrderForHQExcelVO custOrderVo = new CustomerOrderForHQExcelVO();
 				HSSFWorkbook custOrderWB = custOrderVo.process(products, cust, orderIdentity, null);
 
-				String fileName = cust.getCustName();
-				if (cust.getChainStoreName() != null && !cust.getChainStoreName().equals(""))
-					fileName += "-" + cust.getChainStoreName();
+				String fileName = cust.getCustFullName();
 				zipMap.put(fileName + ".xls", custOrderWB);
 			}
 			
 			//总计单
 			Customer allCustomer = new Customer();
-			allCustomer.setChainStoreName("全部");
+//			allCustomer.setChainStoreName("全部");
 			allCustomer.setCustName("A所有客户总计单");
 			DetachedCriteria criteria = DetachedCriteria.forClass(CustOrderProduct.class);
 			criteria.add(Restrictions.ne("status", EntityConfig.INACTIVE));
@@ -586,7 +582,7 @@ public class OrderService {
 			CustomerOrderForHQExcelVO custOrderVo = new CustomerOrderForHQExcelVO();
 			HSSFWorkbook custOrderWB = custOrderVo.process(products, allCustomer, orderIdentity, customerDaoImpl);
 
-			String fileName = allCustomer.getCustName() +  "-" + allCustomer.getChainStoreName();
+			String fileName = allCustomer.getCustName();
 			zipMap.put(fileName + ".xls", custOrderWB);
 			
 			filePath = FileUtility.zipWorkbooks(zipMap);

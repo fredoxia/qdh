@@ -5,18 +5,18 @@ import org.springframework.stereotype.Service;
 
 import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.order.Customer;
-import qdh.dao.entity.qxMIS.UserInfor2;
+import qdh.dao.entity.order.HeadqUser;
 import qdh.dao.entity.systemConfig.SystemConfig;
 import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CustomerDaoImpl;
-import qdh.dao.impl.qxMIS.UserInfor2DaoImpl;
+import qdh.dao.impl.order.HeadqUserDaoImpl;
 import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 
 @Service
 public class UserService {
 
 	@Autowired
-	private UserInfor2DaoImpl userInforDaoImpl;
+	private HeadqUserDaoImpl userInforDaoImpl;
 	
 	@Autowired
 	private CustomerDaoImpl customerDaoImpl;
@@ -24,11 +24,13 @@ public class UserService {
 	@Autowired
 	private SystemConfigDaoImpl systemConfigDaoImpl;
 	
-	public Response HQlogin(UserInfor2 user) {
-		if (user.getUserName().equals("admin")){
-			return userInforDaoImpl.getLocalAdmin(user.getUserName(), user.getPassword());
-		} else 
-			return userInforDaoImpl.getUserByUserNamePwd(user.getUserName(), user.getPassword());
+	/**
+	 * @param user
+	 * @return
+	 */
+	public Response HQlogin(HeadqUser user) {
+		return userInforDaoImpl.getUserByUserNamePwd(user.getUserName(), user.getPassword());
+
 	}
 
 	public Response loginMobile(Customer cust) {

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import qdh.dao.entity.qxMIS.UserInfor2;
+import qdh.dao.entity.order.HeadqUser;
 import qdh.dao.impl.Response;
 import qdh.pageModel.DataGrid;
 import qdh.pageModel.Json;

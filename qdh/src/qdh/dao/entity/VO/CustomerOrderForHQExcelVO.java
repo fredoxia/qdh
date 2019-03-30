@@ -37,7 +37,7 @@ public class CustomerOrderForHQExcelVO extends AbstractExcelView {
 	private int DATE_ROW = 1;
 	private int CUST_ROW = 2;
 
-	private int CHAIN_COLUMN = 0;
+	private int CUST_COLUMN = 0;
 	private int YEAR_COLUMN = 1;
 	private int QUARTER_COLUMN =2;
 	private int BRAND_COLUMN =3;
@@ -71,7 +71,7 @@ public class CustomerOrderForHQExcelVO extends AbstractExcelView {
 	}
 	
 	private String getFileName(Customer cust) {
-		String fileName = cust.getId() + "-" + cust.getCustName() + "-" + cust.getChainStoreName() + ".xls";
+		String fileName = cust.getId() + "-" + cust.getCustFullName() + ".xls";
 		return  ExcelUtility.encodeExcelDownloadName(fileName,defaulFileName);
 	}
 
@@ -123,7 +123,7 @@ public class CustomerOrderForHQExcelVO extends AbstractExcelView {
 				dateRow.createCell(2).setCellValue(orderIdentity);
 
 				HSSFRow custRow = sheet.getRow(CUST_ROW);
-				custRow.createCell(2).setCellValue(cust.getCustName() + "-" + cust.getChainStoreName());
+				custRow.createCell(2).setCellValue(cust.getCustFullName());
 				
 				sheetCount++;
 				sumHands = 0;
@@ -148,7 +148,7 @@ public class CustomerOrderForHQExcelVO extends AbstractExcelView {
 			if (customerDaoImpl != null){
 				Customer cust2 = customerDaoImpl.get(cop.getCustId(), true);
 				if (cust2 != null){
-					dataRow.createCell(CHAIN_COLUMN).setCellValue(cust2.getCustName() + "-" + cust2.getChainStoreName());
+					dataRow.createCell(CUST_COLUMN).setCellValue(cust2.getCustFullName());
 					
 				}
 			}
