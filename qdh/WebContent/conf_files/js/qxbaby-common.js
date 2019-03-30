@@ -72,7 +72,7 @@ function validateLoginForm(){
 		error += "密码 - 必须输入!\n";
 	}
 	if (error != ""){
-		alert(error);
+		$.messager.alert('提示',error,"info");
 		return false;
 	} else
 		return true;
