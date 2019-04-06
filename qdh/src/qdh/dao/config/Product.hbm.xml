@@ -5,7 +5,7 @@
    <class name="Area" table="area">
         <cache usage="read-write" region="qdhConstant"/>
         <id name="area_ID" column="area_ID">
-            <generator class="assigned" />
+            <generator class="identity" />
         </id>
         <property name="area_Name" column="area_Name" type="string"/>
         <property name="area_Code" column="area_Code" type="string"/>
@@ -14,7 +14,7 @@
     <class name="Brand" table="brand">
         <cache usage="read-write" region="qdh"/>
         <id name="brand_ID" column="brand_ID">
-            <generator class="assigned" />
+            <generator class="identity" />
         </id>
         <property name="brand_Name" column="brand_name" type="string"/>
         <property name="brand_Code" column="brand_Code" type="string"/>
@@ -25,7 +25,7 @@
     <class name="Category" table="category">
         <cache usage="read-write" region="qdh"/>
         <id name="category_ID" column="category_ID">
-            <generator class="assigned" />
+            <generator class="identity" />
         </id>
         <property name="category_Name" column="category_Name" type="string"/>
         <property name="category_Code" column="category_Code" type="string"/>
@@ -34,7 +34,7 @@
     <class name="Quarter" table="quarter">
         <cache usage="read-write" region="qdhConstant"/>
         <id name="quarter_ID" column="quarter_ID">
-            <generator class="assigned" />
+            <generator class="identity" />
         </id>
         <property name="quarter_Name" column="quarter_Name" type="string"/>
         <property name="quarter_Code" column="quarter_Code" type="string"/>
@@ -43,7 +43,7 @@
     <class name="Year" table="year">
         <cache usage="read-write" region="qdhConstant"/>
         <id name="year_ID" column="year_ID" type="integer">
-            <generator class="assigned" />
+            <generator class="identity" />
         </id>
         <property name="year" column="year" type="string"/>
         <property name="year_Code" column="year_Code" type="string"/>
@@ -52,7 +52,7 @@
     <class name="Color" table="color">
         <cache usage="read-write" region="qdhConstant"/>
         <id name="colorId" column="color_id">
-            <generator class="assigned" />
+            <generator class="identity" />
         </id>
         <property name="code" column="code" type="string"/>
         <property name="name" column="name" type="string"/>
@@ -63,7 +63,7 @@
     <class name="Size" table="size">
         <cache usage="read-write" region="qdhConstant"/>
         <id name="sizeId" column="size_id">
-            <generator class="assigned" />
+            <generator class="identity" />
         </id>
         <property name="code" column="code" type="string"/>
         <property name="name" column="name" type="string"/>
@@ -74,7 +74,7 @@
     <class name="Product" table="product">
     	<cache usage="read-write" region="qdh"/>
         <id name="productId" column="product_ID"> 
-            <generator class="assigned" />
+            <generator class="identity" />
         </id>
         <property name="serialNum" column="serial_number" type="string"/>
         <property name="productCode" column="product_Code" type="string"/>
@@ -97,7 +97,7 @@
     <class name="ProductBarcode" table="product_barcode">
         <cache usage="read-write" region="qdh"/>
         <id name="id" column="id"> 
-            <generator class="assigned" />
+            <generator class="identity" />
         </id>
         <property name="status" column="status" type="integer"/>
         <property name="barcode" column="barcode" type="string"/>
@@ -110,10 +110,17 @@
     <class name="NumPerHand" table="num_per_hand">
         <cache usage="read-write" region="qdhConstant"/>
         <id name="id" column="id" type="integer">
-            <generator class="assigned" />
+            <generator class="identity" />
         </id>
         <property name="numPerHand" column="numPerHand" type="integer"/>
     </class>
 
+    <class name="ProductUnit" table="product_unit">
+        <cache usage="read-write" region="qdhConstant"/>
+        <id name="id" column="id" type="integer">
+            <generator class="identity" />
+        </id>
+        <property name="productUnit" column="productUnit" type="string"/>
+    </class> 
         
 </hibernate-mapping>

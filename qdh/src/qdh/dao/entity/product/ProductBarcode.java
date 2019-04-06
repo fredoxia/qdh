@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import org.springframework.beans.BeanUtils;
 
 import qdh.dao.entity.qxMIS.ProductBarcode2;
+import qdh.utility.DateUtility;
 
 
 public class ProductBarcode implements Serializable {
@@ -67,6 +68,7 @@ public class ProductBarcode implements Serializable {
 		this.setColor(color);
 		this.setProduct(product);
 		this.setSize(size);
+		this.setCreateDate(DateUtility.getToday());
 	}
 	
 	public int getStatus() {

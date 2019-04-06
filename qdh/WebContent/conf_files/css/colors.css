@@ -1,0 +1,159 @@
+DIV#ent_menu_labels A {
+	COLOR: white; description: Links in the top navigation
+}
+DIV.construction#ent_menu_labels A {
+	COLOR: black
+}
+DIV#ent_menu_labels A:hover {
+	description: Links in top navigation with mouse over them
+}
+DIV#ent_menu_labels UL UL {
+	BORDER-RIGHT: #ffcc00 1px solid; BORDER-TOP: #ffcc00 1px solid; BORDER-LEFT: #ffcc00 1px solid; BORDER-BOTTOM: #ffcc00 1px solid; BACKGROUND-COLOR: #ffffcc; description: Deeper levels in top navigation
+}
+DIV#ent_menu_labels LI LI {
+	BORDER-TOP: #ffcc00 1px solid
+}
+DIV#ent_menu_labels LI LI:first-child {
+	BORDER-TOP-STYLE: none
+}
+DIV.construction#ent_menu_labels UL UL {
+	COLOR: black; BACKGROUND-COLOR: #ffffcc; description: Deeper levels in top navigation
+}
+DIV#ent_menu_labels LI LI A {
+	COLOR: black; TEXT-ALIGN: left; description: Links in deeper levels in top navigation
+}
+DIV#div_menu_labels A {
+	COLOR: black; description: Links in the top navigation
+}
+DIV#div_menu_labels A:hover {
+	description: Links in top navigation with mouse over them
+}
+DIV#div_menu_labels UL UL {
+	BORDER-RIGHT: #ffcc00 1px solid; BORDER-TOP: #ffcc00 1px solid; BORDER-LEFT: #ffcc00 1px solid; COLOR: black; BORDER-BOTTOM: #ffcc00 1px solid; BACKGROUND-COLOR: #ffffcc; description: Deeper levels in top navigation
+}
+DIV#div_menu_labels LI LI {
+	BORDER-TOP: #ffcc00 1px solid
+}
+DIV#div_menu_labels LI LI:first-child {
+	BORDER-TOP-STYLE: none
+}
+DIV#div_menu_labels LI LI A {
+	COLOR: black; TEXT-ALIGN: left; description: Links in deeper levels in top navigation
+}
+#otherlinks {
+	COLOR: #f7d807
+}
+#otherlinks A {
+	COLOR: #f7d807
+}
+#otherlinks A:visited {
+	COLOR: #f7d807
+}
+#division_name {
+	COLOR: black
+}
+.construction#otherlinks {
+	COLOR: black
+}
+.construction#otherlinks A {
+	COLOR: black
+}
+.construction#otherlinks A:visited {
+	COLOR: black
+}
+#division_name {
+	COLOR: black
+}
+A.depttitlelink {
+	FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #000; FONT-STYLE: normal; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+.PBABgColor{
+	background: rgb(231, 239, 229);
+}
+.PBAInnerTableTitale{
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, Sans-Serif;
+	background: rgb(173, 203, 173);
+}
+.PBAOuterTableTitale{
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, Sans-Serif;
+	background: rgb(247, 243, 247);
+}
+
+.OuterTable{
+	border-color: rgb(247, 243, 247);
+	border-style: solid;
+	
+}
+
+.InnerTable{
+	border-color: rgb(173, 203, 173)
+	border-style: solid;
+	background: rgb(231, 239, 229);
+}
+.InnerTableContent {
+	FONT-SIZE: 12px; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, Sans-Serif
+}
+
+.TotalFieldBackground{
+	background: rgb(247, 243, 247);
+}
+
+.TotalFieldBackgroundChangeLog{
+	background: rgb(247, 243, 247);
+	COLOR: #F62817;
+}
+.Horizontal_Line{
+	color: silver;
+	height: 2%;
+}
+.HomeHyperLink{
+	font-weight: normal;
+	COLOR: black;
+	font-size: 13px;
+	FONT-FAMILY: Verdana, Arial, Helvetica, Sans-Serif;
+}
+.DueDateInRed{
+	COLOR: red;
+}
+.HighLihtApproval{
+	background: rgb(103, 227, 105);
+}
+.UnHighLihtApproval{
+	background: rgb(255, 255, 0);
+}
+
+
+
+
+.emailDV {
+	border:solid 1px #666666;  
+	padding:1px; 
+	position:absolute; 
+	z-index:100; 
+	visibility:hidden; 
+	color:#333333;
+	top:20px; 
+	left:90px; 
+	background: rgb(231, 239, 229);
+	layer-background-color:#666;
+	clear: both;
+	}
+		
+ .emailDV h5 {
+	 margin: 0 0 5px 0;
+	 padding: 2px;
+	 background: rgb(173, 203, 173);
+	 color: White;
+	}
+	
+.change_Log{
+	color:#F62817;
+}
+
+.disabledText{
+	background: rgb(231, 239, 229);
+}
+
+.enaabledText{
+	background: White;
+}	

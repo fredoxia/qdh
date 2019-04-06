@@ -59,22 +59,6 @@ public class CustAcctController {
 		return mav;
 	}
 	
-	@ResponseBody
-	@RequestMapping("/AddUpdateCustAcct")
-	public Json AddUpdateCustAcct(Customer cust, HttpSession session){
-		Response response = new Response();
-//		SessionInfo loginUser = (SessionInfo)session.getAttribute(ControllerConfig.HQ_SESSION_INFO);
-//		try {
-//			response = custAcctService.addUpdateAcct(cust,loginUser.getUserName());
-//		} catch (Exception e){
-//			e.printStackTrace();
-//			response.setFail("系统错误 : " + e.getMessage());
-//		}
-		
-		Json json = new Json(response);
-		
-		return json;
-	}
 	
 	@ResponseBody
 	@RequestMapping("/InactiveCustAcct")

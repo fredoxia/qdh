@@ -178,6 +178,13 @@ function parseValue(value){
 		return value;
 }
 
+function parseColorValue(color){
+	if (color == undefined)
+		return "-";
+	else 
+		return color.name;
+}
+
 function parseNumberValue(value){
 	if (value == undefined || isNaN(value))
 		return "-";

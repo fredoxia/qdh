@@ -42,6 +42,42 @@ function deleteOrderData(){
 	});
 
 }
+
+function deleteProdData(){
+	$.messager.prompt("密码验证","一旦确认删除,当前系统中产品信息都将清空,对应的订货数据也将受到影响.输入密码:", function(password){
+		if (password == "vj7683c688"){
+			var param = "";
+			$.post('<%=request.getContextPath()%>/systemConfigController/DeleteProdData', param, 
+					function(result) {
+						if (result.success) {
+							$.messager.alert('信息', result.msg, 'info');
+						} else {
+							$.messager.alert('失败警告', result.msg, 'error');
+						}
+					}, 'JSON');
+		} else {
+			alert("密码错误");
+		}	   
+	});
+}
+
+function updateCurrentBrand(){
+	$.messager.progress({
+		title : '提示',
+		text : '数据处理中，请稍后....'
+	});
+	$.post('<%=request.getContextPath()%>/systemConfigController/UpdateCurrentBrands', "", 
+			function(result) {
+		        $.messager.progress('close'); 
+				if (result.success) {
+					$.messager.alert('信息', result.msg, 'info');
+				} else if (result.warning){
+					$.messager.alert('注意', result.msg, 'warning');
+				} else {
+					$.messager.alert('失败警告', result.msg, 'error');
+				}
+			}, 'JSON');	
+}
 </script>
 </head>
 <body>
@@ -50,7 +86,7 @@ function deleteOrderData(){
 		<div data-options="region:'center',border:false">
 		       <form:form id="systemConfForm">  
 			    <table class="table table-hover table-condensed" style="display: block; width: 100%; align:left">
-					<tr>
+				<!--  <tr>
 						<th height="35" width="10%">能否删除客户</th>
 						<td>
 							<form:select id="lockUpdateCust" path="lockUpdateCust">
@@ -77,7 +113,7 @@ function deleteOrderData(){
 							</form:select> * 管理员模式下才能导出单据到条码系统
 						</td>
 					</tr>	
-					<tr>
+					<tr>-->	
 					<th height="35">订货会代码</th>
 						<td>
 							<form:input id="orderIdentity" path="orderIdentity" maxlength="15"  class="easyui-numberbox" data-options="min:201606,precision:0"/> 例如: 201604
@@ -91,13 +127,28 @@ function deleteOrderData(){
 					</tr>	
 					<tr>
 						<th colspan="2"><hr/></th>
+					</tr>					
+					<tr>
+						<th height="35">批量更新产品信息</th>
+						<td>
+							<a onclick="updateCurrentBrand();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-reload'">更新产品信息</a>									
+						</td>
+					</tr>						
+					<tr>
+						<th colspan="2"><hr/></th>
 					</tr>
 					<tr>
 						<th height="35">系统功能</th>
 						<td>
 							<a onclick="deleteOrderData();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">清空当前客户订单数据</a>									
 						</td>
-					</tr>					
+					</tr>		
+					<tr>
+						<th height="35"></th>
+						<td>
+							<a onclick="deleteProdData();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">清空当前产品数据</a>									
+						</td>
+					</tr>										
 				</table>
 			</form:form>
 		</div>

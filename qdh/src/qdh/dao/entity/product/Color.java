@@ -5,6 +5,15 @@ import java.io.Serializable;
 import qdh.dao.entity.qxMIS.Color2;
 
 public class Color extends Color2{
+	public Color(){
+		
+	}
+    
+    public Color(int colorId){
+    	setColorId(colorId);
+    }
+    
+    
     /**
 	 * 
 	 */

@@ -61,6 +61,10 @@ public class SystemConfigController {
 		return json;
 	}
 	
+	/**
+	 * 删除客户订单数据
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping("/DeleteCurrentOrderData")
 	public Json DeleteCurrentOrderData(){
@@ -77,4 +81,40 @@ public class SystemConfigController {
 		return json;
 	}
 	
+	/**
+	 * 删除所有产品信息
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/DeleteProdData")
+	public Json DeleteProdData(){
+		Response response = new Response();
+		try {
+			response = systemConfigService.deleteProdData();
+		} catch (Exception e){
+			e.printStackTrace();
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("/UpdateCurrentBrands")
+	public Json UpdateCurrentBrands(){
+		Response response = new Response();
+		try {
+			response = systemConfigService.updateCurrentBrands();
+		} catch (Exception e){
+			e.printStackTrace();
+			response.setFail("系统错误 : " + e.getMessage());
+		}
+		
+		Json json = new Json(response);
+		
+		return json;
+	}
 }
