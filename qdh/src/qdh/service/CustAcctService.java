@@ -458,7 +458,7 @@ public class CustAcctService {
 					return response;
 				}
 				
-				if (!StringUtils.isEmpty(cust.getPassword()))
+				if (StringUtils.isEmpty(cust.getPassword()))
 					custDB.setPassword(cust.getPassword());
 				custDB.setCustName(cust.getCustName());
 				custDB.setCustRegion(cust.getCustRegion());
@@ -467,7 +467,7 @@ public class CustAcctService {
 				response.setSuccess("客户资料已经成功更新");
 			}
 		} else {
-			if (!StringUtils.isEmpty(cust.getPassword()))
+			if (StringUtils.isEmpty(cust.getPassword()))
 			     cust.setPassword(StringUtility.getRandomPassword());
 			customerDaoImpl.save(cust, userName);
 			response.setSuccess("客户资料已经成功添加");
