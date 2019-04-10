@@ -167,6 +167,10 @@ public class SystemConfigService {
 				return response;
 			}
 			
+			List<CurrentBrands> currentBrands = CurrentBrandsDaoImpl.getAll(true);
+			for (CurrentBrands cb: currentBrands){
+				CurrentBrandsDaoImpl.delete(cb, true);
+			}
 			
 			for (Product product : products){
 				int yearId = product.getYear().getYear_ID();
@@ -178,14 +182,14 @@ public class SystemConfigService {
 			    categoryIds.add(categoryId);
 			}
 			
-			for (String currentBrand: currentBrandsString){
-				String[] currentBrandArray = currentBrand.split(",");
+			for (String cbs: currentBrandsString){
+				String[] currentBrandArray = cbs.split(",");
 				int yearId = Integer.parseInt(currentBrandArray[0]);
 				int quarterId = Integer.parseInt(currentBrandArray[1]);
 			    int brandId = Integer.parseInt(currentBrandArray[2]);
 			    
-			    CurrentBrands currentBrands = new CurrentBrands(yearId, quarterId, brandId, 0, "");
-			    CurrentBrandsDaoImpl.saveOrUpdate(currentBrands, true);
+			    CurrentBrands currentBrand = new CurrentBrands(yearId, quarterId, brandId, 0, "");
+			    CurrentBrandsDaoImpl.saveOrUpdate(currentBrand, true);
 			}
 			
 			for (Integer categoryId : categoryIds){
