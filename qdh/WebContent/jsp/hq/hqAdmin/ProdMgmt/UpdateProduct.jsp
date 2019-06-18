@@ -155,7 +155,7 @@ function saveBarcodeBackProcess(data){
 	          <td height="18"><strong>预设价1 </strong>       :</td><td><form:input path="productBarcode.product.wholeSalePrice" id="wholeSalePrice"  cssClass="easyui-numberbox" data-options="min:0,max:999,precision:0"/></td>
 	       </tr>
 	       <tr class="InnerTableContent" style="background-color: rgb(255, 250, 208);">
-	          <td height="18"><strong>厂家零售价 </strong>       :</td><td><form:input path="productBarcode.product.salesPriceFactory" id="salesPriceFactory"  cssClass="easyui-numberbox" data-options="min:0,max:999,precision:0"/></td>
+	          <td height="18"><strong>厂家零售价 </strong>       :</td><td><form:input path="productBarcode.product.salesPriceFactory" id="salesPriceFactory"  cssClass="easyui-numberbox" data-options="min:0,max:1500,precision:0"/></td>
 	       </tr>
 	       <tr class="InnerTableContent">
 	          <td height="18"><strong>折扣 </strong>       :</td><td><form:input path="productBarcode.product.discount" id="discount"  cssClass="easyui-numberbox" data-options="min:0,max:1,precision:2"/></td>
