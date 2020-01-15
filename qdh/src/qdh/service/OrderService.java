@@ -51,6 +51,7 @@ import qdh.dao.impl.qxMIS.PreOrderIdentityDaoImpl;
 import qdh.dao.impl.systemConfig.OrderExportLogDaoImpl;
 import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 import qdh.pageModel.SessionInfo;
+import qdh.sysParms.SystemParm;
 import qdh.utility.DateUtility;
 import qdh.utility.FileUtility;
 import qdh.utility.loggerLocal;
@@ -228,7 +229,7 @@ public class OrderService {
 		productCriteria.addOrder(Order.asc("productCode"));
 		
 		//1. 生成CurrentOrderProduct map
-		List<ProductBarcode> productBarcodes = productBarcodeDaoImpl.getByCritera(criteria, 0, 15, true);
+		List<ProductBarcode> productBarcodes = productBarcodeDaoImpl.getByCritera(criteria, 0, SystemParm.getRecordPerPage(), true);
 		if (productBarcodes == null || productBarcodes.size() == 0)
 			return response;
 		Map<Integer, CustOrderProductVO> copMap = new HashMap<>();
