@@ -178,17 +178,16 @@ function assignProductValue(p){
 function clearAllData(){
 	$("#error").html("");
 
-	$("#salesPrice").attr("value","");
-	$("#barcode").attr("value","");
-	$("#productCode").attr("value","");
-	$("#recCost").attr("value","");
-	$("#wholeSalePrice").attr("value","");
-	$("#wholeSalePrice2").attr("value","");
-	$("#wholeSalePrice3").attr("value","");
-	$("#salesPriceFactory").attr("value","");
-	$("#serialNum").attr("value","");
+	$("#salesPrice").val("");
+	$("#barcode").textbox("setValue","");
+	$("#productCode").textbox("setValue","");
+	$("#recCost").numberbox("setValue","");
+	$("#wholeSalePrice").numberbox("setValue","");
+
+	$("#salesPriceFactory").numberbox("setValue","");
+	$("#serialNum").textbox("setValue","");
 	$("#color").empty();
-	$("#colorName").attr("value","");
+	$("#colorName").val("");
 	
     $('#orgTablebody tr').each(function () {                
         $(this).remove();
