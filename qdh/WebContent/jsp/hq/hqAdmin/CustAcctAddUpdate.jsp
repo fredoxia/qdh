@@ -37,7 +37,7 @@
                 <form:input class="easyui-textbox" path="cust.custRegion" style="width:70%" data-options="label:'客户备注:',validType:'length[0,20]'"/>
             </div>
             <div style="margin-bottom:20px">
-                <form:input class="easyui-textbox" path="cust.password" style="width:40%" data-options="label:'密码:',prompt:'如果留空,系统将自动生成四位数密码',validType:'length[4,4]'"/>
+                <form:input class="easyui-textbox" path="cust.password" style="width:70%" data-options="label:'密码:',prompt:'如果留空,系统将自动生成四位数密码',validType:'length[4,4]'"/>
             </div>
             <div style="margin-bottom:20px">
                 <form:select class="easyui-combobox" path="cust.status" label="状态" style="width:70%">

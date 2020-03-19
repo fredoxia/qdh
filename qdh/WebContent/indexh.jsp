@@ -14,11 +14,11 @@ function login(){
     }
 }
 function loginBackProcess(data){
-	if (data.success)
+
+	if (data.returnCode == SUCCESS)
 		window.location.href = "<%=request.getContextPath()%>/userController/HQMain";
 	else {
-
-		alert(data.msg);
+		$.messager.alert('提示',data.msg,"error");
 	}
 }
 </script>

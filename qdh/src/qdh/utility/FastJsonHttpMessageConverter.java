@@ -31,6 +31,14 @@ public class FastJsonHttpMessageConverter extends AbstractHttpMessageConverter<O
 
 	private SerializerFeature[] serializerFeature;
 
+	public SerializerFeature[] getSerializerFeature() {
+		return serializerFeature;
+	}
+
+	public void setSerializerFeature(SerializerFeature[] serializerFeature) {
+		this.serializerFeature = serializerFeature;
+	}
+
 	@Override
 	protected boolean supports(Class<?> clazz) {
 		return true;

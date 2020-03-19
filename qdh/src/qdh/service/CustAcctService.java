@@ -28,7 +28,7 @@ import qdh.dao.entity.systemConfig.SystemConfig;
 import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CustomerDaoImpl;
 import qdh.dao.impl.order.CustOrderDaoImpl;
-import qdh.dao.impl.order.CustOrderProductDaoImpl;
+import qdh.dao.impl.order.CustOrderProdDaoImpl;
 import qdh.dao.impl.qxMIS.ChainStore2DaoImpl;
 import qdh.dao.impl.systemConfig.SystemConfigDaoImpl;
 import qdh.pageModel.DataGrid;
@@ -50,7 +50,7 @@ public class CustAcctService {
 	private CustOrderDaoImpl orderDaoImpl;
 	
 	@Autowired
-	private CustOrderProductDaoImpl custOrderProductDaoImpl;
+	private CustOrderProdDaoImpl custOrderProductDaoImpl;
 	
 	@Autowired
 	private SystemConfigDaoImpl systemConfigDaoImpl;
@@ -458,7 +458,7 @@ public class CustAcctService {
 					return response;
 				}
 				
-				if (!StringUtils.isEmpty(cust.getPassword()))
+				if (StringUtils.isEmpty(cust.getPassword()))
 					custDB.setPassword(cust.getPassword());
 				custDB.setCustName(cust.getCustName());
 				custDB.setCustRegion(cust.getCustRegion());
@@ -467,7 +467,7 @@ public class CustAcctService {
 				response.setSuccess("客户资料已经成功更新");
 			}
 		} else {
-			if (!StringUtils.isEmpty(cust.getPassword()))
+			if (StringUtils.isEmpty(cust.getPassword()))
 			     cust.setPassword(StringUtility.getRandomPassword());
 			customerDaoImpl.save(cust, userName);
 			response.setSuccess("客户资料已经成功添加");

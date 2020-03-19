@@ -10,7 +10,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import qdh.dao.config.EntityConfig;
 import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.order.Customer;
@@ -76,6 +75,16 @@ public class CustOrderProdDaoImpl extends BaseDAO<CustOrderProduct>{
 				myTotal.add(0);
 		}
 		return myTotal;
+	}
+
+	public int deleteProduct(int id) {
+		Object[] values = new Object[]{id};
+		
+		String hql = "DELETE from CustOrderProduct WHERE productBarcode.id =?";
+		
+		int count = this.executeHQLUpdateDelete(hql, values, true);
+		
+		return count;
 	}
 
 

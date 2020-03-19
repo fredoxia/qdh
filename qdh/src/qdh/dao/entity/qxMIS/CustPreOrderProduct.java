@@ -31,7 +31,7 @@ public class CustPreOrderProduct implements Serializable {
     	this.pbId = pb.getId();
     	this.totalQuantity = cop.getQuantity();
     	this.sumCost = p.getRecCost() * cop.getQuantity() * p.getNumPerHand();
-    	this.sumWholePrice = p.getWholePrice() * cop.getQuantity() * p.getNumPerHand();
+    	this.sumWholePrice = p.getWholeSalePrice()* cop.getQuantity() * p.getNumPerHand();
     	this.sumRetailPrice = cop.getSumRetailPrice();
     }
     

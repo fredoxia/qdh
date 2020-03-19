@@ -81,7 +81,7 @@ function refresh(){
 		</div>
 	</div>
 	<div id="toolbar" style="display: none;">
-			<a onclick="exportOrders();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-syn_data',plain:true">导出当前订货会订单到条码系统</a>
+			<!--  <a onclick="exportOrders();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-syn_data',plain:true">导出当前订货会订单到条码系统</a>-->
 			<a onclick="refresh();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-reload',plain:true">刷新</a>
 	</div>
 

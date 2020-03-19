@@ -29,8 +29,7 @@ public class UserController {
 		Json j = new Json();
 		Response response = userService.HQlogin(user);
 		if (response.isSuccess()) {
-			j.setSuccess(true);
-			j.setMsg("登陆成功！");
+          
 
 			SessionInfo sessionInfo = new SessionInfo();
 			BeanUtils.copyProperties((HeadqUser)response.getReturnValue(), sessionInfo);
@@ -39,7 +38,8 @@ public class UserController {
 			
 			session.setAttribute(ControllerConfig.HQ_SESSION_INFO, sessionInfo);
 
-			j.setObj(sessionInfo);
+			//response.setReturnValue(sessionInfo);
+			j = new Json(response);
 		} else {
 			j.setMsg(response.getMessage());
 		}

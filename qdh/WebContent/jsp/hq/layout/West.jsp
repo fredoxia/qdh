@@ -33,7 +33,10 @@ $(function() {
                <li data-options="iconCls:'icon-images',state:'open',border:false">  
 		            <span>订货会资料管理</span>  
 	        		<ul>
-	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/prodOptController/HQProdMgmt'}">订货会品牌管理</li>
+	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/prodOptController/HQMainBasicData'}">基础资料管理</li>
+	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/prodOptController/HQPreBarcodeGen'}">条码制作</li>
+	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/prodOptController/HQPreSearchBarcode'}">条码查询</li>
+	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/prodOptController/HQPreBatchBarcodeImport'}">批量条码导入</li>
 	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/prodOptController/HQBarcodeMgmt'}">当前条码查询</li>
 	        			 <li data-options="iconCls:'icon-images',attributes:{url:'<%=request.getContextPath()%>/custAcctController/CustAcctMgmt'}">客户数据管理</li>
 	        		</ul> 

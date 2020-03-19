@@ -72,7 +72,7 @@ function validateLoginForm(){
 		error += "密码 - 必须输入!\n";
 	}
 	if (error != ""){
-		alert(error);
+		$.messager.alert('提示',error,"info");
 		return false;
 	} else
 		return true;
@@ -176,6 +176,13 @@ function parseValue(value){
 		return "-";
 	else 
 		return value;
+}
+
+function parseColorValue(color){
+	if (color == undefined)
+		return "-";
+	else 
+		return color.name;
 }
 
 function parseNumberValue(value){

@@ -31,6 +31,7 @@ import qdh.dao.entity.VO.RptSummaryHeaderVO;
 import qdh.dao.entity.order.CurrentBrands;
 import qdh.dao.entity.order.CustOrderProduct;
 import qdh.dao.entity.order.Customer;
+import qdh.dao.entity.order.ProductCategoryInSystem;
 import qdh.dao.entity.product.Brand;
 import qdh.dao.entity.product.Category;
 import qdh.dao.entity.product.Product;
@@ -40,6 +41,7 @@ import qdh.dao.impl.Response;
 import qdh.dao.impl.order.CurrentBrandsDaoImpl;
 import qdh.dao.impl.order.CustOrderProdDaoImpl;
 import qdh.dao.impl.order.CustomerDaoImpl;
+import qdh.dao.impl.order.ProductCategoryInSystemDaoImpl;
 import qdh.dao.impl.product.CategoryDaoImpl;
 import qdh.dao.impl.product.ProductBarcodeDaoImpl;
 import qdh.dao.impl.systemConfig.OrderExportLogDaoImpl;
@@ -71,6 +73,9 @@ public class RptService {
 	
 	@Autowired
 	private CategoryDaoImpl categoryDaoImpl;
+	
+	@Autowired
+	private ProductCategoryInSystemDaoImpl productCategoryInSystemDaoImpl;
 	
 	public DataGrid generateHQProdRpt(Integer currentBrandId, Integer page, Integer rowsPerPage, String sort, String order) {
 		DataGrid dataGrid = new DataGrid();
@@ -672,7 +677,12 @@ public class RptService {
 		Map dataMap = new HashMap();
 		
 		//1. 页面下拉菜单
-		List<Category> allCategories = categoryDaoImpl.getAll(true);
+		List<ProductCategoryInSystem> productCategoryInSystems = productCategoryInSystemDaoImpl.getAll(true);
+		List<Category> allCategories = new ArrayList<>();
+		for (ProductCategoryInSystem productCategoryInSystem : productCategoryInSystems){
+		     Category category = categoryDaoImpl.get(productCategoryInSystem.getCategoryId(), true);
+		     allCategories.add(category);
+		}
 		Category allCategory = new Category();
 		allCategory.setCategory_Name("所有类别");
 		allCategories.add(0, allCategory);
@@ -766,7 +776,12 @@ public class RptService {
 		Map dataMap = new HashMap();
 		
 		//1. 页面下拉菜单
-		List<Category> allCategories = categoryDaoImpl.getAll(true);
+		List<ProductCategoryInSystem> productCategoryInSystems = productCategoryInSystemDaoImpl.getAll(true);
+		List<Category> allCategories = new ArrayList<>();
+		for (ProductCategoryInSystem productCategoryInSystem : productCategoryInSystems){
+		     Category category1 = categoryDaoImpl.get(productCategoryInSystem.getCategoryId(), true);
+		     allCategories.add(category1);
+		}
 		Category allCategory = new Category();
 		allCategory.setCategory_Name("所有类别");
 		allCategories.add(0, allCategory);

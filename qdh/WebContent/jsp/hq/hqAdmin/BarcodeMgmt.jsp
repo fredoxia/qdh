@@ -87,12 +87,6 @@ $(function() {
 			field : 'salesPrice',
 			title : '连锁店终端价',
 			width : 40
-		}, {
-			field : 'createDate',
-			title : '条码系统创建日期',
-			sortable:true,
-			order:'desc',
-			width : 70
 		} ] ],
 		toolbar : '#toolbar'
 	});

@@ -27,11 +27,30 @@
 							<value>text/html;charset=UTF-8</value><!-- 避免IE出现下载JSON文件的情况 -->
 						</list>
 					</property>
+					<property name="serializerFeature">
+                    <list>
+                        <value>PrettyFormat</value>
+                        <value>WriteMapNullValue</value>
+                        <value>WriteNullStringAsEmpty</value>
+                        <value>WriteNullListAsEmpty</value>
+                        <value>DisableCircularReferenceDetect</value>
+                    </list>
+                </property>
 				</bean>
 			</list>
 		</property>
 	</bean>
-	
+	<!-- 解析器注册 -->  
+<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">  
+    <property name="messageConverters">  
+        <list>  
+            <ref bean="stringHttpMessageConverter"/>  
+        </list>  
+    </property>  
+</bean>  
+<!-- String类型解析器，允许直接返回String类型的消息 -->  
+<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter"/>
+
 	<!-- 拦截器 -->
 	<mvc:interceptors>
 		<mvc:interceptor>
@@ -39,6 +58,12 @@
 			<bean class="qdh.interceptor.SecurityInterceptor"></bean>
 		</mvc:interceptor>
 	</mvc:interceptors>
+
+<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+     <property name="maxUploadSize" value="104857600" />
+     <property name="maxInMemorySize" value="4096" />
+     <property name="defaultEncoding" value="UTF-8"></property>
+</bean>
 	
     <!-- database outside configuration -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
